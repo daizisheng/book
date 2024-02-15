@@ -374,19 +374,77 @@ document.write(`
   <section class="tex2jax_ignore mathjax_ignore" id="bip0039">
 <h1>BIP0039 生成确定性密钥的助记码<a class="headerlink" href="#bip0039" title="Permalink to this heading">#</a></h1>
 <p><a class="reference external" href="https://en.bitcoin.it/wiki/BIP_0039">https://en.bitcoin.it/wiki/BIP_0039</a></p>
-<p><strong>BTC私钥</strong> 实际上就是一个32字节的随机数，而 <strong>公钥</strong> 是通过将椭圆曲线的 <strong>生成元点</strong> 自加而得到，自加的次数就是这个私钥 ，此时私钥被当作一个大整数。而 <strong>BTC地址</strong> 则是通过把公钥哈希而得到。</p>
+<p><strong>BTC私钥</strong> 实际上就是一个32字节的随机数组，而 <strong>公钥</strong> 是通过将椭圆曲线的 <strong>生成元点</strong> 自加而得到，自加的次数就是这个私钥 ，此时私钥被当作一个大整数。而 <strong>BTC地址</strong> 则是通过把公钥哈希而得到。程序逻辑如下：</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span>
+
+<span class="c1"># 固定随机种子，免得每次跑的结果不一样</span>
 <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="c1"># 随机生成一个私钥</span>
 <span class="n">private_key</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">256</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">private_key_hex</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;0x</span><span class="si">{</span><span class="n">private_key</span><span class="si">:</span><span class="s2">064x</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">private_key_hex</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;private_key: 0x</span><span class="si">{</span><span class="n">private_key</span><span class="si">:</span><span class="s2">064x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0x854a965708ceac392904cdefcf84b683a749f9c5470b9805d2d6b8777dc59a3a
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>private_key: 0x854a965708ceac392904cdefcf84b683a749f9c5470b9805d2d6b8777dc59a3a
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># BTC所选择的椭圆曲线是secp256k1, 其参数如下</span>
+<span class="n">p</span> <span class="o">=</span> <span class="mh">0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F</span>
+<span class="n">a</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mi">7</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mh">0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141</span>
+<span class="n">Gx</span> <span class="o">=</span> <span class="mh">0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798</span>
+<span class="n">Gy</span> <span class="o">=</span> <span class="mh">0x483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8</span>
+
+<span class="c1"># 椭圆曲线的方程是 y^2 = x^3 + ax + b</span>
+
+<span class="c1"># 椭圆曲线上的加法如下，其中 None 表示无穷远点，即加法的单位元，即 0，p1和p2是椭圆曲线上的点</span>
+<span class="k">def</span> <span class="nf">secp256k1_add</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">p1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">p2</span>
+    <span class="k">if</span> <span class="n">p2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">p1</span>
+    <span class="k">if</span> <span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">p2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">p1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">p2</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="c1"># 两个点互为相反数，即相加为0</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">p1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">p2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">%</span> <span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="c1"># s是斜率</span>
+    <span class="k">if</span> <span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">p2</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="nb">pow</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">p1</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="p">(</span><span class="n">p2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">p1</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="nb">pow</span><span class="p">(</span><span class="n">p2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">s</span> <span class="o">*</span> <span class="n">s</span> <span class="o">-</span> <span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">p2</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">%</span> <span class="n">p</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="p">(</span> <span class="o">-</span> <span class="p">(</span><span class="n">s</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="n">p1</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span> <span class="o">%</span> <span class="n">p</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># 私钥 -&gt; 公钥 (倍点算法)</span>
+<span class="k">def</span> <span class="nf">priv_key_to_pub_key</span><span class="p">(</span><span class="n">priv_key</span><span class="p">):</span>
+    <span class="c1"># 生成公钥</span>
+    <span class="n">pub_key</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">256</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">priv_key</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">i</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">pub_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">pub_key</span> <span class="o">=</span> <span class="p">(</span><span class="n">Gx</span><span class="p">,</span> <span class="n">Gy</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">pub_key</span> <span class="o">=</span> <span class="n">secp256k1_add</span><span class="p">(</span><span class="n">pub_key</span><span class="p">,</span> <span class="p">(</span><span class="n">Gx</span><span class="p">,</span> <span class="n">Gy</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">pub_key</span>
+
+<span class="c1"># 生成公钥</span>
+<span class="n">pub_key</span> <span class="o">=</span> <span class="n">priv_key_to_pub_key</span><span class="p">(</span><span class="n">private_key</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;pub_key: 0x</span><span class="si">{</span><span class="n">pub_key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">064x</span><span class="si">}</span><span class="s2">, 0x</span><span class="si">{</span><span class="n">pub_key</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">064x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>pub_key: 0x34ff3be4033f7a06696c3d09f7d1671cbcf55cd700535655647077456769a24e, 0x5d9d11623a236c553f6619d89832098c55df16c3e8f8b6818491067a73cc2f1a
 </pre></div>
 </div>
 </div>
