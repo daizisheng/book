@@ -375,9 +375,13 @@ document.write(`
 <h1>BIP0039 生成确定性密钥的助记码<a class="headerlink" href="#bip0039" title="Permalink to this heading">#</a></h1>
 <p><a class="reference external" href="https://en.bitcoin.it/wiki/BIP_0039">https://en.bitcoin.it/wiki/BIP_0039</a></p>
 <p><strong>BTC私钥</strong> 实际上就是一个32字节的随机数组，而 <strong>公钥</strong> 是通过将椭圆曲线的 <strong>生成元点</strong> 自加而得到，自加的次数就是这个私钥 ，此时私钥被当作一个大整数。而 <strong>BTC地址</strong> 则是通过把公钥哈希而得到。程序逻辑如下：</p>
+<p>例子来自 <a class="reference external" href="https://en.bitcoin.it/wiki/Technical_background_of_version_1_Bitcoin_addresses">https://en.bitcoin.it/wiki/Technical_background_of_version_1_Bitcoin_addresses</a></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span>
+
+<span class="c1"># 设置随机数种子，以便结果可重复</span>
+<span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
 <span class="c1"># 随机生成一个私钥</span>
 <span class="n">private_key</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">256</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
@@ -536,6 +540,53 @@ base58 address: 1PMycacnJaSqwwJqjawXBErnLsZ7RkXUAs
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic_word_list: abandon,ability,able,about,...
+</pre></div>
+</div>
+</div>
+</div>
+<p>助记词的个数可以是12个或者更多，我们以12个助记词为例来说明BIP0039。</p>
+<p>12个助记词，每个助记词从2048个单词中随机挑选，说明我们至少需要 <code class="docutils literal notranslate"><span class="pre">12</span> <span class="pre">*</span> <span class="pre">11</span> <span class="pre">=</span> <span class="pre">132</span></code> 个随机比特。在BIP0039中，12个助记词我们使用4个比特的校验码，因此剩余的128个比特来自随机。示例如下：</p>
+<p>测试例子来自 <a class="github reference external" href="https://github.com/trezor/python-mnemonic/blob/master/vectors.json">trezor/python-mnemonic</a></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">random_bits</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">128</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># 为了方便，我们直接使用一个固定的随机数</span>
+<span class="n">random_bits</span> <span class="o">=</span> <span class="mh">0x9e885d952ad362caeb4efe34a8e91bd2</span>
+
+<span class="n">random_bytes</span> <span class="o">=</span> <span class="n">random_bits</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+<span class="n">sha256ed_random_bytes</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">random_bytes</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+<span class="n">sha256ed_random_bytes_as_int</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">sha256ed_random_bytes</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+<span class="n">random_bits</span> <span class="o">=</span> <span class="p">(</span><span class="n">random_bits</span> <span class="o">&lt;&lt;</span> <span class="mi">4</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">sha256ed_random_bytes_as_int</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="mi">256</span> <span class="o">-</span> <span class="mi">4</span><span class="p">));</span>
+
+<span class="n">mnemonic</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">):</span>
+    <span class="n">mnemonic</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mnemonic_word_list</span><span class="p">[</span><span class="n">random_bits</span> <span class="o">&amp;</span> <span class="mi">2047</span><span class="p">])</span>
+    <span class="n">random_bits</span> <span class="o">=</span> <span class="n">random_bits</span> <span class="o">&gt;&gt;</span> <span class="mi">11</span>
+<span class="n">mnemonic</span> <span class="o">=</span> <span class="n">mnemonic</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">mnemonic</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mnemonic</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mnemonic: </span><span class="si">{</span><span class="n">mnemonic</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic: ozone drill grab fiber curtain grace pudding thank cruise elder eight picnic
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">unicodedata</span>
+
+<span class="n">salt</span> <span class="o">=</span> <span class="s2">&quot;mnemonic&quot;</span> <span class="o">+</span> <span class="s2">&quot;TREZOR&quot;</span>
+<span class="n">seed</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">pbkdf2_hmac</span><span class="p">(</span><span class="s1">&#39;sha512&#39;</span><span class="p">,</span> <span class="n">mnemonic</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">),</span> <span class="n">salt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">),</span> <span class="mi">2048</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;seed: 0x</span><span class="si">{</span><span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;big&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">0128x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>seed: 0x274ddc525802f7c828d8ef7ddbcdc5304e87ac3535913611fbbfa986d0c9e5476c91689f9c8a54fd55bd38606aa6a8595ad213d4c9c9f9aca3fb217069a41028
 </pre></div>
 </div>
 </div>
