@@ -379,17 +379,17 @@ document.write(`
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span>
 
-<span class="c1"># 固定随机种子，免得每次跑的结果不一样</span>
-<span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-
 <span class="c1"># 随机生成一个私钥</span>
 <span class="n">private_key</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">256</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># 为了方便，我们直接使用一个固定的私钥</span>
+<span class="n">private_key</span> <span class="o">=</span> <span class="mh">0x18e14a7b6a307f426a94f8114701e7c8e774e7f9a47e2c2035db29a206321725</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;private_key: 0x</span><span class="si">{</span><span class="n">private_key</span><span class="si">:</span><span class="s2">064x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>private_key: 0x854a965708ceac392904cdefcf84b683a749f9c5470b9805d2d6b8777dc59a3a
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>private_key: 0x18e14a7b6a307f426a94f8114701e7c8e774e7f9a47e2c2035db29a206321725
 </pre></div>
 </div>
 </div>
@@ -429,22 +429,78 @@ document.write(`
 <span class="k">def</span> <span class="nf">priv_key_to_pub_key</span><span class="p">(</span><span class="n">priv_key</span><span class="p">):</span>
     <span class="c1"># 生成公钥</span>
     <span class="n">pub_key</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="p">(</span><span class="n">Gx</span><span class="p">,</span> <span class="n">Gy</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">256</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">priv_key</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">i</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">pub_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">pub_key</span> <span class="o">=</span> <span class="p">(</span><span class="n">Gx</span><span class="p">,</span> <span class="n">Gy</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">pub_key</span> <span class="o">=</span> <span class="n">secp256k1_add</span><span class="p">(</span><span class="n">pub_key</span><span class="p">,</span> <span class="p">(</span><span class="n">Gx</span><span class="p">,</span> <span class="n">Gy</span><span class="p">))</span>
+            <span class="n">pub_key</span> <span class="o">=</span> <span class="n">secp256k1_add</span><span class="p">(</span><span class="n">pub_key</span><span class="p">,</span> <span class="n">base</span><span class="p">)</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">secp256k1_add</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">base</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">pub_key</span>
 
 <span class="c1"># 生成公钥</span>
 <span class="n">pub_key</span> <span class="o">=</span> <span class="n">priv_key_to_pub_key</span><span class="p">(</span><span class="n">private_key</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;pub_key: 0x</span><span class="si">{</span><span class="n">pub_key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">064x</span><span class="si">}</span><span class="s2">, 0x</span><span class="si">{</span><span class="n">pub_key</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">064x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># 压缩形式的公钥</span>
+<span class="k">if</span> <span class="n">pub_key</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="n">compressed_pub_key</span> <span class="o">=</span> <span class="mh">0x03</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">compressed_pub_key</span> <span class="o">=</span> <span class="mh">0x02</span>
+<span class="n">compressed_pub_key</span> <span class="o">=</span> <span class="n">compressed_pub_key</span> <span class="o">&lt;&lt;</span> <span class="mi">256</span> <span class="o">|</span> <span class="n">pub_key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;compressed_pub_key: 0x</span><span class="si">{</span><span class="n">compressed_pub_key</span><span class="si">:</span><span class="s2">066x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>pub_key: 0x34ff3be4033f7a06696c3d09f7d1671cbcf55cd700535655647077456769a24e, 0x5d9d11623a236c553f6619d89832098c55df16c3e8f8b6818491067a73cc2f1a
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>pub_key: 0x50863ad64a87ae8a2fe83c1af1a8403cb53f53e486d8511dad8a04887e5b2352, 0x2cd470243453a299fa9e77237716103abc11a1df38855ed6f2ee187e9c582ba6
+compressed_pub_key: 0x0250863ad64a87ae8a2fe83c1af1a8403cb53f53e486d8511dad8a04887e5b2352
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">hashlib</span>
+
+<span class="c1"># 生成地址</span>
+<span class="n">hashed_pub_key</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">compressed_pub_key</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">33</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sha256ed_pub_key: 0x</span><span class="si">{</span><span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">hashed_pub_key</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;big&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">064x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">ripemd160_hasher</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;ripemd160&#39;</span><span class="p">)</span>
+<span class="n">ripemd160_hasher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">hashed_pub_key</span><span class="p">)</span>
+<span class="n">ripemd160_pub_key</span> <span class="o">=</span> <span class="n">ripemd160_hasher</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ripemd160ed_pub_key: 0x</span><span class="si">{</span><span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">ripemd160_pub_key</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;big&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">040x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">ripemd160_pub_key_with_version</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">ripemd160_pub_key</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">21</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span> <span class="c1"># 添加版本号</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ripemd160_pub_key_with_version: 0x</span><span class="si">{</span><span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">ripemd160_pub_key_with_version</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;big&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">042x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">hashed_ripemd160_pub_key_with_version</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">ripemd160_pub_key_with_version</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sha256ed_ripemd160_pub_key_with_version: 0x</span><span class="si">{</span><span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">hashed_ripemd160_pub_key_with_version</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;big&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">064x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">hashed_twice_ripemd160_pub_key_with_version</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">hashed_ripemd160_pub_key_with_version</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sha256ed_twice_ripemd160_pub_key_with_version: 0x</span><span class="si">{</span><span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">hashed_twice_ripemd160_pub_key_with_version</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;big&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">064x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">checksum</span> <span class="o">=</span> <span class="n">hashed_twice_ripemd160_pub_key_with_version</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;checksum: 0x</span><span class="si">{</span><span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">checksum</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;big&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">08x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">address</span> <span class="o">=</span> <span class="n">ripemd160_pub_key_with_version</span> <span class="o">+</span> <span class="n">checksum</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;address: 0x</span><span class="si">{</span><span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">address</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;big&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">050x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># base58编码</span>
+<span class="kn">import</span> <span class="nn">base58</span>
+<span class="n">address</span> <span class="o">=</span> <span class="n">base58</span><span class="o">.</span><span class="n">b58encode</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;base58 address: </span><span class="si">{</span><span class="n">address</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>sha256ed_pub_key: 0x0b7c28c9b7290c98d7438e70b3d3f7c848fbd7d1dc194ff83f4f7cc9b1378e98
+ripemd160ed_pub_key: 0xf54a5851e9372b87810a8e60cdd2e7cfd80b6e31
+ripemd160_pub_key_with_version: 0x00f54a5851e9372b87810a8e60cdd2e7cfd80b6e31
+sha256ed_ripemd160_pub_key_with_version: 0xad3c854da227c7e99c4abfad4ea41d71311160df2e415e713318c70d67c6b41c
+sha256ed_twice_ripemd160_pub_key_with_version: 0xc7f18fe8fcbed6396741e58ad259b5cb16b7fd7f041904147ba1dcffabf747fd
+checksum: 0xc7f18fe8
+address: 0x00f54a5851e9372b87810a8e60cdd2e7cfd80b6e31c7f18fe8
+base58 address: 1PMycacnJaSqwwJqjawXBErnLsZ7RkXUAs
 </pre></div>
 </div>
 </div>
