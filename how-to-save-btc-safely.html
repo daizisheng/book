@@ -346,7 +346,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
 </div></div>
       
     </div>
@@ -362,6 +364,16 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">BIP0039 生成确定性密钥的助记码</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#bip0032">BIP0032 分层确定性钱包</a></li>
+</ul>
+
+            </nav>
         </div>
     </div>
 </div>
@@ -577,11 +589,43 @@ base58 address: 1PMycacnJaSqwwJqjawXBErnLsZ7RkXUAs
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">unicodedata</span>
-
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 这里选择TREZOR作为密码，是因为我们的测试例子来自TREZOR</span>
 <span class="n">salt</span> <span class="o">=</span> <span class="s2">&quot;mnemonic&quot;</span> <span class="o">+</span> <span class="s2">&quot;TREZOR&quot;</span>
+
+<span class="c1"># password based key derivation function 2</span>
 <span class="n">seed</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">pbkdf2_hmac</span><span class="p">(</span><span class="s1">&#39;sha512&#39;</span><span class="p">,</span> <span class="n">mnemonic</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">),</span> <span class="n">salt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">),</span> <span class="mi">2048</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;seed: 0x</span><span class="si">{</span><span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;big&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">0128x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">my_hmac</span><span class="p">(</span><span class="n">key_bytes</span><span class="p">,</span> <span class="n">msg_bytes</span><span class="p">):</span>
+    <span class="n">block_size_of_sha512</span> <span class="o">=</span> <span class="mi">128</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key_bytes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">block_size_of_sha512</span><span class="p">:</span>
+        <span class="n">key_bytes</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha512</span><span class="p">(</span><span class="n">key_bytes</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">key_bytes</span> <span class="o">=</span> <span class="n">key_bytes</span> <span class="o">+</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">block_size_of_sha512</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">key_bytes</span><span class="p">))</span>
+    <span class="n">opad</span> <span class="o">=</span> <span class="mh">0x5c</span>
+    <span class="n">ipad</span> <span class="o">=</span> <span class="mh">0x36</span>
+
+    <span class="n">part1</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">([</span><span class="n">x</span> <span class="o">^</span> <span class="n">opad</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">key_bytes</span><span class="p">])</span>
+    <span class="n">part2</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">([</span><span class="n">x</span> <span class="o">^</span> <span class="n">ipad</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">key_bytes</span><span class="p">])</span> <span class="o">+</span> <span class="n">msg_bytes</span>
+    <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha512</span><span class="p">(</span><span class="n">part1</span> <span class="o">+</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha512</span><span class="p">(</span><span class="n">part2</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">())</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+
+<span class="k">assert</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">my_hmac</span><span class="p">(</span> <span class="s2">&quot;key&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">),</span> <span class="s2">&quot;The quick brown fox jumps over the lazy dog&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="p">),</span> <span class="s2">&quot;big&quot;</span><span class="p">)</span> <span class="o">==</span> \
+        <span class="mh">0xb42af09057bac1e2d41708e48a902e09b5ff7f12ab428a4fe86653c73dd248fb82f948a549f7b791a5b41915ee4d1ec3935357e4e2317250d0372afa2ebeeb3a</span>
+
+<span class="k">def</span> <span class="nf">my_pbkdf2</span><span class="p">(</span><span class="n">mnemonic_bytes</span><span class="p">,</span> <span class="n">salt_bytes</span><span class="p">):</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">salt_bytes</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2048</span><span class="p">):</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">my_hmac</span><span class="p">(</span><span class="n">mnemonic_bytes</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ret</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">u</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">([</span><span class="n">x</span> <span class="o">^</span> <span class="n">y</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">u</span><span class="p">)])</span>
+    <span class="k">return</span> <span class="n">ret</span>
+
+<span class="c1">#seed2 = my_pbkdf2(&quot;abc&quot;.encode(&#39;utf-8&#39;), &quot;123&quot;.encode(&#39;utf-8&#39;))</span>
+<span class="n">seed2</span> <span class="o">=</span> <span class="n">my_pbkdf2</span><span class="p">(</span><span class="n">mnemonic</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">),</span> <span class="n">salt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+<span class="k">assert</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">seed2</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -591,6 +635,11 @@ base58 address: 1PMycacnJaSqwwJqjawXBErnLsZ7RkXUAs
 </div>
 </div>
 </div>
+<p>好了，有了这个seed之后怎么办？这个还需要 BIP0032 来帮助了。</p>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="bip0032">
+<h1>BIP0032 分层确定性钱包<a class="headerlink" href="#bip0032" title="Permalink to this heading">#</a></h1>
+<p>如上，我们有了一个seed，原则上，我们把这个seed直接处理一下，就可以得到一个私钥，但是 BIP0032 给出了一个更好的方案，如何由一个seed确定性的得到很多的私钥。BIP0032其实解决了一个问题，那就是你可以只备份一次，就可以生成无限多个地址来使用。要知道，在早期，因为忘了及时备份，丢失新生成的地址上的币是很频繁的。历史上，比特币官方客户端在打币的时候，每次都会为找零生成新地址，这就更加剧了丢币的行为。</p>
 </section>
 
     <script type="text/x-thebe-config">
@@ -630,7 +679,22 @@ base58 address: 1PMycacnJaSqwwJqjawXBErnLsZ7RkXUAs
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"></div>
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">BIP0039 生成确定性密钥的助记码</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#bip0032">BIP0032 分层确定性钱包</a></li>
+</ul>
+
+  </nav></div>
+
+</div></div>
               
             
           </div>
