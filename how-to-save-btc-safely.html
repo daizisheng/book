@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>BIP0039 生成确定性密钥的助记码 &#8212; My sample book</title>
+    <title>BIP0039 生成确定性密钥的助记词 &#8212; My sample book</title>
   
   
   
@@ -359,7 +359,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>BIP0039 生成确定性密钥的助记码</h1>
+    <h1>BIP0039 生成确定性密钥的助记词</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -369,7 +369,7 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">BIP0039 生成确定性密钥的助记码</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">BIP0039 生成确定性密钥的助记词</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#bip0032">BIP0032 分层确定性钱包</a></li>
 </ul>
 
@@ -384,7 +384,7 @@ document.write(`
                 <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="bip0039">
-<h1>BIP0039 生成确定性密钥的助记码<a class="headerlink" href="#bip0039" title="Permalink to this heading">#</a></h1>
+<h1>BIP0039 生成确定性密钥的助记词<a class="headerlink" href="#bip0039" title="Permalink to this heading">#</a></h1>
 <p><a class="reference external" href="https://en.bitcoin.it/wiki/BIP_0039">https://en.bitcoin.it/wiki/BIP_0039</a></p>
 <p><strong>BTC私钥</strong> 实际上就是一个32字节的随机数组，而 <strong>公钥</strong> 是通过将椭圆曲线的 <strong>生成元点</strong> 自加而得到，自加的次数就是这个私钥 ，此时私钥被当作一个大整数。而 <strong>BTC地址</strong> 则是通过把公钥哈希而得到。程序逻辑如下：</p>
 <p>例子来自 <a class="reference external" href="https://en.bitcoin.it/wiki/Technical_background_of_version_1_Bitcoin_addresses">https://en.bitcoin.it/wiki/Technical_background_of_version_1_Bitcoin_addresses</a></p>
@@ -623,7 +623,6 @@ base58 address: 1PMycacnJaSqwwJqjawXBErnLsZ7RkXUAs
             <span class="n">ret</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">([</span><span class="n">x</span> <span class="o">^</span> <span class="n">y</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">u</span><span class="p">)])</span>
     <span class="k">return</span> <span class="n">ret</span>
 
-<span class="c1">#seed2 = my_pbkdf2(&quot;abc&quot;.encode(&#39;utf-8&#39;), &quot;123&quot;.encode(&#39;utf-8&#39;))</span>
 <span class="n">seed2</span> <span class="o">=</span> <span class="n">my_pbkdf2</span><span class="p">(</span><span class="n">mnemonic</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">),</span> <span class="n">salt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
 <span class="k">assert</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">seed2</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
 </pre></div>
@@ -688,7 +687,7 @@ base58 address: 1PMycacnJaSqwwJqjawXBErnLsZ7RkXUAs
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">BIP0039 生成确定性密钥的助记码</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">BIP0039 生成确定性密钥的助记词</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#bip0032">BIP0032 分层确定性钱包</a></li>
 </ul>
 
