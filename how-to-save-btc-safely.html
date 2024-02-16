@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>BIP0039 生成确定性密钥的助记词 &#8212; My book</title>
+    <title>How to save btc safely. &#8212; My book</title>
   
   
   
@@ -170,8 +170,7 @@ const thebe_selector_output = ".output, .cell_output"
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">BIP0039 生成确定性密钥的助记词</a></li>
-
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">How to save btc safely.</a></li>
 </ul>
 
     </div>
@@ -357,7 +356,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>BIP0039 生成确定性密钥的助记词</h1>
+    <h1>How to save btc safely.</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -367,10 +366,9 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">BIP0039 生成确定性密钥的助记词</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#bip0032">BIP0032 分层确定性钱包</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bip0039">BIP0039 生成确定性密钥的助记词</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bip0032">BIP0032 分层确定性钱包</a></li>
 </ul>
-
             </nav>
         </div>
     </div>
@@ -381,8 +379,10 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="bip0039">
-<h1>BIP0039 生成确定性密钥的助记词<a class="headerlink" href="#bip0039" title="Permalink to this heading">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="how-to-save-btc-safely">
+<h1>How to save btc safely.<a class="headerlink" href="#how-to-save-btc-safely" title="Permalink to this heading">#</a></h1>
+<section id="bip0039">
+<h2>BIP0039 生成确定性密钥的助记词<a class="headerlink" href="#bip0039" title="Permalink to this heading">#</a></h2>
 <p><a class="reference external" href="https://en.bitcoin.it/wiki/BIP_0039">https://en.bitcoin.it/wiki/BIP_0039</a></p>
 <p><strong>BTC私钥</strong> 实际上就是一个32字节的随机数组，而 <strong>公钥</strong> 是通过将椭圆曲线的 <strong>生成元点</strong> 自加而得到，自加的次数就是这个私钥 ，此时私钥被当作一个大整数。而 <strong>BTC地址</strong> 则是通过把公钥哈希而得到。程序逻辑如下：</p>
 <p>例子来自 <a class="reference external" href="https://en.bitcoin.it/wiki/Technical_background_of_version_1_Bitcoin_addresses">https://en.bitcoin.it/wiki/Technical_background_of_version_1_Bitcoin_addresses</a></p>
@@ -634,8 +634,8 @@ base58 address: 1PMycacnJaSqwwJqjawXBErnLsZ7RkXUAs
 </div>
 <p>好了，有了这个seed之后怎么办？这个还需要 BIP0032 来帮助了。</p>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="bip0032">
-<h1>BIP0032 分层确定性钱包<a class="headerlink" href="#bip0032" title="Permalink to this heading">#</a></h1>
+<section id="bip0032">
+<h2>BIP0032 分层确定性钱包<a class="headerlink" href="#bip0032" title="Permalink to this heading">#</a></h2>
 <p>如上，我们有了一个seed，原则上，我们把这个seed直接处理一下，就可以得到一个私钥，但是 BIP0032 给出了一个更好的方案，如何由一个seed确定性的得到很多的私钥。BIP0032其实解决了一个问题，那就是你可以只备份一次，就可以生成无限多个地址来使用。要知道，在早期，因为忘了及时备份，丢失新生成的地址上的币是很频繁的。历史上，比特币官方客户端在打币的时候，每次都会为找零生成新地址，这就更加剧了丢币的行为。</p>
 <p>首先我们根据seed生成一个主私钥以及主公钥</p>
 <div class="cell docutils container">
@@ -764,6 +764,7 @@ child_public_point: xpub69H7F5d8KSRgmmdJg2KhpAK8SR3DjMwAdkxj3ZuxV27CprR9LgpeyGmX
 </div>
 </div>
 </section>
+</section>
 
     <script type="text/x-thebe-config">
     {
@@ -820,10 +821,9 @@ child_public_point: xpub69H7F5d8KSRgmmdJg2KhpAK8SR3DjMwAdkxj3ZuxV27CprR9LgpeyGmX
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">BIP0039 生成确定性密钥的助记词</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#bip0032">BIP0032 分层确定性钱包</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bip0039">BIP0039 生成确定性密钥的助记词</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bip0032">BIP0032 分层确定性钱包</a></li>
 </ul>
-
   </nav></div>
 
 </div></div>
