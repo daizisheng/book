@@ -643,14 +643,19 @@ base58 address: 1PMycacnJaSqwwJqjawXBErnLsZ7RkXUAs
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 为了方便，我们直接使用一个固定的seed</span>
-<span class="n">seed</span> <span class="o">=</span> <span class="mh">0x000102030405060708090a0b0c0d0e0f</span>
+<span class="n">seed</span> <span class="o">=</span> <span class="mh">0xfffcf9f6f3f0edeae7e4e1dedbd8d5d2cfccc9c6c3c0bdbab7b4b1aeaba8a5a29f9c999693908d8a8784817e7b7875726f6c696663605d5a5754514e4b484542</span>
 
-<span class="n">I</span> <span class="o">=</span> <span class="n">my_hmac</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;Bitcoin seed&quot;</span><span class="p">,</span> <span class="n">seed</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">))</span>
+<span class="n">I</span> <span class="o">=</span> <span class="n">my_hmac</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;Bitcoin seed&quot;</span><span class="p">,</span> <span class="n">seed</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">))</span>
 <span class="n">I_L</span> <span class="o">=</span> <span class="n">I</span><span class="p">[:</span><span class="mi">32</span><span class="p">]</span>
 <span class="n">I_R</span> <span class="o">=</span> <span class="n">I</span><span class="p">[</span><span class="mi">32</span><span class="p">:]</span>
 <span class="n">master_private_key</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">I_L</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
 <span class="n">master_chain_code</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">I_R</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
 <span class="n">master_public_point</span> <span class="o">=</span> <span class="n">priv_key_to_pub_key</span><span class="p">(</span><span class="n">master_private_key</span><span class="p">)</span>
+<span class="n">master_public_key</span> <span class="o">=</span> <span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x02</span><span class="s1">&#39;</span> <span class="k">if</span> <span class="p">(</span><span class="n">master_public_point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x03</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">master_public_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+<span class="n">tmp</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;ripemd160&#39;</span><span class="p">)</span>
+<span class="n">tmp</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">master_public_key</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">())</span>
+<span class="n">hash160_master_public_key</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+<span class="n">master_fingerprint</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">hash160_master_public_key</span><span class="p">[:</span><span class="mi">4</span><span class="p">],</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">serialize_mainnet_private_key</span><span class="p">(</span><span class="n">private_key</span><span class="p">,</span> <span class="n">chain_code</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">parent_fingerprint</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">child_number</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
     <span class="n">ret</span> <span class="o">=</span> <span class="p">(</span><span class="mh">0x0488ADE4</span><span class="p">)</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span> <span class="c1"># version</span>
@@ -682,17 +687,80 @@ base58 address: 1PMycacnJaSqwwJqjawXBErnLsZ7RkXUAs
 
 <span class="n">serialized_mainnet_private_key</span> <span class="o">=</span> <span class="n">base58</span><span class="o">.</span><span class="n">b58encode</span><span class="p">(</span><span class="n">serialize_mainnet_private_key</span><span class="p">(</span><span class="n">master_private_key</span><span class="p">,</span> <span class="n">master_chain_code</span><span class="p">))</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;master_private_key: </span><span class="si">{</span><span class="n">serialized_mainnet_private_key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="k">assert</span> <span class="n">serialized_mainnet_private_key</span> <span class="o">==</span> <span class="s2">&quot;xprv9s21ZrQH143K3QTDL4LXw2F7HEK3wJUD2nW2nRk4stbPy6cq3jPPqjiChkVvvNKmPGJxWUtg6LnF5kejMRNNU3TGtRBeJgk33yuGBxrMPHi&quot;</span>
+<span class="k">assert</span> <span class="n">serialized_mainnet_private_key</span> <span class="o">==</span> <span class="s2">&quot;xprv9s21ZrQH143K31xYSDQpPDxsXRTUcvj2iNHm5NUtrGiGG5e2DtALGdso3pGz6ssrdK4PFmM8NSpSBHNqPqm55Qn3LqFtT2emdEXVYsCzC2U&quot;</span>
 
 <span class="n">serialized_mainnet_public_point</span> <span class="o">=</span> <span class="n">base58</span><span class="o">.</span><span class="n">b58encode</span><span class="p">(</span><span class="n">serialize_mainnet_public_point</span><span class="p">(</span><span class="n">master_public_point</span><span class="p">,</span> <span class="n">master_chain_code</span><span class="p">))</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;master_public_point: </span><span class="si">{</span><span class="n">serialized_mainnet_public_point</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="k">assert</span> <span class="n">serialized_mainnet_public_point</span> <span class="o">==</span> <span class="s2">&quot;xpub661MyMwAqRbcFtXgS5sYJABqqG9YLmC4Q1Rdap9gSE8NqtwybGhePY2gZ29ESFjqJoCu1Rupje8YtGqsefD265TMg7usUDFdp6W1EGMcet8&quot;</span>
+<span class="k">assert</span> <span class="n">serialized_mainnet_public_point</span> <span class="o">==</span> <span class="s2">&quot;xpub661MyMwAqRbcFW31YEwpkMuc5THy2PSt5bDMsktWQcFF8syAmRUapSCGu8ED9W6oDMSgv6Zz8idoc4a6mr8BDzTJY47LJhkJ8UB7WEGuduB&quot;</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>master_private_key: xprv9s21ZrQH143K3QTDL4LXw2F7HEK3wJUD2nW2nRk4stbPy6cq3jPPqjiChkVvvNKmPGJxWUtg6LnF5kejMRNNU3TGtRBeJgk33yuGBxrMPHi
-master_public_point: xpub661MyMwAqRbcFtXgS5sYJABqqG9YLmC4Q1Rdap9gSE8NqtwybGhePY2gZ29ESFjqJoCu1Rupje8YtGqsefD265TMg7usUDFdp6W1EGMcet8
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>master_private_key: xprv9s21ZrQH143K31xYSDQpPDxsXRTUcvj2iNHm5NUtrGiGG5e2DtALGdso3pGz6ssrdK4PFmM8NSpSBHNqPqm55Qn3LqFtT2emdEXVYsCzC2U
+master_public_point: xpub661MyMwAqRbcFW31YEwpkMuc5THy2PSt5bDMsktWQcFF8syAmRUapSCGu8ED9W6oDMSgv6Zz8idoc4a6mr8BDzTJY47LJhkJ8UB7WEGuduB
+</pre></div>
+</div>
+</div>
+</div>
+<p>上面生成的主私钥和公钥我们成为 <strong>m</strong> (master的意思)。那我们怎么派生出更多的私钥和公钥呢？</p>
+<p>下面我们来生成 <strong>m/1</strong> (这个类似一个路径的感觉)。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">child_number</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">I</span> <span class="o">=</span> <span class="n">my_hmac</span><span class="p">(</span><span class="n">master_chain_code</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">),</span> <span class="n">master_public_key</span> <span class="o">+</span> <span class="n">child_number</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">))</span>
+<span class="c1"># 核心在这里，父节点的私钥影响了字节点的私钥</span>
+<span class="n">child_private_key</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">I</span><span class="p">[:</span><span class="mi">32</span><span class="p">],</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">master_private_key</span><span class="p">)</span> <span class="o">%</span> <span class="n">n</span>
+<span class="n">child_chain_code</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">I</span><span class="p">[</span><span class="mi">32</span><span class="p">:],</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+<span class="n">child_public_point</span> <span class="o">=</span> <span class="n">priv_key_to_pub_key</span><span class="p">(</span><span class="n">child_private_key</span><span class="p">)</span>
+<span class="n">child_public_key</span> <span class="o">=</span> <span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x02</span><span class="s1">&#39;</span> <span class="k">if</span> <span class="p">(</span><span class="n">child_public_point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x03</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">child_public_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+<span class="n">tmp</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;ripemd160&#39;</span><span class="p">)</span>
+<span class="n">tmp</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">child_public_key</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">())</span>
+<span class="n">hash160_child_public_key</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+<span class="n">child_fingerprint</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">hash160_child_public_key</span><span class="p">[:</span><span class="mi">4</span><span class="p">],</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+
+<span class="n">serialized_mainnet_child_private_key</span> <span class="o">=</span> <span class="n">base58</span><span class="o">.</span><span class="n">b58encode</span><span class="p">(</span><span class="n">serialize_mainnet_private_key</span><span class="p">(</span><span class="n">child_private_key</span><span class="p">,</span> <span class="n">child_chain_code</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">master_fingerprint</span><span class="p">,</span> <span class="n">child_number</span><span class="p">))</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;child_private_key: </span><span class="si">{</span><span class="n">serialized_mainnet_child_private_key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">serialized_mainnet_child_private_key</span> <span class="o">==</span> <span class="s2">&quot;xprv9vHkqa6EV4sPZHYqZznhT2NPtPCjKuDKGY38FBWLvgaDx45zo9WQRUT3dKYnjwih2yJD9mkrocEZXo1ex8G81dwSM1fwqWpWkeS3v86pgKt&quot;</span>
+
+<span class="n">serialized_mainnet_child_public_point</span> <span class="o">=</span> <span class="n">base58</span><span class="o">.</span><span class="n">b58encode</span><span class="p">(</span><span class="n">serialize_mainnet_public_point</span><span class="p">(</span><span class="n">child_public_point</span><span class="p">,</span> <span class="n">child_chain_code</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">master_fingerprint</span><span class="p">,</span> <span class="n">child_number</span><span class="p">))</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;child_public_point: </span><span class="si">{</span><span class="n">serialized_mainnet_child_public_point</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">serialized_mainnet_child_public_point</span> <span class="o">==</span> <span class="s2">&quot;xpub69H7F5d8KSRgmmdJg2KhpAK8SR3DjMwAdkxj3ZuxV27CprR9LgpeyGmXUbC6wb7ERfvrnKZjXoUmmDznezpbZb7ap6r1D3tgFxHmwMkQTPH&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>child_private_key: xprv9vHkqa6EV4sPZHYqZznhT2NPtPCjKuDKGY38FBWLvgaDx45zo9WQRUT3dKYnjwih2yJD9mkrocEZXo1ex8G81dwSM1fwqWpWkeS3v86pgKt
+child_public_point: xpub69H7F5d8KSRgmmdJg2KhpAK8SR3DjMwAdkxj3ZuxV27CprR9LgpeyGmXUbC6wb7ERfvrnKZjXoUmmDznezpbZb7ap6r1D3tgFxHmwMkQTPH
+</pre></div>
+</div>
+</div>
+</div>
+<p>如上，我们就可以得到很多的衍生私钥和公钥，他们可以识别为</p>
+<ul class="simple">
+<li><p><strong>m</strong></p></li>
+<li><p><strong>m/0</strong> , <strong>m/1</strong> , …</p></li>
+<li><p><strong>m/0/0</strong> , … , <strong>m/1/0</strong></p></li>
+<li><p>…</p></li>
+</ul>
+<p>在上述的衍生过程中，我们一直父节点的私钥以及公钥，从而可以容易的衍生出子节点的私钥以及公钥。这里更有意思的是，如果我们只知道父节点的公钥，我们能够得到子节点的信息么？为什么这个很重要，可以考虑这样的应用场景。父节点（或者主节点）的私钥存在冷钱包里面，但是其公钥是放在热钱包里面的，方便收款和查看余额，如果能够直接从父节点的公钥得到子节点的公钥，那我们就可以方便创建更多地址了。</p>
+<p>如果理解一下上面的衍生过程，我们可以看出，这个想法是可以实现的。上面的衍生过程可以看作这样几个子过程:</p>
+<ol class="arabic simple">
+<li><p>master_public_point, master_chain_code -&gt; I</p></li>
+<li><p>I -&gt; child_chain_code</p></li>
+<li><p>I + master_private_key -&gt; child_private_key</p></li>
+<li><p>child_private_key -&gt; child_public_point</p></li>
+</ol>
+<p>3和4可以结合起来得到:</p>
+<ol class="arabic simple">
+<li><p>master_public_point, master_chain_code -&gt; I</p></li>
+<li><p>I -&gt; child_chain_code</p></li>
+<li><p>I + master_public_point -&gt; child_public_point</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">new_I</span> <span class="o">=</span> <span class="n">my_hmac</span><span class="p">(</span><span class="n">master_chain_code</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">),</span> <span class="n">master_public_key</span> <span class="o">+</span> <span class="n">child_number</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">))</span>
+<span class="n">new_child_public_point</span> <span class="o">=</span> <span class="n">secp256k1_add</span><span class="p">(</span><span class="n">priv_key_to_pub_key</span><span class="p">(</span><span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">new_I</span><span class="p">[:</span><span class="mi">32</span><span class="p">],</span> <span class="s1">&#39;big&#39;</span><span class="p">)),</span> <span class="n">master_public_point</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">new_child_public_point</span> <span class="o">==</span> <span class="n">child_public_point</span>
 </pre></div>
 </div>
 </div>
