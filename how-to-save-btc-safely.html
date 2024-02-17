@@ -368,6 +368,7 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bip0039">BIP0039 生成确定性密钥的助记词</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bip0032">BIP0032 分层确定性钱包</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bither-net">bither.net钱包</a></li>
 </ul>
             </nav>
         </div>
@@ -740,7 +741,7 @@ child_public_point: xpub69H7F5d8KSRgmmdJg2KhpAK8SR3DjMwAdkxj3ZuxV27CprR9LgpeyGmX
 <li><p><strong>m/0/0</strong> , … , <strong>m/1/0</strong></p></li>
 <li><p>…</p></li>
 </ul>
-<p>在上述的衍生过程中，我们一直父节点的私钥以及公钥，从而可以容易的衍生出子节点的私钥以及公钥。这里更有意思的是，如果我们只知道父节点的公钥，我们能够得到子节点的信息么？为什么这个很重要，可以考虑这样的应用场景。父节点（或者主节点）的私钥存在冷钱包里面，但是其公钥是放在热钱包里面的，方便收款和查看余额，如果能够直接从父节点的公钥得到子节点的公钥，那我们就可以方便创建更多地址了。</p>
+<p>在上述的衍生过程中，我们已知父节点的私钥以及公钥，从而可以容易的衍生出子节点的私钥以及公钥。这里更有意思的是，如果我们只知道父节点的公钥，我们能够得到子节点的信息么？为什么这个很重要，可以考虑这样的应用场景。父节点（或者主节点）的私钥存在冷钱包里面，但是其公钥是放在热钱包里面的，方便收款和查看余额，如果能够直接从父节点的公钥得到子节点的公钥，那我们就可以方便创建更多地址了。</p>
 <p>如果理解一下上面的衍生过程，我们可以看出，这个想法是可以实现的。上面的衍生过程可以看作这样几个子过程:</p>
 <ol class="arabic simple">
 <li><p>master_public_point, master_chain_code -&gt; I</p></li>
@@ -759,6 +760,192 @@ child_public_point: xpub69H7F5d8KSRgmmdJg2KhpAK8SR3DjMwAdkxj3ZuxV27CprR9LgpeyGmX
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">new_I</span> <span class="o">=</span> <span class="n">my_hmac</span><span class="p">(</span><span class="n">master_chain_code</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">),</span> <span class="n">master_public_key</span> <span class="o">+</span> <span class="n">child_number</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">))</span>
 <span class="n">new_child_public_point</span> <span class="o">=</span> <span class="n">secp256k1_add</span><span class="p">(</span><span class="n">priv_key_to_pub_key</span><span class="p">(</span><span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">new_I</span><span class="p">[:</span><span class="mi">32</span><span class="p">],</span> <span class="s1">&#39;big&#39;</span><span class="p">)),</span> <span class="n">master_public_point</span><span class="p">)</span>
 <span class="k">assert</span> <span class="n">new_child_public_point</span> <span class="o">==</span> <span class="n">child_public_point</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>实际上，BIP0032还搞了一种衍生机制，我猜可能是为隐私的考虑。因为如上所述，从父节点的公钥就可以推测出所有子节点的公钥，那我知道了你的公钥，就可以容易的推算出所有子节点、孙子节点的公钥，从而查看你的余额，一点隐私都没有了。</p>
+<p>这种新的机制把 <strong>child_number &gt;= 2^31</strong> 单独拿出来，加以隐私考虑，为了书写方便，这个衍生方式用 <strong>m/0’</strong> 来代表 <strong>child_number=2^31</strong> 。</p>
+<p>下面是 <strong>m/0/2147483647’</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grandson_number</span> <span class="o">=</span> <span class="mi">2147483647</span> <span class="o">+</span> <span class="mi">2</span><span class="o">**</span><span class="mi">31</span>
+<span class="c1"># 注意这里的区别，如果不知道父节点的私钥，我们是得不到I的数据的</span>
+<span class="n">I</span> <span class="o">=</span> <span class="n">my_hmac</span><span class="p">(</span><span class="n">child_chain_code</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">),</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">child_private_key</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">grandson_number</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">))</span>
+<span class="n">grandson_private_key</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">I</span><span class="p">[:</span><span class="mi">32</span><span class="p">],</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">child_private_key</span><span class="p">)</span> <span class="o">%</span> <span class="n">n</span>
+<span class="n">grandson_chain_code</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">I</span><span class="p">[</span><span class="mi">32</span><span class="p">:],</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+<span class="n">grandson_public_point</span> <span class="o">=</span> <span class="n">priv_key_to_pub_key</span><span class="p">(</span><span class="n">grandson_private_key</span><span class="p">)</span>
+<span class="n">grandson_public_key</span> <span class="o">=</span> <span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x02</span><span class="s1">&#39;</span> <span class="k">if</span> <span class="p">(</span><span class="n">grandson_public_point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x03</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">grandson_public_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+<span class="n">tmp</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;ripemd160&#39;</span><span class="p">)</span>
+<span class="n">tmp</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">grandson_public_key</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">())</span>
+<span class="n">hash160_grandson_public_key</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+<span class="n">grandson_fingerprint</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">hash160_grandson_public_key</span><span class="p">[:</span><span class="mi">4</span><span class="p">],</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+
+<span class="n">serialized_mainnet_grandson_private_key</span> <span class="o">=</span> <span class="n">base58</span><span class="o">.</span><span class="n">b58encode</span><span class="p">(</span><span class="n">serialize_mainnet_private_key</span><span class="p">(</span><span class="n">grandson_private_key</span><span class="p">,</span> <span class="n">grandson_chain_code</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">child_fingerprint</span><span class="p">,</span> <span class="n">grandson_number</span><span class="p">))</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;grandson_private_key: </span><span class="si">{</span><span class="n">serialized_mainnet_grandson_private_key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">serialized_mainnet_grandson_private_key</span> <span class="o">==</span> <span class="s2">&quot;xprv9wSp6B7kry3Vj9m1zSnLvN3xH8RdsPP1Mh7fAaR7aRLcQMKTR2vidYEeEg2mUCTAwCd6vnxVrcjfy2kRgVsFawNzmjuHc2YmYRmagcEPdU9&quot;</span>
+
+<span class="n">serialized_mainnet_grandson_public_point</span> <span class="o">=</span> <span class="n">base58</span><span class="o">.</span><span class="n">b58encode</span><span class="p">(</span><span class="n">serialize_mainnet_public_point</span><span class="p">(</span><span class="n">grandson_public_point</span><span class="p">,</span> <span class="n">grandson_chain_code</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">child_fingerprint</span><span class="p">,</span> <span class="n">grandson_number</span><span class="p">))</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;grandson_public_point: </span><span class="si">{</span><span class="n">serialized_mainnet_grandson_public_point</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">serialized_mainnet_grandson_public_point</span> <span class="o">==</span> <span class="s2">&quot;xpub6ASAVgeehLbnwdqV6UKMHVzgqAG8Gr6riv3Fxxpj8ksbH9ebxaEyBLZ85ySDhKiLDBrQSARLq1uNRts8RuJiHjaDMBU4Zn9h8LZNnBC5y4a&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>grandson_private_key: xprv9wSp6B7kry3Vj9m1zSnLvN3xH8RdsPP1Mh7fAaR7aRLcQMKTR2vidYEeEg2mUCTAwCd6vnxVrcjfy2kRgVsFawNzmjuHc2YmYRmagcEPdU9
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>grandson_public_point: xpub6ASAVgeehLbnwdqV6UKMHVzgqAG8Gr6riv3Fxxpj8ksbH9ebxaEyBLZ85ySDhKiLDBrQSARLq1uNRts8RuJiHjaDMBU4Zn9h8LZNnBC5y4a
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="bither-net">
+<h2>bither.net钱包<a class="headerlink" href="#bither-net" title="Permalink to this heading">#</a></h2>
+<p><a class="reference external" href="https://bither.net">https://bither.net</a></p>
+<p>基于版本1.4.8: 4d8770d4c24620bf40559ae402148d526ea488b0069b7347fe0903fec9a73b51 bither-desktop.jar</p>
+<p>做个小实验。首先我们用bither生成一个HDM热钱包，相关数据如下。根据 BIP0044，我们猜测这个地址的衍生路径是 <strong>m/44’/0’/0’/0/0</strong> ，我们来验证一下。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bither_mnemnic_words</span> <span class="o">=</span> <span class="s2">&quot;peanut-test-swear-eager-obtain-tuition-plate-tool-butter-dragon-identify-army&quot;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+<span class="n">bither_mnemnic_words_as_idx_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">mnemonic_word_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">bither_mnemnic_words</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)]</span>
+<span class="n">bither_mnemnic_words_as_bin_string</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">idx</span><span class="si">:</span><span class="s2">011b</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">bither_mnemnic_words_as_idx_list</span><span class="p">])</span>
+<span class="n">bither_mnemnic_words_as_int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">bither_mnemnic_words_as_bin_string</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">bither_mnemnic_words_as_int</span> <span class="o">&gt;&gt;=</span> <span class="mi">4</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;bither_mnemnic_words_as_int: 0x</span><span class="si">{</span><span class="n">bither_mnemnic_words_as_int</span><span class="si">:</span><span class="s2">032x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">bither_first_btc_address</span> <span class="o">=</span> <span class="s2">&quot;1Ntu2p29uSgkjvHihLrDvnKwWxx7VnZ6Lv&quot;</span>
+
+<span class="k">def</span> <span class="nf">get_fingerprint</span><span class="p">(</span><span class="n">compressed_public_key</span><span class="p">):</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;ripemd160&#39;</span><span class="p">)</span>
+    <span class="n">tmp</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">compressed_public_key</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">())</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">tmp</span><span class="o">.</span><span class="n">digest</span><span class="p">()[:</span><span class="mi">4</span><span class="p">],</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">get_address</span><span class="p">(</span><span class="n">compressed_public_key</span><span class="p">):</span>
+    <span class="n">hashed_pub_key</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">compressed_public_key</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+
+    <span class="n">ripemd160_hasher</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;ripemd160&#39;</span><span class="p">)</span>
+    <span class="n">ripemd160_hasher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">hashed_pub_key</span><span class="p">)</span>
+    <span class="n">ripemd160_pub_key</span> <span class="o">=</span> <span class="n">ripemd160_hasher</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+
+    <span class="n">ripemd160_pub_key_with_version</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">ripemd160_pub_key</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">21</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span> <span class="c1"># 添加版本号</span>
+
+    <span class="n">hashed_ripemd160_pub_key_with_version</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">ripemd160_pub_key_with_version</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+
+    <span class="n">hashed_twice_ripemd160_pub_key_with_version</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">hashed_ripemd160_pub_key_with_version</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+
+    <span class="n">checksum</span> <span class="o">=</span> <span class="n">hashed_twice_ripemd160_pub_key_with_version</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span>
+
+    <span class="n">address</span> <span class="o">=</span> <span class="n">ripemd160_pub_key_with_version</span> <span class="o">+</span> <span class="n">checksum</span>
+    <span class="k">return</span> <span class="n">base58</span><span class="o">.</span><span class="n">b58encode</span><span class="p">(</span><span class="n">address</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">mnemonic_to_key</span><span class="p">(</span><span class="n">mnemonic</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="n">seed</span> <span class="o">=</span> <span class="n">my_pbkdf2</span><span class="p">(</span><span class="n">mnemonic</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">),</span> <span class="s2">&quot;mnemonic&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="n">my_hmac</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;Bitcoin seed&quot;</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
+    <span class="n">I_L</span> <span class="o">=</span> <span class="n">I</span><span class="p">[:</span><span class="mi">32</span><span class="p">]</span>
+    <span class="n">I_R</span> <span class="o">=</span> <span class="n">I</span><span class="p">[</span><span class="mi">32</span><span class="p">:]</span>
+    <span class="n">private_key</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">I_L</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+    <span class="n">chain_code</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">I_R</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+    <span class="n">public_key</span> <span class="o">=</span> <span class="n">priv_key_to_pub_key</span><span class="p">(</span><span class="n">private_key</span><span class="p">)</span>
+    <span class="n">compressed_public_key</span> <span class="o">=</span> <span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x02</span><span class="s1">&#39;</span> <span class="k">if</span> <span class="p">(</span><span class="n">public_key</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x03</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">public_key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+    <span class="n">fingerprint</span> <span class="o">=</span> <span class="n">get_fingerprint</span><span class="p">(</span><span class="n">compressed_public_key</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">child_number</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">child_number</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="o">**</span><span class="mi">31</span><span class="p">:</span>
+            <span class="c1"># normal child</span>
+            <span class="n">I</span> <span class="o">=</span> <span class="n">my_hmac</span><span class="p">(</span><span class="n">chain_code</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">),</span> <span class="n">compressed_public_key</span> <span class="o">+</span> <span class="n">child_number</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># hardened child</span>
+            <span class="n">I</span> <span class="o">=</span> <span class="n">my_hmac</span><span class="p">(</span><span class="n">chain_code</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">),</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">private_key</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">child_number</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">))</span>
+        <span class="n">private_key</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">I</span><span class="p">[:</span><span class="mi">32</span><span class="p">],</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">private_key</span><span class="p">)</span> <span class="o">%</span> <span class="n">n</span>
+        <span class="n">chain_code</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">I</span><span class="p">[</span><span class="mi">32</span><span class="p">:],</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+        <span class="n">public_key</span> <span class="o">=</span> <span class="n">priv_key_to_pub_key</span><span class="p">(</span><span class="n">private_key</span><span class="p">)</span>
+        <span class="n">compressed_public_key</span> <span class="o">=</span> <span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x02</span><span class="s1">&#39;</span> <span class="k">if</span> <span class="p">(</span><span class="n">public_key</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x03</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">public_key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+        <span class="n">fingerprint</span> <span class="o">=</span> <span class="n">get_fingerprint</span><span class="p">(</span><span class="n">compressed_public_key</span><span class="p">)</span>
+
+    <span class="n">address</span> <span class="o">=</span> <span class="n">get_address</span><span class="p">(</span><span class="n">compressed_public_key</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;private_key&quot;</span><span class="p">:</span> <span class="n">private_key</span><span class="p">,</span> <span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="n">address</span><span class="p">,</span> <span class="s2">&quot;seed&quot;</span><span class="p">:</span> <span class="n">seed</span><span class="p">}</span>
+
+<span class="n">computed_bither_info</span> <span class="o">=</span> <span class="n">mnemonic_to_key</span><span class="p">(</span><span class="n">bither_mnemnic_words</span><span class="p">,</span> <span class="p">[</span><span class="mi">44</span><span class="o">+</span><span class="mi">2</span><span class="o">**</span><span class="mi">31</span><span class="p">,</span> <span class="mi">0</span><span class="o">+</span><span class="mi">2</span><span class="o">**</span><span class="mi">31</span><span class="p">,</span> <span class="mi">0</span><span class="o">+</span><span class="mi">2</span><span class="o">**</span><span class="mi">31</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">computed_bither_first_btc_address</span> <span class="o">=</span> <span class="n">computed_bither_info</span><span class="p">[</span><span class="s2">&quot;address&quot;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;computed_bither_first_btc_address: </span><span class="si">{</span><span class="n">computed_bither_first_btc_address</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">computed_bither_first_btc_address</span> <span class="o">==</span> <span class="n">bither_first_btc_address</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>bither_mnemnic_words_as_int: 0xa1fbf36e227989d4698f251f4841c206
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>computed_bither_first_btc_address: 1Ntu2p29uSgkjvHihLrDvnKwWxx7VnZ6Lv
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>地址果然是对的。</p>
+<p>bither钱包除了可以到处助记词之外，实际上还可以导出一个 <strong>HD账户种子二维码</strong> 的东西，这玩意儿是加密过的种子，但是要注意是生成助记词的那个随机数，用这个随机数就可以生成助记词。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bither_seed_qrcode_content</span> <span class="o">=</span> <span class="s2">&quot;3D25EF489FCEA9BD9470C8254E65DD3AC4C6AFCD60882F3050065B2CB16268FF/DF48C3E83CB3D59707F87B6544AE6BF6/03FB2B4121FBDB4E07&quot;</span>
+<span class="n">bither_encrypted_seed</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">bither_seed_qrcode_content</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">bither_iv</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">bither_seed_qrcode_content</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">bither_salt</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">bither_seed_qrcode_content</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">bither_password</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\x00</span><span class="s2">1</span><span class="se">\x00</span><span class="s2">2</span><span class="se">\x00</span><span class="s2">3</span><span class="se">\x00</span><span class="s2">4</span><span class="se">\x00</span><span class="s2">5</span><span class="se">\x00</span><span class="s2">q</span><span class="se">\x00</span><span class="s2">w</span><span class="se">\x00</span><span class="s2">e</span><span class="se">\x00</span><span class="s2">r</span><span class="se">\x00</span><span class="s2">t&quot;</span> <span class="c1"># 我们随便设置一个密码，注意这里的编码 WTF</span>
+
+<span class="kn">from</span> <span class="nn">cryptography.hazmat.backends</span> <span class="kn">import</span> <span class="n">default_backend</span>
+<span class="kn">from</span> <span class="nn">cryptography.hazmat.primitives</span> <span class="kn">import</span> <span class="n">padding</span>
+<span class="kn">from</span> <span class="nn">cryptography.hazmat.primitives.ciphers</span> <span class="kn">import</span> <span class="n">Cipher</span><span class="p">,</span> <span class="n">algorithms</span><span class="p">,</span> <span class="n">modes</span>
+
+<span class="k">def</span> <span class="nf">encrypt_bither_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">iv</span><span class="p">,</span> <span class="n">salt</span><span class="p">):</span>
+    <span class="n">salt</span> <span class="o">=</span> <span class="n">salt</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span> <span class="o">==</span> <span class="mi">16</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">iv</span><span class="p">)</span> <span class="o">==</span> <span class="mi">16</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">salt</span><span class="p">)</span> <span class="o">==</span> <span class="mi">8</span>
+
+    <span class="n">aes_key</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">scrypt</span><span class="p">(</span><span class="n">password</span><span class="p">,</span> <span class="n">salt</span><span class="o">=</span><span class="n">salt</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">16384</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dklen</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+
+    <span class="n">cipher</span> <span class="o">=</span> <span class="n">Cipher</span><span class="p">(</span><span class="n">algorithms</span><span class="o">.</span><span class="n">AES</span><span class="p">(</span><span class="n">aes_key</span><span class="p">),</span> <span class="n">modes</span><span class="o">.</span><span class="n">CBC</span><span class="p">(</span><span class="n">iv</span><span class="p">),</span> <span class="n">backend</span><span class="o">=</span><span class="n">default_backend</span><span class="p">())</span>
+
+    <span class="n">encryptor</span> <span class="o">=</span> <span class="n">cipher</span><span class="o">.</span><span class="n">encryptor</span><span class="p">()</span>
+
+    <span class="n">padder</span> <span class="o">=</span> <span class="n">padding</span><span class="o">.</span><span class="n">PKCS7</span><span class="p">(</span><span class="n">algorithms</span><span class="o">.</span><span class="n">AES</span><span class="o">.</span><span class="n">block_size</span><span class="p">)</span><span class="o">.</span><span class="n">padder</span><span class="p">()</span>
+
+    <span class="n">padded_data</span> <span class="o">=</span> <span class="n">padder</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span> <span class="o">+</span> <span class="n">padder</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+    <span class="n">encrypted_data</span> <span class="o">=</span> <span class="n">encryptor</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">padded_data</span><span class="p">)</span> <span class="o">+</span> <span class="n">encryptor</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">encrypted_data</span>
+
+<span class="n">ret</span> <span class="o">=</span> <span class="n">encrypt_bither_seed</span><span class="p">(</span><span class="n">bither_mnemnic_words_as_int</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="s2">&quot;big&quot;</span><span class="p">),</span> <span class="n">bither_password</span><span class="p">,</span> <span class="n">bither_iv</span><span class="p">,</span> <span class="n">bither_salt</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">ret</span> <span class="o">==</span> <span class="n">bither_encrypted_seed</span>
+
+<span class="k">def</span> <span class="nf">decrypt_bither_seed</span><span class="p">(</span><span class="n">encrypted_seed</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">iv</span><span class="p">,</span> <span class="n">salt</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">salt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="c1"># IS_COMPRESSED_FLAG + IS_FROMXRANDOM_FLAG</span>
+    <span class="n">salt</span> <span class="o">=</span> <span class="n">salt</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">encrypted_seed</span><span class="p">)</span> <span class="o">==</span> <span class="mi">32</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">iv</span><span class="p">)</span> <span class="o">==</span> <span class="mi">16</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">salt</span><span class="p">)</span> <span class="o">==</span> <span class="mi">8</span>
+
+    <span class="n">aes_key</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">scrypt</span><span class="p">(</span><span class="n">password</span><span class="p">,</span> <span class="n">salt</span><span class="o">=</span><span class="n">salt</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">16384</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dklen</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+
+    <span class="n">cipher</span> <span class="o">=</span> <span class="n">Cipher</span><span class="p">(</span><span class="n">algorithms</span><span class="o">.</span><span class="n">AES</span><span class="p">(</span><span class="n">aes_key</span><span class="p">),</span> <span class="n">modes</span><span class="o">.</span><span class="n">CBC</span><span class="p">(</span><span class="n">iv</span><span class="p">),</span> <span class="n">backend</span><span class="o">=</span><span class="n">default_backend</span><span class="p">())</span>
+
+    <span class="n">decryptor</span> <span class="o">=</span> <span class="n">cipher</span><span class="o">.</span><span class="n">decryptor</span><span class="p">()</span>
+
+    <span class="n">decrypted_padded_bytes</span> <span class="o">=</span> <span class="n">decryptor</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">encrypted_seed</span><span class="p">)</span> <span class="o">+</span> <span class="n">decryptor</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">decrypted_padded_bytes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">32</span>
+
+    <span class="n">unpadder</span> <span class="o">=</span> <span class="n">padding</span><span class="o">.</span><span class="n">PKCS7</span><span class="p">(</span><span class="n">algorithms</span><span class="o">.</span><span class="n">AES</span><span class="o">.</span><span class="n">block_size</span><span class="p">)</span><span class="o">.</span><span class="n">unpadder</span><span class="p">()</span>
+
+    <span class="n">decrypted_bytes</span> <span class="o">=</span> <span class="n">unpadder</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">decrypted_padded_bytes</span><span class="p">)</span> <span class="o">+</span> <span class="n">unpadder</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">decrypted_bytes</span>
+
+<span class="n">ret</span> <span class="o">=</span> <span class="n">decrypt_bither_seed</span><span class="p">(</span><span class="n">bither_encrypted_seed</span><span class="p">,</span> <span class="n">bither_password</span><span class="p">,</span> <span class="n">bither_iv</span><span class="p">,</span> <span class="n">bither_salt</span><span class="p">)</span>
+<span class="c1">#print(f&quot;decrypted_mnemonic_seeds: 0x{int.from_bytes(ret, &#39;big&#39;):032x}&quot;)</span>
+<span class="k">assert</span> <span class="n">ret</span> <span class="o">==</span> <span class="n">bither_mnemnic_words_as_int</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="s2">&quot;big&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -823,6 +1010,7 @@ child_public_point: xpub69H7F5d8KSRgmmdJg2KhpAK8SR3DjMwAdkxj3ZuxV27CprR9LgpeyGmX
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bip0039">BIP0039 生成确定性密钥的助记词</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bip0032">BIP0032 分层确定性钱包</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bither-net">bither.net钱包</a></li>
 </ul>
   </nav></div>
 
