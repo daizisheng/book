@@ -372,6 +372,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bitherhd">bither非HD模式</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ledger-nano-s-plus">Ledger Nano S Plus</a></li>
 </ul>
             </nav>
         </div>
@@ -601,7 +602,7 @@ base58 address: 1PMycacnJaSqwwJqjawXBErnLsZ7RkXUAs
 <span class="k">def</span> <span class="nf">my_hmac</span><span class="p">(</span><span class="n">key_bytes</span><span class="p">,</span> <span class="n">msg_bytes</span><span class="p">):</span>
     <span class="n">block_size_of_sha512</span> <span class="o">=</span> <span class="mi">128</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key_bytes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">block_size_of_sha512</span><span class="p">:</span>
-        <span class="n">key_bytes</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha512</span><span class="p">(</span><span class="n">key_bytes</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+        <span class="n">key_bytes</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha512</span><span class="p">(</span><span class="n">key_bytes</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span> <span class="o">+</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">block_size_of_sha512</span> <span class="o">-</span> <span class="mi">64</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">key_bytes</span> <span class="o">=</span> <span class="n">key_bytes</span> <span class="o">+</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">block_size_of_sha512</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">key_bytes</span><span class="p">))</span>
     <span class="n">opad</span> <span class="o">=</span> <span class="mh">0x5c</span>
@@ -840,8 +841,9 @@ grandson_public_point: xpub6ASAVgeehLbnwdqV6UKMHVzgqAG8Gr6riv3Fxxpj8ksbH9ebxaEyB
     <span class="n">address</span> <span class="o">=</span> <span class="n">ripemd160_pub_key_with_version</span> <span class="o">+</span> <span class="n">checksum</span>
     <span class="k">return</span> <span class="n">base58</span><span class="o">.</span><span class="n">b58encode</span><span class="p">(</span><span class="n">address</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">mnemonic_to_key</span><span class="p">(</span><span class="n">mnemonic</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-    <span class="n">seed</span> <span class="o">=</span> <span class="n">my_pbkdf2</span><span class="p">(</span><span class="n">mnemonic</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">),</span> <span class="s2">&quot;mnemonic&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">mnemonic_to_key</span><span class="p">(</span><span class="n">mnemonic</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">extra_phrase</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="c1"># extra_phrase used later</span>
+    <span class="n">seed</span> <span class="o">=</span> <span class="n">my_pbkdf2</span><span class="p">(</span><span class="n">mnemonic</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;mnemonic&quot;</span> <span class="o">+</span> <span class="n">extra_phrase</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
     <span class="n">I</span> <span class="o">=</span> <span class="n">my_hmac</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;Bitcoin seed&quot;</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
     <span class="n">I_L</span> <span class="o">=</span> <span class="n">I</span><span class="p">[:</span><span class="mi">32</span><span class="p">]</span>
     <span class="n">I_R</span> <span class="o">=</span> <span class="n">I</span><span class="p">[</span><span class="mi">32</span><span class="p">:]</span>
@@ -879,9 +881,6 @@ grandson_public_point: xpub6ASAVgeehLbnwdqV6UKMHVzgqAG8Gr6riv3Fxxpj8ksbH9ebxaEyB
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>computed_bither_first_btc_address: 1Ntu2p29uSgkjvHihLrDvnKwWxx7VnZ6Lv
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
 </pre></div>
 </div>
 </div>
@@ -1011,6 +1010,32 @@ grandson_public_point: xpub6ASAVgeehLbnwdqV6UKMHVzgqAG8Gr6riv3Fxxpj8ksbH9ebxaEyB
 </div>
 </section>
 </section>
+<section id="ledger-nano-s-plus">
+<h2>Ledger Nano S Plus<a class="headerlink" href="#ledger-nano-s-plus" title="Permalink to this heading">#</a></h2>
+<p>有了bither.net的经验，貌似一切就容易了。注意参考 <a class="reference external" href="https://en.bitcoin.it/wiki/BIP_0044">https://en.bitcoin.it/wiki/BIP_0044</a> 。我们来初始化一个Ledger设备，然后检查一切是不是如同 <a class="reference external" href="http://bither.net">bither.net</a> 一样。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ledger_mnemonic_words</span> <span class="o">=</span> <span class="s2">&quot;fabric gaze exchange canvas symbol use swamp arctic resemble label guide angry nature solve laptop exit fuel result hood cactus piece hotel divorce illegal&quot;</span>
+<span class="n">ledger_first_btc_address_info_from_computed</span> <span class="o">=</span> <span class="n">mnemonic_to_key</span><span class="p">(</span><span class="n">ledger_mnemonic_words</span><span class="p">,</span> <span class="p">[</span><span class="mi">44</span><span class="o">+</span><span class="mi">2</span><span class="o">**</span><span class="mi">31</span><span class="p">,</span> <span class="mi">0</span><span class="o">+</span><span class="mi">2</span><span class="o">**</span><span class="mi">31</span><span class="p">,</span> <span class="mi">0</span><span class="o">+</span><span class="mi">2</span><span class="o">**</span><span class="mi">31</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">ledger_first_btc_address_shown</span> <span class="o">=</span> <span class="s2">&quot;16MoycEPk6ZUGnrR5EkmNJgkap1hnLKcVr&quot;</span>
+<span class="k">assert</span> <span class="n">ledger_first_btc_address_info_from_computed</span><span class="p">[</span><span class="s2">&quot;address&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ledger_first_btc_address_shown</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>看得出来，ledger和bither之间毫无区别，都是遵守同样几个BIP，以及相同的衍生path，整个计算过程也毫无二致。</p>
+<p>不过ledger还有个一个高级功能，就是可以设置一个密码，从而得到完全不同的地址集合。我们来试一下</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ledger_extra_password</span> <span class="o">=</span> <span class="s2">&quot;12345&quot;</span>
+<span class="n">ledger_extra_btc_address_info_from_computed</span> <span class="o">=</span> <span class="n">mnemonic_to_key</span><span class="p">(</span><span class="n">ledger_mnemonic_words</span><span class="p">,</span> <span class="p">[</span><span class="mi">44</span><span class="o">+</span><span class="mi">2</span><span class="o">**</span><span class="mi">31</span><span class="p">,</span> <span class="mi">0</span><span class="o">+</span><span class="mi">2</span><span class="o">**</span><span class="mi">31</span><span class="p">,</span> <span class="mi">0</span><span class="o">+</span><span class="mi">2</span><span class="o">**</span><span class="mi">31</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">extra_phrase</span><span class="o">=</span><span class="n">ledger_extra_password</span><span class="p">)</span>
+<span class="n">ledger_extra_btc_address_shown</span> <span class="o">=</span> <span class="s2">&quot;1PB24uzHD786A5x6xSKjLtBBewnvapC2rk&quot;</span>
+<span class="k">assert</span> <span class="n">ledger_extra_btc_address_info_from_computed</span><span class="p">[</span><span class="s2">&quot;address&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ledger_extra_btc_address_shown</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -1074,6 +1099,7 @@ grandson_public_point: xpub6ASAVgeehLbnwdqV6UKMHVzgqAG8Gr6riv3Fxxpj8ksbH9ebxaEyB
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bitherhd">bither非HD模式</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ledger-nano-s-plus">Ledger Nano S Plus</a></li>
 </ul>
   </nav></div>
 
