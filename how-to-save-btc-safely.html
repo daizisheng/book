@@ -373,6 +373,7 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ledger-nano-s-plus">Ledger Nano S Plus</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#btc">手搓BTC</a></li>
 </ul>
             </nav>
         </div>
@@ -1036,6 +1037,66 @@ grandson_public_point: xpub6ASAVgeehLbnwdqV6UKMHVzgqAG8Gr6riv3Fxxpj8ksbH9ebxaEyB
 </div>
 </div>
 </section>
+<section id="btc">
+<h2>手搓BTC<a class="headerlink" href="#btc" title="Permalink to this heading">#</a></h2>
+<p>由上可知，如果遵循BIP0039，我们实际上需要做的是，首先生成若干比特的随机数，然后从2048个助记词中挑选出助记词列表。</p>
+<p>如果我们不相信钱包的随机数生成机制，我们是不是可以手工完成上述过程？貌似是可以的，但需要仔细分析一下。</p>
+<p>对Ledger钱包而言，我们要生成的助记词是24个，对应 <code class="docutils literal notranslate"><span class="pre">24</span> <span class="pre">*</span> <span class="pre">11</span> <span class="pre">=</span> <span class="pre">264</span></code> 比特，其中 256 比特来自随机数，另外8比特是校验码，也就是checksum。这个校验码是通过sha256哈希计算而得的，这个部分我们要手工计算就困难了。</p>
+<p>类似分析bither钱包，我们要生成的助记词是12个，对应 <code class="docutils literal notranslate"><span class="pre">12</span> <span class="pre">*</span> <span class="pre">11</span> <span class="pre">=</span> <span class="pre">132</span></code> 比特，其中 128 比特来自随机数，另外4比特是校验码。这个校验码同样是通过哈希计算得到的，应该也很难与手工计算，对吧？但是，相对于计算哈希，我们可以直接穷举所有的 <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">^</span> <span class="pre">4</span> <span class="pre">=</span> <span class="pre">16</span></code> 种不同的校验码，似乎也不算太多？</p>
+<p>我们来试一下：</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 我们通过摇骰子来得到随机性，每次摇骰子，如果得到的数字是 5和6 就丢弃，重新摇骰子</span>
+<span class="n">dice_results</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">dice_entropy</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">dice_results</span><span class="p">]),</span> <span class="mi">4</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">checksum</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="mi">4</span><span class="p">):</span>
+    <span class="n">entropy</span> <span class="o">=</span> <span class="n">dice_entropy</span> <span class="o">*</span> <span class="mi">2</span><span class="o">**</span><span class="mi">4</span> <span class="o">+</span> <span class="n">checksum</span>
+    <span class="n">mnemonic</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">):</span>
+        <span class="n">mnemonic</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mnemonic_word_list</span><span class="p">[</span><span class="n">entropy</span> <span class="o">&amp;</span> <span class="mi">2047</span><span class="p">])</span>
+        <span class="n">entropy</span> <span class="o">=</span> <span class="n">entropy</span> <span class="o">&gt;&gt;</span> <span class="mi">11</span>
+    <span class="n">mnemonic</span> <span class="o">=</span> <span class="n">mnemonic</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">mnemonic</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mnemonic</span><span class="p">)</span>
+    <span class="n">first_address</span> <span class="o">=</span> <span class="n">mnemonic_to_key</span><span class="p">(</span><span class="n">mnemonic</span><span class="p">,</span> <span class="p">[</span><span class="mi">44</span><span class="o">+</span><span class="mi">2</span><span class="o">**</span><span class="mi">31</span><span class="p">,</span> <span class="mi">0</span><span class="o">+</span><span class="mi">2</span><span class="o">**</span><span class="mi">31</span><span class="p">,</span> <span class="mi">0</span><span class="o">+</span><span class="mi">2</span><span class="o">**</span><span class="mi">31</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])[</span><span class="s2">&quot;address&quot;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mnemonic for checksum=</span><span class="si">{</span><span class="n">checksum</span><span class="si">:</span><span class="s2">x</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">mnemonic</span><span class="si">}</span><span class="s2"> </span><span class="se">\t</span><span class="s2">first_address: </span><span class="si">{</span><span class="n">first_address</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=0: olive pride shallow visit prison metal license dress wealth describe aware present 	first_address: 1HtP3Ck78jbbvDDFBuve1jjTJE7t64mDyC
+mnemonic for checksum=1: olive pride shallow visit prison metal license dress wealth describe aware pretty 	first_address: 1MX49nSeQ1DXAa5g2Qech1DrshghM7QS8C
+mnemonic for checksum=2: olive pride shallow visit prison metal license dress wealth describe aware prevent 	first_address: 1CsnKcS3sUrivoThpW5tvr97nszaMJVtxt
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=3: olive pride shallow visit prison metal license dress wealth describe aware price 	first_address: 1MVx4x8WzDPTemkSbYuGJS14EGVqL53Lig
+mnemonic for checksum=4: olive pride shallow visit prison metal license dress wealth describe aware pride 	first_address: 1FpF2kY7nZk5jc7fZCob6XkGQMKmexb7V4
+mnemonic for checksum=5: olive pride shallow visit prison metal license dress wealth describe aware primary 	first_address: 1A4RYyEHcgyp6vPH8fvbbcX7rz8VWokMXd
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=6: olive pride shallow visit prison metal license dress wealth describe aware print 	first_address: 1eHGu3LSLVzM67HNSJo2xFvY9xuP1u3cF
+mnemonic for checksum=7: olive pride shallow visit prison metal license dress wealth describe aware priority 	first_address: 1CmumQ5EHK9KCMVmPd7SAiKQjX7NDga8Fx
+mnemonic for checksum=8: olive pride shallow visit prison metal license dress wealth describe aware prison 	first_address: 1LkYX3WdrhmkiruNaEdXrKRTZkbbrzrpeT
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=9: olive pride shallow visit prison metal license dress wealth describe aware private 	first_address: 1CpfG1KQk7SsMLE4HYLugv27yd6e7FqQfA
+mnemonic for checksum=a: olive pride shallow visit prison metal license dress wealth describe aware prize 	first_address: 143L1VZ2P6weU9G8rhpPbgzrd7LftRNinw
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=b: olive pride shallow visit prison metal license dress wealth describe aware problem 	first_address: 19Kj2Df1LnE6xZMvZejAtEypKCr3RGbGJy
+mnemonic for checksum=c: olive pride shallow visit prison metal license dress wealth describe aware process 	first_address: 1EKHYbwnkcCciRTFCpT4AkbKfANTvwARWH
+mnemonic for checksum=d: olive pride shallow visit prison metal license dress wealth describe aware produce 	first_address: 1C7iKFpJXxRR8gaWvVcqHCKGMw1axvwTMU
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=e: olive pride shallow visit prison metal license dress wealth describe aware profit 	first_address: 1D13tVvU6LKdbf5ry4iU7imdhzhsUc4zyV
+mnemonic for checksum=f: olive pride shallow visit prison metal license dress wealth describe aware program 	first_address: 1Na6NXdaPqje9HViVf75R1RzeVo7UqbpXg
+</pre></div>
+</div>
+</div>
+</div>
+<p>通过手工将上面16组可能的助记词输入到bither钱包中去，我们将知道哪一个校验码才是正确的。</p>
+<p>通过不断尝试，答案是几乎到了列表末尾的 <code class="docutils literal notranslate"><span class="pre">checksum=e</span></code>，但是相比计算sha256哈希来说，这个也算是简单多了。</p>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -1100,6 +1161,7 @@ grandson_public_point: xpub6ASAVgeehLbnwdqV6UKMHVzgqAG8Gr6riv3Fxxpj8ksbH9ebxaEyB
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ledger-nano-s-plus">Ledger Nano S Plus</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#btc">手搓BTC</a></li>
 </ul>
   </nav></div>
 
