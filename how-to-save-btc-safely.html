@@ -368,7 +368,10 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bip0039">BIP0039 生成确定性密钥的助记词</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bip0032">BIP0032 分层确定性钱包</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bither-net">bither.net钱包</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bither-net">bither.net钱包</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bitherhd">bither非HD模式</a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -793,9 +796,7 @@ child_public_point: xpub69H7F5d8KSRgmmdJg2KhpAK8SR3DjMwAdkxj3ZuxV27CprR9LgpeyGmX
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>grandson_private_key: xprv9wSp6B7kry3Vj9m1zSnLvN3xH8RdsPP1Mh7fAaR7aRLcQMKTR2vidYEeEg2mUCTAwCd6vnxVrcjfy2kRgVsFawNzmjuHc2YmYRmagcEPdU9
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>grandson_public_point: xpub6ASAVgeehLbnwdqV6UKMHVzgqAG8Gr6riv3Fxxpj8ksbH9ebxaEyBLZ85ySDhKiLDBrQSARLq1uNRts8RuJiHjaDMBU4Zn9h8LZNnBC5y4a
+grandson_public_point: xpub6ASAVgeehLbnwdqV6UKMHVzgqAG8Gr6riv3Fxxpj8ksbH9ebxaEyBLZ85ySDhKiLDBrQSARLq1uNRts8RuJiHjaDMBU4Zn9h8LZNnBC5y4a
 </pre></div>
 </div>
 </div>
@@ -886,7 +887,7 @@ child_public_point: xpub69H7F5d8KSRgmmdJg2KhpAK8SR3DjMwAdkxj3ZuxV27CprR9LgpeyGmX
 </div>
 </div>
 <p>地址果然是对的。</p>
-<p>bither钱包除了可以到处助记词之外，实际上还可以导出一个 <strong>HD账户种子二维码</strong> 的东西，这玩意儿是加密过的种子，但是要注意是生成助记词的那个随机数，用这个随机数就可以生成助记词。</p>
+<p>bither钱包除了可以导出助记词之外，实际上还可以导出一个 <strong>HD账户种子二维码</strong> 的东西，这玩意儿是加密过的种子，但是要注意是生成助记词的那个随机数，用这个随机数就可以生成助记词。</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bither_seed_qrcode_content</span> <span class="o">=</span> <span class="s2">&quot;3D25EF489FCEA9BD9470C8254E65DD3AC4C6AFCD60882F3050065B2CB16268FF/DF48C3E83CB3D59707F87B6544AE6BF6/03FB2B4121FBDB4E07&quot;</span>
@@ -950,6 +951,65 @@ child_public_point: xpub69H7F5d8KSRgmmdJg2KhpAK8SR3DjMwAdkxj3ZuxV27CprR9LgpeyGmX
 </div>
 </div>
 </div>
+<section id="bitherhd">
+<h3>bither非HD模式<a class="headerlink" href="#bitherhd" title="Permalink to this heading">#</a></h3>
+<p>除了上述的这种复杂的所谓HD模式（先生成助记词，然后生成一个seed，然后再生成各个地址）之外，bither还有一种简单直接的模式，就是独立的一个一个的地址，相互没有任何关系。</p>
+<p>在这种模式之下，用户的私钥可以直接导出，也可以先加密后导出。</p>
+<p><a class="reference external" href="https://en.bitcoin.it/wiki/Wallet_import_format">https://en.bitcoin.it/wiki/Wallet_import_format</a></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bither_normal_address</span> <span class="o">=</span> <span class="s2">&quot;1MnqqRyVjvRJKJE1GjWexbK2E8jatwyVYW&quot;</span>
+<span class="c1"># WIF private key for compressed public key</span>
+<span class="n">bither_normal_address_private_key_str</span> <span class="o">=</span> <span class="s2">&quot;L5AjnXZbfZXTwqyYZbEtpfKiUtWbfxHC14djNixeoML9bigbt6WV&quot;</span>
+
+<span class="k">def</span> <span class="nf">wif_to_address</span><span class="p">(</span><span class="n">wif</span><span class="p">):</span>
+    <span class="c1"># first byte is 0x80 for mainnet</span>
+    <span class="c1"># last 4 bytes are the checksum</span>
+    <span class="c1"># last 5th byte is 0x01 for compressed public key</span>
+    <span class="n">private_key</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">base58</span><span class="o">.</span><span class="n">b58decode</span><span class="p">(</span><span class="n">wif</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">],</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+    <span class="n">public_point</span> <span class="o">=</span> <span class="n">priv_key_to_pub_key</span><span class="p">(</span><span class="n">private_key</span><span class="p">)</span>
+    <span class="n">compressed_public_key</span> <span class="o">=</span> <span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x02</span><span class="s1">&#39;</span> <span class="k">if</span> <span class="p">(</span><span class="n">public_point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x03</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">public_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">get_address</span><span class="p">(</span><span class="n">compressed_public_key</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">wif_to_address</span><span class="p">(</span><span class="n">bither_normal_address_private_key_str</span><span class="p">)</span> <span class="o">==</span> <span class="n">bither_normal_address</span>
+
+<span class="n">bither_encrypted_wif</span> <span class="o">=</span> <span class="s2">&quot;E8BE291DD03FBDBBFC916348EB37160EEFF43B1ADF7122C4557E4BA2792078726FCE930FA9755A417C95B8127A16E332/9C118D1BA7E529E66E4993D064E33FBE/0376CBFC3EB2B0E8BA&quot;</span>
+<span class="n">bither_encrypted_wif</span> <span class="o">=</span> <span class="n">bither_encrypted_wif</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="n">bither_encrypted_wif_bytes</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">bither_encrypted_wif</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">bither_encrypted_wif_iv</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">bither_encrypted_wif</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">bither_encrypted_wif_salt</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">bither_encrypted_wif</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+<span class="k">def</span> <span class="nf">decrypt_bither_wif</span><span class="p">(</span><span class="n">encrypted_wif</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">iv</span><span class="p">,</span> <span class="n">salt</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">salt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="c1"># IS_COMPRESSED_FLAG + IS_FROMXRANDOM_FLAG</span>
+    <span class="n">salt</span> <span class="o">=</span> <span class="n">salt</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">encrypted_wif</span><span class="p">)</span> <span class="o">==</span> <span class="mi">48</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">iv</span><span class="p">)</span> <span class="o">==</span> <span class="mi">16</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">salt</span><span class="p">)</span> <span class="o">==</span> <span class="mi">8</span>
+
+    <span class="n">aes_key</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">scrypt</span><span class="p">(</span><span class="n">password</span><span class="p">,</span> <span class="n">salt</span><span class="o">=</span><span class="n">salt</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">16384</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dklen</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+
+    <span class="n">cipher</span> <span class="o">=</span> <span class="n">Cipher</span><span class="p">(</span><span class="n">algorithms</span><span class="o">.</span><span class="n">AES</span><span class="p">(</span><span class="n">aes_key</span><span class="p">),</span> <span class="n">modes</span><span class="o">.</span><span class="n">CBC</span><span class="p">(</span><span class="n">iv</span><span class="p">),</span> <span class="n">backend</span><span class="o">=</span><span class="n">default_backend</span><span class="p">())</span>
+
+    <span class="n">decryptor</span> <span class="o">=</span> <span class="n">cipher</span><span class="o">.</span><span class="n">decryptor</span><span class="p">()</span>
+
+    <span class="n">decrypted_padded_bytes</span> <span class="o">=</span> <span class="n">decryptor</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">encrypted_wif</span><span class="p">)</span> <span class="o">+</span> <span class="n">decryptor</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">decrypted_padded_bytes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">48</span>
+
+    <span class="n">unpadder</span> <span class="o">=</span> <span class="n">padding</span><span class="o">.</span><span class="n">PKCS7</span><span class="p">(</span><span class="n">algorithms</span><span class="o">.</span><span class="n">AES</span><span class="o">.</span><span class="n">block_size</span><span class="p">)</span><span class="o">.</span><span class="n">unpadder</span><span class="p">()</span>
+
+    <span class="n">decrypted_bytes</span> <span class="o">=</span> <span class="n">unpadder</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">decrypted_padded_bytes</span><span class="p">)</span> <span class="o">+</span> <span class="n">unpadder</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">decrypted_bytes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">32</span>
+
+    <span class="k">return</span> <span class="n">decrypted_bytes</span>
+
+<span class="n">wif_bytes</span> <span class="o">=</span> <span class="n">decrypt_bither_wif</span><span class="p">(</span><span class="n">bither_encrypted_wif_bytes</span><span class="p">,</span> <span class="n">bither_password</span><span class="p">,</span> <span class="n">bither_encrypted_wif_iv</span><span class="p">,</span> <span class="n">bither_encrypted_wif_salt</span><span class="p">)</span>
+<span class="n">expected_wif_bytes</span> <span class="o">=</span> <span class="n">base58</span><span class="o">.</span><span class="n">b58decode</span><span class="p">(</span><span class="n">bither_normal_address_private_key_str</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span>
+<span class="k">assert</span> <span class="n">wif_bytes</span> <span class="o">==</span> <span class="n">expected_wif_bytes</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
 </section>
 </section>
 
@@ -1010,7 +1070,10 @@ child_public_point: xpub69H7F5d8KSRgmmdJg2KhpAK8SR3DjMwAdkxj3ZuxV27CprR9LgpeyGmX
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bip0039">BIP0039 生成确定性密钥的助记词</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bip0032">BIP0032 分层确定性钱包</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bither-net">bither.net钱包</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bither-net">bither.net钱包</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bitherhd">bither非HD模式</a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
