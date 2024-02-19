@@ -1,5 +1,4 @@
 all: build publish
-	echo go go go
 
 build:
 	jupyter-book build ./book
