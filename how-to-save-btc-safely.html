@@ -374,6 +374,7 @@ document.write(`
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ledger-nano-s-plus">Ledger Nano S Plus</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#btc">手搓BTC</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-sigbtc">multi-sig多签存储btc</a></li>
 </ul>
             </nav>
         </div>
@@ -1042,7 +1043,7 @@ grandson_public_point: xpub6ASAVgeehLbnwdqV6UKMHVzgqAG8Gr6riv3Fxxpj8ksbH9ebxaEyB
 <p>由上可知，如果遵循BIP0039，我们实际上需要做的是，首先生成若干比特的随机数，然后从2048个助记词中挑选出助记词列表。</p>
 <p>如果我们不相信钱包的随机数生成机制，我们是不是可以手工完成上述过程？貌似是可以的，但需要仔细分析一下。</p>
 <p>对Ledger钱包而言，我们要生成的助记词是24个，对应 <code class="docutils literal notranslate"><span class="pre">24</span> <span class="pre">*</span> <span class="pre">11</span> <span class="pre">=</span> <span class="pre">264</span></code> 比特，其中 256 比特来自随机数，另外8比特是校验码，也就是checksum。这个校验码是通过sha256哈希计算而得的，这个部分我们要手工计算就困难了。</p>
-<p>类似分析bither钱包，我们要生成的助记词是12个，对应 <code class="docutils literal notranslate"><span class="pre">12</span> <span class="pre">*</span> <span class="pre">11</span> <span class="pre">=</span> <span class="pre">132</span></code> 比特，其中 128 比特来自随机数，另外4比特是校验码。这个校验码同样是通过哈希计算得到的，应该也很难与手工计算，对吧？但是，相对于计算哈希，我们可以直接穷举所有的 <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">^</span> <span class="pre">4</span> <span class="pre">=</span> <span class="pre">16</span></code> 种不同的校验码，似乎也不算太多？</p>
+<p>类似分析bither钱包，我们要生成的助记词是12个，对应 <code class="docutils literal notranslate"><span class="pre">12</span> <span class="pre">*</span> <span class="pre">11</span> <span class="pre">=</span> <span class="pre">132</span></code> 比特，其中 128 比特来自随机数，另外4比特是校验码。这个校验码同样是通过哈希计算得到的，应该也很难于进行手工计算，对吧？但是，相对于计算哈希，我们可以直接穷举所有的 <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">^</span> <span class="pre">4</span> <span class="pre">=</span> <span class="pre">16</span></code> 种不同的校验码，似乎也不算太多？</p>
 <p>我们来试一下：</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1066,36 +1067,167 @@ grandson_public_point: xpub6ASAVgeehLbnwdqV6UKMHVzgqAG8Gr6riv3Fxxpj8ksbH9ebxaEyB
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=0: olive pride shallow visit prison metal license dress wealth describe aware present 	first_address: 1HtP3Ck78jbbvDDFBuve1jjTJE7t64mDyC
 mnemonic for checksum=1: olive pride shallow visit prison metal license dress wealth describe aware pretty 	first_address: 1MX49nSeQ1DXAa5g2Qech1DrshghM7QS8C
-mnemonic for checksum=2: olive pride shallow visit prison metal license dress wealth describe aware prevent 	first_address: 1CsnKcS3sUrivoThpW5tvr97nszaMJVtxt
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=3: olive pride shallow visit prison metal license dress wealth describe aware price 	first_address: 1MVx4x8WzDPTemkSbYuGJS14EGVqL53Lig
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=2: olive pride shallow visit prison metal license dress wealth describe aware prevent 	first_address: 1CsnKcS3sUrivoThpW5tvr97nszaMJVtxt
+mnemonic for checksum=3: olive pride shallow visit prison metal license dress wealth describe aware price 	first_address: 1MVx4x8WzDPTemkSbYuGJS14EGVqL53Lig
 mnemonic for checksum=4: olive pride shallow visit prison metal license dress wealth describe aware pride 	first_address: 1FpF2kY7nZk5jc7fZCob6XkGQMKmexb7V4
-mnemonic for checksum=5: olive pride shallow visit prison metal license dress wealth describe aware primary 	first_address: 1A4RYyEHcgyp6vPH8fvbbcX7rz8VWokMXd
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=6: olive pride shallow visit prison metal license dress wealth describe aware print 	first_address: 1eHGu3LSLVzM67HNSJo2xFvY9xuP1u3cF
-mnemonic for checksum=7: olive pride shallow visit prison metal license dress wealth describe aware priority 	first_address: 1CmumQ5EHK9KCMVmPd7SAiKQjX7NDga8Fx
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=5: olive pride shallow visit prison metal license dress wealth describe aware primary 	first_address: 1A4RYyEHcgyp6vPH8fvbbcX7rz8VWokMXd
+mnemonic for checksum=6: olive pride shallow visit prison metal license dress wealth describe aware print 	first_address: 1eHGu3LSLVzM67HNSJo2xFvY9xuP1u3cF
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=7: olive pride shallow visit prison metal license dress wealth describe aware priority 	first_address: 1CmumQ5EHK9KCMVmPd7SAiKQjX7NDga8Fx
 mnemonic for checksum=8: olive pride shallow visit prison metal license dress wealth describe aware prison 	first_address: 1LkYX3WdrhmkiruNaEdXrKRTZkbbrzrpeT
+mnemonic for checksum=9: olive pride shallow visit prison metal license dress wealth describe aware private 	first_address: 1CpfG1KQk7SsMLE4HYLugv27yd6e7FqQfA
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=9: olive pride shallow visit prison metal license dress wealth describe aware private 	first_address: 1CpfG1KQk7SsMLE4HYLugv27yd6e7FqQfA
-mnemonic for checksum=a: olive pride shallow visit prison metal license dress wealth describe aware prize 	first_address: 143L1VZ2P6weU9G8rhpPbgzrd7LftRNinw
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=a: olive pride shallow visit prison metal license dress wealth describe aware prize 	first_address: 143L1VZ2P6weU9G8rhpPbgzrd7LftRNinw
+mnemonic for checksum=b: olive pride shallow visit prison metal license dress wealth describe aware problem 	first_address: 19Kj2Df1LnE6xZMvZejAtEypKCr3RGbGJy
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=b: olive pride shallow visit prison metal license dress wealth describe aware problem 	first_address: 19Kj2Df1LnE6xZMvZejAtEypKCr3RGbGJy
-mnemonic for checksum=c: olive pride shallow visit prison metal license dress wealth describe aware process 	first_address: 1EKHYbwnkcCciRTFCpT4AkbKfANTvwARWH
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=c: olive pride shallow visit prison metal license dress wealth describe aware process 	first_address: 1EKHYbwnkcCciRTFCpT4AkbKfANTvwARWH
 mnemonic for checksum=d: olive pride shallow visit prison metal license dress wealth describe aware produce 	first_address: 1C7iKFpJXxRR8gaWvVcqHCKGMw1axvwTMU
+mnemonic for checksum=e: olive pride shallow visit prison metal license dress wealth describe aware profit 	first_address: 1D13tVvU6LKdbf5ry4iU7imdhzhsUc4zyV
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=e: olive pride shallow visit prison metal license dress wealth describe aware profit 	first_address: 1D13tVvU6LKdbf5ry4iU7imdhzhsUc4zyV
-mnemonic for checksum=f: olive pride shallow visit prison metal license dress wealth describe aware program 	first_address: 1Na6NXdaPqje9HViVf75R1RzeVo7UqbpXg
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=f: olive pride shallow visit prison metal license dress wealth describe aware program 	first_address: 1Na6NXdaPqje9HViVf75R1RzeVo7UqbpXg
 </pre></div>
 </div>
 </div>
 </div>
 <p>通过手工将上面16组可能的助记词输入到bither钱包中去，我们将知道哪一个校验码才是正确的。</p>
 <p>通过不断尝试，答案是几乎到了列表末尾的 <code class="docutils literal notranslate"><span class="pre">checksum=e</span></code>，但是相比计算sha256哈希来说，这个也算是简单多了。</p>
+</section>
+<section id="multi-sigbtc">
+<h2>multi-sig多签存储btc<a class="headerlink" href="#multi-sigbtc" title="Permalink to this heading">#</a></h2>
+<p>如果只使用单独的一个钱包来存币，上面介绍的机制貌似已经够了。但有时候我们不免会有一个疑问，如果这个钱包出问题了怎么办？比如要是bither钱包出bug了，比如随机数生成过程出问题了，或者是签名交易的时候出bug泄漏私钥了，怎么办？要是Ledger钱包固件出问题了，比如官方被黑了，固件出bug了，怎么办？一个容易想到的答案是，如果我们能够同时使用这两个钱包，甚至多个钱包的安全性，似乎会更安全一些？</p>
+<p>这个可以用比特币的多签机制来解决。下面直接用一个例子来解释。</p>
+<p><a class="reference external" href="https://en.bitcoin.it/wiki/OP_CHECKMULTISIG">https://en.bitcoin.it/wiki/OP_CHECKMULTISIG</a></p>
+<p><a class="reference external" href="https://mempool.space/zh/tx/d3adb18d5e118bb856fbea4b1af936602454b44a98fc6c823aedc858b491fc13">https://mempool.space/zh/tx/d3adb18d5e118bb856fbea4b1af936602454b44a98fc6c823aedc858b491fc13</a> 是一个 <code class="docutils literal notranslate"><span class="pre">2/3</span></code> 的例子。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># raw data from https://bitaps.com/raw/transaction/d3adb18d5e118bb856fbea4b1af936602454b44a98fc6c823aedc858b491fc13</span>
+
+<span class="n">ms_recv_tx</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="mh">0x01</span><span class="p">,</span> <span class="c1"># raw is 01000000</span>
+    <span class="s2">&quot;flag&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="c1"># for legacy tx, flag is None</span>
+    <span class="s2">&quot;in_count&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="c1"># raw is 01</span>
+    <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;tx&quot;</span><span class="p">:</span> <span class="mh">0x1b16e4a8af0831da62d8baae47636e49060049948a3d9b8b9b78eafb853b5a2b</span><span class="p">,</span>
+            <span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="c1"># raw is 01000000</span>
+            <span class="s2">&quot;script_size&quot;</span><span class="p">:</span> <span class="mh">0x8b</span><span class="p">,</span> <span class="c1"># raw is 8b</span>
+            <span class="s2">&quot;script_sig&quot;</span><span class="p">:</span> <span class="mh">0x48304502204c3da378d8323a7233892b8050f738da69daf765ddc0d9815d9ad352286b70c2022100dff11c19338daa85ec5b124434de3b4378ebe8c56950348d5f66197af1d04f09014104910ae6c9b41b04d366ea54e920663c691843bb83ef7336cd6a0f79b0ac82ee38d2ca23a24adc2348d82c8ca13f0db885712493e89d88551118a7e80ff66ab23c</span><span class="p">,</span>
+            <span class="s2">&quot;seq_no&quot;</span><span class="p">:</span> <span class="mh">0xffffffff</span><span class="p">,</span> <span class="c1"># raw is ffffffff</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;out_count&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="c1"># raw is 01</span>
+    <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">9980000</span><span class="p">,</span> <span class="c1"># raw is 6048980000000000</span>
+            <span class="s2">&quot;script_size&quot;</span><span class="p">:</span> <span class="mh">0x17</span><span class="p">,</span> <span class="c1"># raw is 17</span>
+            <span class="s2">&quot;script&quot;</span><span class="p">:</span> <span class="mh">0xa914b4acb9d78d6a6256964a60484c95de490eaaae7587</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;lock_time&quot;</span><span class="p">:</span> <span class="mh">0x00</span><span class="p">,</span> <span class="c1"># raw is 00000000</span>
+<span class="p">}</span>
+
+<span class="c1"># 主要看 output[0].script</span>
+<span class="c1"># a914b4acb9d78d6a6256964a60484c95de490eaaae7587</span>
+<span class="n">output_script</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;OP_HASH160&quot;</span><span class="p">,</span> <span class="c1"># 0xa9</span>
+    <span class="s2">&quot;0x14&quot;</span><span class="p">,</span> <span class="c1"># 20 bytes</span>
+    <span class="s2">&quot;0xb4acb9d78d6a6256964a60484c95de490eaaae75&quot;</span><span class="p">,</span> <span class="c1"># 20 bytes</span>
+    <span class="s2">&quot;OP_EQUAL&quot;</span><span class="p">,</span> <span class="c1"># 0x87</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>关键是看这个 <code class="docutils literal notranslate"><span class="pre">0xb4acb9d78d6a6256964a60484c95de490eaaae75</span></code> 代表的是什么。</p>
+<p>首先参考 BIP0013 和 BIP0016，我们可以算出这个hash对应的收款地址是：</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">p2sh_script_hash</span> <span class="o">=</span> <span class="mh">0xb4acb9d78d6a6256964a60484c95de490eaaae75</span>
+<span class="n">p2sh_address</span> <span class="o">=</span> <span class="s2">&quot;3JALUHKvqB7NToPA2jALntCUWmvsgYMyGj&quot;</span>
+
+<span class="k">def</span> <span class="nf">p2sh_script_hash_to_address</span><span class="p">(</span><span class="n">p2sh_script_hash</span><span class="p">):</span>
+    <span class="n">hash_as_bytes</span> <span class="o">=</span> <span class="n">p2sh_script_hash</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+    <span class="n">bytes_with_version</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x05</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">hash_as_bytes</span>
+    <span class="n">checksum</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">bytes_with_version</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">())</span><span class="o">.</span><span class="n">digest</span><span class="p">()[:</span><span class="mi">4</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">base58</span><span class="o">.</span><span class="n">b58encode</span><span class="p">(</span><span class="n">bytes_with_version</span> <span class="o">+</span> <span class="n">checksum</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">p2sh_script_hash_to_address</span><span class="p">(</span><span class="n">p2sh_script_hash</span><span class="p">)</span> <span class="o">==</span> <span class="n">p2sh_address</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>那这个脚本具体代表什么呢，光从这个收币的交易是看不出来的，还得从花费这些币的交易中所泄漏的信息才能看出来。</p>
+<p><a class="reference external" href="https://mempool.space/zh/tx/cc11ca9e9dc188663c41eb23b15370f68eded56b7ec54dd5bc4f2d2ae93addb2">https://mempool.space/zh/tx/cc11ca9e9dc188663c41eb23b15370f68eded56b7ec54dd5bc4f2d2ae93addb2</a></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># raw data at https://bitaps.com/raw/transaction/cc11ca9e9dc188663c41eb23b15370f68eded56b7ec54dd5bc4f2d2ae93addb2</span>
+
+<span class="n">ms_send_tx</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="mh">0x01</span><span class="p">,</span> <span class="c1"># raw is 01000000</span>
+    <span class="s2">&quot;flag&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="c1"># for legacy tx, flag is None</span>
+    <span class="s2">&quot;in_count&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="c1"># raw is 01</span>
+    <span class="s2">&quot;inputs&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;tx&quot;</span><span class="p">:</span> <span class="mh">0x13fc91b458c8ed3a826cfc984ab454246036f91a4beafb56b88b115e8db1add3</span><span class="p">,</span>
+            <span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="c1"># raw is 00000000</span>
+            <span class="s2">&quot;script_size&quot;</span><span class="p">:</span> <span class="mh">0x015f</span><span class="p">,</span> <span class="c1"># raw is fd5f01</span>
+            <span class="s2">&quot;scrpt&quot;</span><span class="p">:</span> <span class="mh">0x00483044022018b88c05ab571cf31bf317a98ed5909cf43218f472bfbeb82b6857d3b1edf4ee0220686627e66b368e298114a097b5814a76fdaac23f7728a42d38415552ba68c8220101493046022100b7a70f4c3b2b5d24475f9664bb77b6046c0251c89b446aad8a86b584b74ed414022100d53dd27b741801a908fdf7c2ee259f444f549b56d7a6c682599ef67b1edb6d24014cc9524104f3d35132084eb1b99b6506178c20adb42d26296012e452e392689bdb6553db33ba24b900000892805de1646821c7b0fb50b3d879c26e2b493b7041e6215356a04104ab4ecc9e8ea2da0562af25bcaede00c4d5a00db60edc17672376decf0a35a34fdc9f1ffad1fb74fd7b1b198b9231c25df88e0769bec49975649b4b3f40adafb04104f7149f270717c00f6cc09b9ce3c22791c4aab1af40a5107aacca85b6f644cc0d84459e308f998d801b8d9d355f8ec33b0e41866841e2870754cf667a9821703d53ae</span><span class="p">,</span>
+            <span class="s2">&quot;seq_no&quot;</span><span class="p">:</span> <span class="mh">0xffffffff</span><span class="p">,</span> <span class="c1"># raw is ffffffff</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;out_count&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="c1"># raw is 01</span>
+    <span class="s2">&quot;outputs&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">9960000</span><span class="p">,</span> <span class="c1"># raw is 40fa970000000000</span>
+            <span class="s2">&quot;script_size&quot;</span><span class="p">:</span> <span class="mh">0x17</span><span class="p">,</span> <span class="c1"># raw is 17</span>
+            <span class="s2">&quot;script&quot;</span><span class="p">:</span> <span class="mh">0xa9146ebdbaf0840274a6b23b0643b75ef4e8e24f37b887</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+<span class="p">}</span>
+
+<span class="n">input_script</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;OP_0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;0x48&quot;</span><span class="p">,</span> <span class="c1"># 72 bytes</span>
+    <span class="mh">0x3044022018b88c05ab571cf31bf317a98ed5909cf43218f472bfbeb82b6857d3b1edf4ee0220686627e66b368e298114a097b5814a76fdaac23f7728a42d38415552ba68c8220101</span><span class="p">,</span>
+    <span class="s2">&quot;0x49&quot;</span><span class="p">,</span> <span class="c1"># 73 bytes</span>
+    <span class="mh">0x3046022100b7a70f4c3b2b5d24475f9664bb77b6046c0251c89b446aad8a86b584b74ed414022100d53dd27b741801a908fdf7c2ee259f444f549b56d7a6c682599ef67b1edb6d2401</span><span class="p">,</span>
+    <span class="s2">&quot;OP_PUSHDATA1&quot;</span><span class="p">,</span> <span class="c1"># 0x4c</span>
+    <span class="s2">&quot;0xc9&quot;</span><span class="p">,</span> <span class="c1"># 0xc9 bytes as the length</span>
+    <span class="mh">0x524104f3d35132084eb1b99b6506178c20adb42d26296012e452e392689bdb6553db33ba24b900000892805de1646821c7b0fb50b3d879c26e2b493b7041e6215356a04104ab4ecc9e8ea2da0562af25bcaede00c4d5a00db60edc17672376decf0a35a34fdc9f1ffad1fb74fd7b1b198b9231c25df88e0769bec49975649b4b3f40adafb04104f7149f270717c00f6cc09b9ce3c22791c4aab1af40a5107aacca85b6f644cc0d84459e308f998d801b8d9d355f8ec33b0e41866841e2870754cf667a9821703d53ae</span>
+<span class="p">]</span>
+
+<span class="c1"># 主要看 input_script[7]，也就是 0x5241...</span>
+<span class="n">p2sh_redeem_script</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;OP_2&quot;</span><span class="p">,</span> <span class="c1"># 0x52</span>
+    <span class="s2">&quot;0x41&quot;</span><span class="p">,</span> <span class="c1"># 65 bytes</span>
+    <span class="mh">0x04f3d35132084eb1b99b6506178c20adb42d26296012e452e392689bdb6553db33ba24b900000892805de1646821c7b0fb50b3d879c26e2b493b7041e6215356a0</span><span class="p">,</span> <span class="c1"># 65 bytes</span>
+    <span class="s2">&quot;0x41&quot;</span><span class="p">,</span> <span class="c1"># 65 bytes</span>
+    <span class="mh">0x04ab4ecc9e8ea2da0562af25bcaede00c4d5a00db60edc17672376decf0a35a34fdc9f1ffad1fb74fd7b1b198b9231c25df88e0769bec49975649b4b3f40adafb0</span><span class="p">,</span> <span class="c1"># 65 bytes</span>
+    <span class="s2">&quot;0x41&quot;</span><span class="p">,</span> <span class="c1"># 65 bytes</span>
+    <span class="mh">0x04f7149f270717c00f6cc09b9ce3c22791c4aab1af40a5107aacca85b6f644cc0d84459e308f998d801b8d9d355f8ec33b0e41866841e2870754cf667a9821703d</span><span class="p">,</span> <span class="c1"># 65 bytes</span>
+    <span class="s2">&quot;OP_3&quot;</span><span class="p">,</span> <span class="c1"># 0x53</span>
+    <span class="s2">&quot;OP_CHECKMULTISIG&quot;</span><span class="p">,</span> <span class="c1"># 0xae</span>
+<span class="p">]</span>
+<span class="n">p2sh_redeem_script_as_bytes</span> <span class="o">=</span> <span class="n">input_script</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mh">0xc9</span><span class="p">,</span> <span class="s2">&quot;big&quot;</span><span class="p">)</span>
+<span class="c1"># tmp is sha256 hash of p2sh_redeem_script_as_bytes</span>
+<span class="n">tmp</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">p2sh_redeem_script_as_bytes</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+<span class="c1"># p2sh_script_hash is ripemd160 hash of tmp</span>
+<span class="n">tmp_hasher</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;ripemd160&#39;</span><span class="p">)</span>
+<span class="n">tmp_hasher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+<span class="n">computed_p2sh_script_hash</span> <span class="o">=</span> <span class="n">tmp_hasher</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+<span class="k">assert</span> <span class="n">computed_p2sh_script_hash</span> <span class="o">==</span> <span class="n">p2sh_script_hash</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
 </section>
 </section>
 
@@ -1162,6 +1294,7 @@ mnemonic for checksum=f: olive pride shallow visit prison metal license dress we
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ledger-nano-s-plus">Ledger Nano S Plus</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#btc">手搓BTC</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-sigbtc">multi-sig多签存储btc</a></li>
 </ul>
   </nav></div>
 
