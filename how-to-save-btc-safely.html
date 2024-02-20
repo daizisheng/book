@@ -375,7 +375,6 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ledger-nano-s-plus">Ledger Nano S Plus</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#btc">手搓BTC</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-sigbtc">multi-sig多签存储btc</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#caravan">caravan</a></li>
 </ul>
             </nav>
         </div>
@@ -1077,25 +1076,25 @@ mnemonic for checksum=2: olive pride shallow visit prison metal license dress we
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=3: olive pride shallow visit prison metal license dress wealth describe aware price 	first_address: 1MVx4x8WzDPTemkSbYuGJS14EGVqL53Lig
 mnemonic for checksum=4: olive pride shallow visit prison metal license dress wealth describe aware pride 	first_address: 1FpF2kY7nZk5jc7fZCob6XkGQMKmexb7V4
+mnemonic for checksum=5: olive pride shallow visit prison metal license dress wealth describe aware primary 	first_address: 1A4RYyEHcgyp6vPH8fvbbcX7rz8VWokMXd
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=5: olive pride shallow visit prison metal license dress wealth describe aware primary 	first_address: 1A4RYyEHcgyp6vPH8fvbbcX7rz8VWokMXd
-mnemonic for checksum=6: olive pride shallow visit prison metal license dress wealth describe aware print 	first_address: 1eHGu3LSLVzM67HNSJo2xFvY9xuP1u3cF
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=6: olive pride shallow visit prison metal license dress wealth describe aware print 	first_address: 1eHGu3LSLVzM67HNSJo2xFvY9xuP1u3cF
 mnemonic for checksum=7: olive pride shallow visit prison metal license dress wealth describe aware priority 	first_address: 1CmumQ5EHK9KCMVmPd7SAiKQjX7NDga8Fx
+mnemonic for checksum=8: olive pride shallow visit prison metal license dress wealth describe aware prison 	first_address: 1LkYX3WdrhmkiruNaEdXrKRTZkbbrzrpeT
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=8: olive pride shallow visit prison metal license dress wealth describe aware prison 	first_address: 1LkYX3WdrhmkiruNaEdXrKRTZkbbrzrpeT
-mnemonic for checksum=9: olive pride shallow visit prison metal license dress wealth describe aware private 	first_address: 1CpfG1KQk7SsMLE4HYLugv27yd6e7FqQfA
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=9: olive pride shallow visit prison metal license dress wealth describe aware private 	first_address: 1CpfG1KQk7SsMLE4HYLugv27yd6e7FqQfA
 mnemonic for checksum=a: olive pride shallow visit prison metal license dress wealth describe aware prize 	first_address: 143L1VZ2P6weU9G8rhpPbgzrd7LftRNinw
+mnemonic for checksum=b: olive pride shallow visit prison metal license dress wealth describe aware problem 	first_address: 19Kj2Df1LnE6xZMvZejAtEypKCr3RGbGJy
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=b: olive pride shallow visit prison metal license dress wealth describe aware problem 	first_address: 19Kj2Df1LnE6xZMvZejAtEypKCr3RGbGJy
-mnemonic for checksum=c: olive pride shallow visit prison metal license dress wealth describe aware process 	first_address: 1EKHYbwnkcCciRTFCpT4AkbKfANTvwARWH
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=c: olive pride shallow visit prison metal license dress wealth describe aware process 	first_address: 1EKHYbwnkcCciRTFCpT4AkbKfANTvwARWH
 mnemonic for checksum=d: olive pride shallow visit prison metal license dress wealth describe aware produce 	first_address: 1C7iKFpJXxRR8gaWvVcqHCKGMw1axvwTMU
+mnemonic for checksum=e: olive pride shallow visit prison metal license dress wealth describe aware profit 	first_address: 1D13tVvU6LKdbf5ry4iU7imdhzhsUc4zyV
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=e: olive pride shallow visit prison metal license dress wealth describe aware profit 	first_address: 1D13tVvU6LKdbf5ry4iU7imdhzhsUc4zyV
-mnemonic for checksum=f: olive pride shallow visit prison metal license dress wealth describe aware program 	first_address: 1Na6NXdaPqje9HViVf75R1RzeVo7UqbpXg
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mnemonic for checksum=f: olive pride shallow visit prison metal license dress wealth describe aware program 	first_address: 1Na6NXdaPqje9HViVf75R1RzeVo7UqbpXg
 </pre></div>
 </div>
 </div>
@@ -1442,12 +1441,6 @@ address_3: 1HbPBdgvD8GbYedhZxAtBMxE8TkWVQFfii
 </div>
 </div>
 </section>
-<section id="caravan">
-<h2>caravan<a class="headerlink" href="#caravan" title="Permalink to this heading">#</a></h2>
-<p>如上我们可以看出，为了得到一个多签收款地址，我们只需要提供公钥即可。先把 <strong>3</strong> 把公钥组装成一个 <strong>script</strong> ，然后计算出 <strong>script hash</strong> ，然后再计算出 <strong>P2SH地址</strong> 即可。当然，为了花掉收到的钱，我们还是需要 3 把公钥对应的私钥中的至少 2 个的。</p>
-<p>这就提醒我们，我们并不需要拿到比如冷钱包的私钥，就能生成多签地址，甚至用 3 把公钥可以得到多个多签地址。通过各种排列，我们实际上可以得到 <code class="docutils literal notranslate"><span class="pre">3!</span> <span class="pre">=</span> <span class="pre">6</span></code> 个不同的 P2SH 地址。</p>
-<p><strong>Caravan</strong> 就提供这样一种服务。 Caravan 是 unchained capital的一个开源项目，貌似是比较安全的，而且考虑到 caravan 无论如何是不可以接触私钥的，所以其安全性貌似并不十分关键。</p>
-</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -1514,7 +1507,6 @@ address_3: 1HbPBdgvD8GbYedhZxAtBMxE8TkWVQFfii
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ledger-nano-s-plus">Ledger Nano S Plus</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#btc">手搓BTC</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-sigbtc">multi-sig多签存储btc</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#caravan">caravan</a></li>
 </ul>
   </nav></div>
 
