@@ -5,4 +5,5 @@ format: jb-book
 root: intro
 chapters:
 - file: how-to-save-btc-safely
+- file: how-to-use-electrum
 
