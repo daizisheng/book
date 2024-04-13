@@ -4,6 +4,7 @@
 format: jb-book
 root: intro
 chapters:
+- file: gauss-on-surfaces
 - file: how-to-save-btc-safely
 - file: how-to-use-electrum
 
