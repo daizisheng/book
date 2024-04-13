@@ -62,6 +62,8 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'gauss-on-surfaces';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -370,6 +372,7 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1. 辅助球面</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2. 一些球面几何</a></li>
 </ul>
             </nav>
         </div>
@@ -385,11 +388,92 @@ document.write(`
 <h1>Gauss on surfaces<a class="headerlink" href="#gauss-on-surfaces" title="Permalink to this heading">#</a></h1>
 <section id="id1">
 <h2>1. 辅助球面<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h2>
-<p>辅助球面是一个单位球面，球面上的点对应了某个方向。球面上有三个特殊点分别对应了三个坐标轴的方向。这三个点或者方向分别命名为 (1)、(2)、(3)。这三个方向是正交的，也就是两两垂直的。</p>
+<p>辅助球面是一个单位球面，球面上的点对应了某个方向。球面上有三个特殊点分别对应了三个坐标轴的方向。这三个点或者方向分别命名为 <span class="math notranslate nohighlight">\(O_1, O_2, O_3\)</span>。这三个方向是正交的，也就是两两垂直的。</p>
 <blockquote>
 <div><p>本想直接用程序或者软件来画示意图的，奈何始终没有找到合适的，看来还是只能上手了。</p>
 </div></blockquote>
+<blockquote>
+<div><p>原文是说球面上的点对应空间中的直线的方向，但是如果这样的话，球面上就有两个点对应同一条直线。所以我感觉原文中的直线可能是说射线？至少是定向了的直线，后面我说成射线吧。</p>
+</div></blockquote>
+<blockquote>
+<div><p>原文是用 (1), (2), (3) 表示三个特殊点，写起来容易混淆，所以改成了 <span class="math notranslate nohighlight">\(O_1, O_2, O_3\)</span> 。</p>
+</div></blockquote>
 <p><img alt="" src="_images/1-1.jpeg" /></p>
+</section>
+<section id="id2">
+<h2>2. 一些球面几何<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>两条射线，在球面上对应的点分别是A和B，则射线之间的夹角，对应于A和B之间的 <strong>大圆</strong> 的弧。</p></li>
+<li><p>一个平面，对应于一个大圆，该大圆和该平面平行。</p></li>
+<li><p>两个平面的夹角，对应于大圆之间的夹角，也对应于大圆的 <strong>极点</strong> 之间的弧。</p></li>
+<li><p>射线和平面的夹角，是一条弧，从射线对应的点开始，到平面对应的大圆截止，并垂直于该大圆。</p></li>
+</ol>
+<blockquote>
+<div><p>可以看出，这里对平面，大圆，弧都没有定向的概念，因此有些模糊。</p>
+</div></blockquote>
+<p><img alt="" src="_images/2-1.jpeg" /></p>
+<ol class="arabic simple" start="5">
+<li><p>对于坐标从 <span class="math notranslate nohighlight">\((x,y,z)\)</span> 到 <span class="math notranslate nohighlight">\((x',y',z')\)</span> 的线段，其长度为 <span class="math notranslate nohighlight">\(r\)</span>，其对应点为 L，那么有</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[ x' = x + r * \cos \angle O_1 L \]</div>
+<div class="math notranslate nohighlight">
+\[ y' = y + r * \cos \angle O_2 L \]</div>
+<div class="math notranslate nohighlight">
+\[ z' = z + r * \cos \angle O_3 L \]</div>
+<ol class="arabic simple" start="6">
+<li><p>球面上的点的坐标之间的关系</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[ \cos^2 \angle O_1 L + \cos^2 \angle O_2 L + \cos^2 \angle O_3 L = 1 \]</div>
+<blockquote>
+<div><p>因为是单位球面，所以这个就是说球面上的点到球心的距离为1，没什么特别的。</p>
+</div></blockquote>
+<p>对于球面上两个点A和B，它们之间的夹角满足</p>
+<div class="math notranslate nohighlight">
+\[ \cos \angle O_1 A \cos \angle O_1 B + \cos \angle O_2 A \cos \angle O_2 B + \cos \angle O_3 A \cos \angle O_3 B  = \cos \angle A B \]</div>
+<p>这个形式上来看，就是夹角的余弦，等于坐标的点乘，这个怎么去理解呢？</p>
+<p>在平面三角形 AOB 中，边长 AO = BO = 1，而对 c=AB有
+$$ \begin{align*}
+c^2 &amp;= (\cos \angle O_1 A - \cos \angle O_1 B)^2</p>
+<ul class="simple">
+<li><p>(\cos \angle O_2 A - \cos \angle O_2 B)^2</p></li>
+<li><p>(\cos \angle O_3 A - \cos \angle O_3 B)^2  \
+&amp;= 1 + 1 - 2 \cos \angle O_1 A * \cos \angle O_1 B</p>
+<ul>
+<li><p>2 \cos \angle O_2 A * \cos \angle O_2 B</p></li>
+<li><p>2 \cos \angle O_3 A * \cos \angle O_3 B
+\end{align*}
+$$</p></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<div><p>这里用到了展开，然后根据上面的 平方和归一 的公式进行了合并。</p>
+</div></blockquote>
+<p>然后用平面三角形的余弦定理得到</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}  
+\begin{align*}
+\cos \angle A B &amp;= \frac{1^2 + 1^2 - c^2}{2 * 1 * 1}  \\
+&amp;= \cos \angle O_1 A \cos \angle O_1 B + \cos \angle O_2 A \cos \angle O_2 B + \cos \angle O_3 A \cos \angle O_3 B
+\end{align*}
+\end{split}\]</div>
+<ol class="arabic simple" start="6">
+<li><p>球面上的余弦定理</p></li>
+</ol>
+<p>平面上三角形的最重要的定理之一就是所谓的余弦定理，大意是： 设三角形三条边的长度分别是 <span class="math notranslate nohighlight">\(a,b,c\)</span> 且边 a 和 b的夹角是 C ，那么有</p>
+<div class="math notranslate nohighlight">
+\[ a^2 + b^2 - 2 * a * b * \cos \angle C = c^2 \]</div>
+<p>对应到球面上是什么呢？因为记住结论公式不好记，可以直接推导。</p>
+<p>假设3个顶点是 A,B,C，因为三条边实际上是弧度，和 <span class="math notranslate nohighlight">\(O_1, O_2, O_3\)</span> 的选择其实没有关系，所以可以直接 <span class="math notranslate nohighlight">\(O_3 = A\)</span>，且B放在 <span class="math notranslate nohighlight">\(O_1, O_3\)</span> 对应的大圆上去。如图所示。</p>
+<p><img alt="" src="_images/2-2.jpeg" /></p>
+<p>这个时候，可以用前面的公式来求  <span class="math notranslate nohighlight">\(\cos \angle B C\)</span> ，有</p>
+<div class="math notranslate nohighlight">
+\[ 
+\cos \angle BC = \sin \angle AB  \sin \angle AC \sin \angle BAC + 0 + \cos \angle AB * \cos \angle AC 
+\]</div>
+<p>这就是球面三角形的余弦定理，好像要复杂不少。</p>
 </section>
 </section>
 
@@ -458,6 +542,7 @@ document.write(`
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1. 辅助球面</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2. 一些球面几何</a></li>
 </ul>
   </nav></div>
 
