@@ -433,22 +433,14 @@ document.write(`
 <div class="math notranslate nohighlight">
 \[ \cos \angle O_1 A \cos \angle O_1 B + \cos \angle O_2 A \cos \angle O_2 B + \cos \angle O_3 A \cos \angle O_3 B  = \cos \angle A B \]</div>
 <p>这个形式上来看，就是夹角的余弦，等于坐标的点乘，这个怎么去理解呢？</p>
-<p>在平面三角形 AOB 中，边长 AO = BO = 1，而对 c=AB有
-$$`
+<p>在平面三角形 AOB 中，边长 AO = BO = 1，而对 c=AB有</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}` 
 \begin{align*}
-c^2 &amp;= (\cos \angle O_1 A - \cos \angle O_1 B)^2</p>
-<ul class="simple">
-<li><p>(\cos \angle O_2 A - \cos \angle O_2 B)^2</p></li>
-<li><p>(\cos \angle O_3 A - \cos \angle O_3 B)^2  \
-&amp;= 1 + 1 - 2 \cos \angle O_1 A * \cos \angle O_1 B</p>
-<ul>
-<li><p>2 \cos \angle O_2 A * \cos \angle O_2 B</p></li>
-<li><p>2 \cos \angle O_3 A * \cos \angle O_3 B
+c^2 &amp;= (\cos \angle O_1 A - \cos \angle O_1 B)^2 + (\cos \angle O_2 A - \cos \angle O_2 B)^2 + (\cos \angle O_3 A - \cos \angle O_3 B)^2  \\
+ &amp;= 1 + 1 - 2 \cos \angle O_1 A * \cos \angle O_1 B - 2 \cos \angle O_2 A * \cos \angle O_2 B - 2 \cos \angle O_3 A * \cos \angle O_3 B
 \end{align*}
-`$$</p></li>
-</ul>
-</li>
-</ul>
+`\end{split}\]</div>
 <blockquote>
 <div><p>这里用到了展开，然后根据上面的 平方和归一 的公式进行了合并。</p>
 </div></blockquote>
@@ -472,7 +464,7 @@ c^2 &amp;= (\cos \angle O_1 A - \cos \angle O_1 B)^2</p>
 <p>这个时候，可以用前面的公式来求  <span class="math notranslate nohighlight">\(\cos \angle B C\)</span> ，有</p>
 <div class="math notranslate nohighlight">
 \[ 
-\cos \angle BC = \sin \angle AB  \sin \angle AC \sin \angle BAC + 0 + \cos \angle AB * \cos \angle AC 
+\cos \angle BC = \sin \angle AB  \sin \angle AC \sin \angle BAC + 0 + \cos \angle AB  \cos \angle AC 
 \]</div>
 <p>这就是球面三角形的余弦定理，好像要复杂不少。</p>
 </section>
