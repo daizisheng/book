@@ -1,0 +1,334 @@
+Traceback (most recent call last):
+  File "/Users/shishengli/anaconda3/lib/python3.11/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/Users/shishengli/anaconda3/lib/python3.11/site-packages/nbclient/client.py", line 1204, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shishengli/anaconda3/lib/python3.11/site-packages/nbclient/util.py", line 84, in wrapped
+    return just_run(coro(*args, **kwargs))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shishengli/anaconda3/lib/python3.11/site-packages/nbclient/util.py", line 62, in just_run
+    return loop.run_until_complete(coro)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shishengli/anaconda3/lib/python3.11/asyncio/base_events.py", line 653, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/Users/shishengli/anaconda3/lib/python3.11/site-packages/nbclient/client.py", line 663, in async_execute
+    await self.async_execute_cell(
+  File "/Users/shishengli/anaconda3/lib/python3.11/site-packages/nbclient/client.py", line 965, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/Users/shishengli/anaconda3/lib/python3.11/site-packages/nbclient/client.py", line 862, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+import os, requests, json
+
+# 测试地址
+test_address = '1HtUGfbDcMzTeHWx2Dbgnhc6kYnj1Hp24i'
+test_sat = 1358647499999999
+test_sat_block = 333458
+
+# from https://ordiscan.com/address/1HtUGfbDcMzTeHWx2Dbgnhc6kYnj1Hp24i/rare-sats we knows this sat belongs to this address
+
+# 首先计算这个sat对应的block
+def get_mined_block_number_from_sat(sat):
+    epoch = 0
+    epoch_start = epoch * 210000
+    acc = 0
+    epoch_full_reward = 210000 * get_block_reward(epoch_start)
+    while acc + epoch_full_reward <= sat:
+        acc += epoch_full_reward
+        epoch += 1
+        epoch_start += 210000
+        epoch_full_reward = 210000 * get_block_reward(epoch_start)
+    
+    epoch_block_reward = get_block_reward(epoch_start)
+    epoch_offset = (sat - acc) // epoch_block_reward
+    block = epoch_start + epoch_offset
+    return block
+
+block = get_mined_block_number_from_sat(test_sat)
+print('block:', block)
+assert block == test_sat_block
+
+def get_cache_fn_content(fn):
+    fn = f'ordinals-data/{fn}'
+    # if file does not exists, return None
+    if not os.path.exists(fn):
+        return None
+    with open(fn, 'r') as f:
+        return f.read()
+
+def put_cache_fn_content(fn, content):
+    fn = f'ordinals-data/{fn}'
+    with open(fn, 'w') as f:
+        f.write(content)
+
+def get_web_content(url, fn=None, **options):
+    if fn != None:
+        fn_content = get_cache_fn_content(fn)
+        if fn_content is not None:
+            return fn_content
+    print(f'fetching {url}')
+    r = requests.get(url)
+    content = None
+    if 'allow_404' in options and options['allow_404'] == True:
+        content = ''
+    else:
+        assert r.status_code == 200
+        content = r.text
+        assert content != None
+    if fn != None:
+        put_cache_fn_content(fn, content)
+    return content
+
+def get_block_hash_from_height(height):
+    fn = f'block_hash_{height}.txt'
+    url = f'https://mempool.space/api/block-height/{height}'
+    hash = get_web_content(url, fn)
+    assert len(hash) == 64
+    return hash
+
+def get_block_txs_from_height(height):
+    hash = get_block_hash_from_height(height)
+    url = f'https://mempool.space/api/block/{hash}/txs'
+    fn = f'block_txs_{height}.txt'
+    content = get_web_content(url, fn)
+
+    obj = json.loads(content)
+    assert len(obj) >= 1
+    assert obj[0]['vin'][0]['is_coinbase'] == True
+    return obj
+
+def get_tx_from_txid(txid):
+    assert len(txid) == 64
+    url = f'https://mempool.space/api/tx/{txid}'
+    fn = f'tx_{txid}.txt'
+    content = get_web_content(url, fn)
+
+    obj = json.loads(content)
+    assert obj['txid'] == txid
+    return obj
+
+# def fill_vin_of_tx(tx, till=None, till_n=None):
+#     assert len(tx['txid']) == 64
+
+#     for vin in tx['vin']:
+#         if vin['is_coinbase']:
+#             vin['prev_tx'] = None
+#             continue
+#         txid = vin['txid']
+#         if txid == till and vin['vout'] == till_n:
+#             break
+#         vout = vin['vout']
+#         assert vin['prevout']
+
+#         prev_tx = get_tx_from_txid(txid)
+#         vin['prev_tx'] = prev_tx
+    
+#     return tx
+
+def get_tx_spent_of_vout(txid, vout):
+    assert len(txid) == 64
+    assert vout >= 0
+
+    fn = f'tx_spent_at_{txid}_{vout}.txt'
+    url = f'https://mempool.space/api/tx/{txid}/outspend/{vout}'
+    content = get_web_content(url, fn)
+    
+    obj = json.loads(content)
+
+    if obj['spent'] == False:
+        return None
+    
+    ret = (obj['txid'], obj['vin'])
+    assert len(ret[0]) == 64
+    assert ret[1] >= 0
+
+    return ret
+
+def get_tx_fee(txid):
+    assert len(txid) == 64
+    tx = get_tx_from_txid(txid)
+
+    fee = tx['fee']
+    assert fee >= 0
+    return fee
+
+    # fill_vin_of_tx(tx)
+
+    # acc = 0
+    # for vin in tx['vin']:
+    #     assert 'prev_tx' in vin
+    #     prev_tx = vin['prev_tx']
+    #     value = prev_tx['vout'][vin['vout']]['value']
+    #     acc += value
+    
+    # for vout in tx['vout']:
+    #     acc -= vout['value']
+    
+    # assert acc >= 0
+
+    # return acc
+
+assert get_tx_fee('6db71e70bd0e5b9f2cc0678ff2bdb47215e2adc68dc72bdac973d93c76a54b7b') == 130_0000
+
+def get_vout_for_offset(tx, offset):
+    assert offset >= 0
+    acc = 0
+    idx = 0
+    for vout in tx['vout']:
+        if acc + vout['value'] > offset:
+            return (idx, vout, offset - acc)
+        acc += vout['value']
+        idx += 1
+    return None
+
+def trace_sat(pos):
+    txid = pos[0]
+    assert len(txid) == 64
+    offset = pos[1] # offset in all output sat's
+    assert offset >= 0
+    tx = get_tx_from_txid(txid)
+
+    # find the output
+    acc = 0
+    tmp = get_vout_for_offset(tx, offset)
+
+    correct_vout = None
+    correct_n = 0
+    correct_offset = 0
+    if tmp != None:
+        correct_n = tmp[0]
+        correct_vout = tmp[1]
+        correct_offset = tmp[2]
+        assert correct_n >= 0
+        assert correct_offset >= 0
+    
+    if tx['vin'][0]['is_coinbase'] == True and correct_vout == None:
+        # destroyed
+        print('destroyed')
+        return None
+    
+    # not fee
+    if correct_vout != None:
+        spent_at = get_tx_spent_of_vout(txid, correct_n)
+        if spent_at == None:
+            # not yet spent
+            return None
+
+        spent_at_txid = spent_at[0]
+        spent_at_vin_idx = spent_at[1]
+
+        spent_at_tx = get_tx_from_txid(spent_at_txid)
+
+        acc = 0
+        vin_found = False
+        for vin in spent_at_tx['vin']:
+            if vin['txid'] == txid and vin['vout'] == correct_n:
+                vin_found = True
+                break
+
+            assert 'prevout' in vin
+            prevout_value = vin['prevout']['value']
+            assert prevout_value >= 0
+
+            acc += prevout_value
+        assert vin_found == True
+
+        return (spent_at_txid, acc + correct_offset)
+    
+    #print('spent as fee')
+
+    assert tx['status']['confirmed'] == True
+
+    block_height = tx['status']['block_height']
+    assert block_height >= 0
+    block_hash = tx['status']['block_hash']
+    assert len(block_hash) == 64
+
+    block_reward = get_block_reward(block_height)
+    txs = get_block_txs_from_height(block_height)
+
+    coinbase_txid = txs[0]['txid']
+    
+    for tx in txs[1:]: # skip the coinbase tx
+        if tx['txid'] == txid:
+            break
+        fee_of_this_tx = tx['fee']
+        assert fee_of_this_tx >= 0
+        block_reward += fee_of_this_tx
+    
+    return (coinbase_txid, block_reward + correct_offset)
+
+def find_utxo_of_sat(sat):
+    print(f'getting utxo for sat {sat}')
+    block = get_mined_block_number_from_sat(sat)
+    print(f'block is {block}')
+
+    tx_list = get_block_txs_from_height(block)
+    coinbase_tx = tx_list[0]
+
+    # current position of this sat is defined as (txid, output_offset)
+    cur_pos = (coinbase_tx['txid'], test_sat - get_number_of_the_first_block_satoshi(test_sat_block))
+
+    n_transfer = 0
+    tx = get_tx_from_txid(cur_pos[0])
+    while True:
+        assert tx['status']['confirmed'] == True
+        block_height = tx['status']['block_height']
+        is_coinbase = tx['vin'][0]['is_coinbase']
+        vout = get_vout_for_offset(tx, cur_pos[1])
+        vout_idx = None
+        vout_offset = None
+        if vout != None:
+            vout_idx = vout[0]
+            vout_offset = vout[2]
+        else:
+            vout_idx = 'as_fee'
+            vout_offset = 'as_fee'
+        print(f'tx = {cur_pos[0]}, vout = {vout_idx}, offset = {vout_offset}, block = {block_height}, n_transfer = {n_transfer}, coinbase = {is_coinbase}')
+        if block_height >= till_height: # do not trace again
+            break
+        next_pos = trace_sat(cur_pos)
+        if next_pos == None:
+            break
+        tx = get_tx_from_txid(next_pos[0])
+        if tx['status']['confirmed'] == False:
+            break
+        cur_pos = next_pos
+        n_transfer += 1
+
+    tx = get_tx_from_txid(cur_pos[0])
+    vout = get_vout_for_offset(tx, cur_pos[1])
+    assert vout != None
+    vout_idx = vout[0]
+    vout = vout[1]
+    addr = vout['scriptpubkey_address']
+    return (cur_pos[0], vout_idx, addr)
+
+ret = find_utxo_of_sat(test_sat)
+print(ret)
+assert ret[2] == test_address
+
+------------------
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mNameError[0m                                 Traceback (most recent call last)
+Cell [0;32mIn[2], line 287[0m
+[1;32m    284[0m     addr [38;5;241m=[39m vout[[38;5;124m'[39m[38;5;124mscriptpubkey_address[39m[38;5;124m'[39m]
+[1;32m    285[0m     [38;5;28;01mreturn[39;00m (cur_pos[[38;5;241m0[39m], vout_idx, addr)
+[0;32m--> 287[0m ret [38;5;241m=[39m find_utxo_of_sat(test_sat)
+[1;32m    288[0m [38;5;28mprint[39m(ret)
+[1;32m    289[0m [38;5;28;01massert[39;00m ret[[38;5;241m2[39m] [38;5;241m==[39m test_address
+
+Cell [0;32mIn[2], line 268[0m, in [0;36mfind_utxo_of_sat[0;34m(sat)[0m
+[1;32m    266[0m     vout_offset [38;5;241m=[39m [38;5;124m'[39m[38;5;124mas_fee[39m[38;5;124m'[39m
+[1;32m    267[0m [38;5;28mprint[39m([38;5;124mf[39m[38;5;124m'[39m[38;5;124mtx = [39m[38;5;132;01m{[39;00mcur_pos[[38;5;241m0[39m][38;5;132;01m}[39;00m[38;5;124m, vout = [39m[38;5;132;01m{[39;00mvout_idx[38;5;132;01m}[39;00m[38;5;124m, offset = [39m[38;5;132;01m{[39;00mvout_offset[38;5;132;01m}[39;00m[38;5;124m, block = [39m[38;5;132;01m{[39;00mblock_height[38;5;132;01m}[39;00m[38;5;124m, n_transfer = [39m[38;5;132;01m{[39;00mn_transfer[38;5;132;01m}[39;00m[38;5;124m, coinbase = [39m[38;5;132;01m{[39;00mis_coinbase[38;5;132;01m}[39;00m[38;5;124m'[39m)
+[0;32m--> 268[0m [38;5;28;01mif[39;00m block_height [38;5;241m>[39m[38;5;241m=[39m till_height: [38;5;66;03m# do not trace again[39;00m
+[1;32m    269[0m     [38;5;28;01mbreak[39;00m
+[1;32m    270[0m next_pos [38;5;241m=[39m trace_sat(cur_pos)
+
+[0;31mNameError[0m: name 'till_height' is not defined
+NameError: name 'till_height' is not defined
+

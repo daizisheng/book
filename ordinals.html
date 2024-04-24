@@ -1,0 +1,905 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Ordinals &#8212; My book</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'ordinals';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="How to use electrum?" href="how-to-use-electrum.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="My book - Home"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="My book - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Welcome to your Jupyter Book
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="how-to-save-btc-safely.html">How to save btc safely.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to-use-electrum.html">How to use electrum?</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Ordinals</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/daizisheng/book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/daizisheng/book/issues/new?title=Issue%20on%20page%20%2Fordinals.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/ordinals.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Ordinals</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">几个实验</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#block">1. 计算一个block挖出来的币的第一个聪的编号</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#utxo">2. 找到制定编号的聪目前在哪个UTXO中，归谁？</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3. 计算一个UTXO中包含的聪的所有编号？</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="ordinals">
+<h1>Ordinals<a class="headerlink" href="#ordinals" title="Permalink to this heading">#</a></h1>
+<p><a class="reference external" href="https://docs.ordinals.com/">https://docs.ordinals.com/</a></p>
+<p><a class="github reference external" href="https://github.com/ordinals/ord/blob/master/bip.mediawiki">ordinals/ord</a></p>
+<p>核心是给所有挖出来的聪编号，从0开始。比如第一个block (height = 0)，也就是创世区块，挖出了50个btc，也就是 50_0000_0000 聪，那么这些聪的编号就是聪 0 到 49_9999_9999。</p>
+<p>再有就是跟踪这些聪的转账历史，从而记录下每个聪的来龙去脉。</p>
+<p>最终就是，对于一个utxo，我们需要知道，对于它所包含的币中的每个聪，其编号是什么。</p>
+<p>这里的难点是跟踪聪的转账历史。btc本身并不区分同一个utxo中的所有聪，因此我们需要为其强行赋予一个输入到输出的映射关系。</p>
+<p>直观上讲，比如我的一个utxo中包含了编号为1，3，5，7，9的聪，然后我支付3聪给A，1聪作为找零给我自己，还有1聪作为交易手续费给了矿工，那么A将得到1，3，5，我自己得到7，矿工得到9。这个非常符合直观，因此比较好理解。当然，确实有一些corner case需要考虑。</p>
+<section id="id1">
+<h2>几个实验<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h2>
+<section id="block">
+<h3>1. 计算一个block挖出来的币的第一个聪的编号<a class="headerlink" href="#block" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># test data from f2pool.com</span>
+<span class="n">block_height</span> <span class="o">=</span> <span class="mi">574993</span>
+<span class="n">correct_ord</span> <span class="o">=</span> <span class="mi">1768741250000000</span>
+
+<span class="c1"># 每4年减半，也就是没210000个区块减半，初始奖励为50BTC</span>
+<span class="k">def</span> <span class="nf">get_block_reward</span><span class="p">(</span><span class="n">block_height</span><span class="p">):</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="mi">50</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="mi">8</span> <span class="o">/</span> <span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">block_height</span> <span class="o">//</span> <span class="mi">210000</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">answer</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">get_number_of_the_first_block_satoshi_brute_force</span><span class="p">(</span><span class="n">block_height</span><span class="p">):</span>
+    <span class="n">acc</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">height</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">block_height</span><span class="p">):</span>
+        <span class="n">acc</span> <span class="o">+=</span> <span class="n">get_block_reward</span><span class="p">(</span><span class="n">height</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">acc</span>
+
+<span class="k">def</span> <span class="nf">get_number_of_the_first_block_satoshi</span><span class="p">(</span><span class="n">block_height</span><span class="p">):</span>
+    <span class="n">epoch</span> <span class="o">=</span> <span class="n">block_height</span> <span class="o">//</span> <span class="mi">210000</span> <span class="c1"># 第几个4年周期</span>
+    <span class="n">acc</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">epoch</span><span class="p">):</span> <span class="c1"># 每个epoch直接计算 </span>
+        <span class="n">acc</span> <span class="o">+=</span> <span class="mi">210000</span> <span class="o">*</span> <span class="n">get_block_reward</span><span class="p">(</span><span class="n">e</span> <span class="o">*</span> <span class="mi">210000</span><span class="p">)</span>
+    <span class="n">epoch_start</span> <span class="o">=</span> <span class="n">epoch</span> <span class="o">*</span> <span class="mi">210000</span>
+    <span class="n">epoch_offset</span> <span class="o">=</span> <span class="n">block_height</span> <span class="o">-</span> <span class="n">epoch_start</span>
+    <span class="n">epoch_reward</span> <span class="o">=</span> <span class="n">get_block_reward</span><span class="p">(</span><span class="n">epoch_start</span><span class="p">)</span>
+    <span class="n">acc</span> <span class="o">+=</span> <span class="n">epoch_offset</span> <span class="o">*</span> <span class="n">epoch_reward</span>
+    <span class="k">return</span> <span class="n">acc</span>
+
+<span class="n">calculated_ord</span> <span class="o">=</span> <span class="n">get_number_of_the_first_block_satoshi</span><span class="p">(</span><span class="n">block_height</span><span class="p">)</span>
+<span class="n">calculated_ord_brute_force</span> <span class="o">=</span> <span class="n">get_number_of_the_first_block_satoshi_brute_force</span><span class="p">(</span><span class="n">block_height</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">calculated_ord</span> <span class="o">==</span> <span class="n">calculated_ord_brute_force</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;calculated_ord:&#39;</span><span class="p">,</span> <span class="n">calculated_ord</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;correct_ord:&#39;</span><span class="p">,</span> <span class="n">correct_ord</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">calculated_ord</span> <span class="o">==</span> <span class="n">correct_ord</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;OK&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>calculated_ord: 1768741250000000
+correct_ord: 1768741250000000
+OK
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="utxo">
+<h3>2. 找到制定编号的聪目前在哪个UTXO中，归谁？<a class="headerlink" href="#utxo" title="Permalink to this heading">#</a></h3>
+<p>首先找到挖出它的block，然后根据转账历史一个tx一个tx的跟踪，直到找到当前的UTXO，从而找到其当前所有者。</p>
+<p>因此一个聪经历的转账次数越多，找到他就越麻烦。比如我们来试着找一下看看。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">requests</span><span class="o">,</span> <span class="nn">json</span>
+
+<span class="c1"># 测试地址</span>
+<span class="n">test_address</span> <span class="o">=</span> <span class="s1">&#39;1HtUGfbDcMzTeHWx2Dbgnhc6kYnj1Hp24i&#39;</span>
+<span class="n">test_sat</span> <span class="o">=</span> <span class="mi">1358647499999999</span>
+<span class="n">test_sat_block</span> <span class="o">=</span> <span class="mi">333458</span>
+
+<span class="c1"># from https://ordiscan.com/address/1HtUGfbDcMzTeHWx2Dbgnhc6kYnj1Hp24i/rare-sats we knows this sat belongs to this address</span>
+
+<span class="c1"># 首先计算这个sat对应的block</span>
+<span class="k">def</span> <span class="nf">get_mined_block_number_from_sat</span><span class="p">(</span><span class="n">sat</span><span class="p">):</span>
+    <span class="n">epoch</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">epoch_start</span> <span class="o">=</span> <span class="n">epoch</span> <span class="o">*</span> <span class="mi">210000</span>
+    <span class="n">acc</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">epoch_full_reward</span> <span class="o">=</span> <span class="mi">210000</span> <span class="o">*</span> <span class="n">get_block_reward</span><span class="p">(</span><span class="n">epoch_start</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">acc</span> <span class="o">+</span> <span class="n">epoch_full_reward</span> <span class="o">&lt;=</span> <span class="n">sat</span><span class="p">:</span>
+        <span class="n">acc</span> <span class="o">+=</span> <span class="n">epoch_full_reward</span>
+        <span class="n">epoch</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">epoch_start</span> <span class="o">+=</span> <span class="mi">210000</span>
+        <span class="n">epoch_full_reward</span> <span class="o">=</span> <span class="mi">210000</span> <span class="o">*</span> <span class="n">get_block_reward</span><span class="p">(</span><span class="n">epoch_start</span><span class="p">)</span>
+    
+    <span class="n">epoch_block_reward</span> <span class="o">=</span> <span class="n">get_block_reward</span><span class="p">(</span><span class="n">epoch_start</span><span class="p">)</span>
+    <span class="n">epoch_offset</span> <span class="o">=</span> <span class="p">(</span><span class="n">sat</span> <span class="o">-</span> <span class="n">acc</span><span class="p">)</span> <span class="o">//</span> <span class="n">epoch_block_reward</span>
+    <span class="n">block</span> <span class="o">=</span> <span class="n">epoch_start</span> <span class="o">+</span> <span class="n">epoch_offset</span>
+    <span class="k">return</span> <span class="n">block</span>
+
+<span class="n">block</span> <span class="o">=</span> <span class="n">get_mined_block_number_from_sat</span><span class="p">(</span><span class="n">test_sat</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;block:&#39;</span><span class="p">,</span> <span class="n">block</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">block</span> <span class="o">==</span> <span class="n">test_sat_block</span>
+
+<span class="k">def</span> <span class="nf">get_cache_fn_content</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
+    <span class="n">fn</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;ordinals-data/</span><span class="si">{</span><span class="n">fn</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="c1"># if file does not exists, return None</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">put_cache_fn_content</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+    <span class="n">fn</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;ordinals-data/</span><span class="si">{</span><span class="n">fn</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">get_web_content</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">fn</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fn_content</span> <span class="o">=</span> <span class="n">get_cache_fn_content</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fn_content</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">fn_content</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;fetching </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="s1">&#39;allow_404&#39;</span> <span class="ow">in</span> <span class="n">options</span> <span class="ow">and</span> <span class="n">options</span><span class="p">[</span><span class="s1">&#39;allow_404&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">assert</span> <span class="n">content</span> <span class="o">!=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">fn</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">put_cache_fn_content</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">content</span>
+
+<span class="k">def</span> <span class="nf">get_block_hash_from_height</span><span class="p">(</span><span class="n">height</span><span class="p">):</span>
+    <span class="n">fn</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;block_hash_</span><span class="si">{</span><span class="n">height</span><span class="si">}</span><span class="s1">.txt&#39;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://mempool.space/api/block-height/</span><span class="si">{</span><span class="n">height</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="nb">hash</span> <span class="o">=</span> <span class="n">get_web_content</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="nb">hash</span><span class="p">)</span> <span class="o">==</span> <span class="mi">64</span>
+    <span class="k">return</span> <span class="nb">hash</span>
+
+<span class="k">def</span> <span class="nf">get_block_txs_from_height</span><span class="p">(</span><span class="n">height</span><span class="p">):</span>
+    <span class="nb">hash</span> <span class="o">=</span> <span class="n">get_block_hash_from_height</span><span class="p">(</span><span class="n">height</span><span class="p">)</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://mempool.space/api/block/</span><span class="si">{</span><span class="nb">hash</span><span class="si">}</span><span class="s1">/txs&#39;</span>
+    <span class="n">fn</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;block_txs_</span><span class="si">{</span><span class="n">height</span><span class="si">}</span><span class="s1">.txt&#39;</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">get_web_content</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
+
+    <span class="n">obj</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">obj</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;vin&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;is_coinbase&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">obj</span>
+
+<span class="k">def</span> <span class="nf">get_tx_from_txid</span><span class="p">(</span><span class="n">txid</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">txid</span><span class="p">)</span> <span class="o">==</span> <span class="mi">64</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://mempool.space/api/tx/</span><span class="si">{</span><span class="n">txid</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">fn</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;tx_</span><span class="si">{</span><span class="n">txid</span><span class="si">}</span><span class="s1">.txt&#39;</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">get_web_content</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
+
+    <span class="n">obj</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">obj</span><span class="p">[</span><span class="s1">&#39;txid&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">txid</span>
+    <span class="k">return</span> <span class="n">obj</span>
+
+<span class="c1"># def fill_vin_of_tx(tx, till=None, till_n=None):</span>
+<span class="c1">#     assert len(tx[&#39;txid&#39;]) == 64</span>
+
+<span class="c1">#     for vin in tx[&#39;vin&#39;]:</span>
+<span class="c1">#         if vin[&#39;is_coinbase&#39;]:</span>
+<span class="c1">#             vin[&#39;prev_tx&#39;] = None</span>
+<span class="c1">#             continue</span>
+<span class="c1">#         txid = vin[&#39;txid&#39;]</span>
+<span class="c1">#         if txid == till and vin[&#39;vout&#39;] == till_n:</span>
+<span class="c1">#             break</span>
+<span class="c1">#         vout = vin[&#39;vout&#39;]</span>
+<span class="c1">#         assert vin[&#39;prevout&#39;]</span>
+
+<span class="c1">#         prev_tx = get_tx_from_txid(txid)</span>
+<span class="c1">#         vin[&#39;prev_tx&#39;] = prev_tx</span>
+    
+<span class="c1">#     return tx</span>
+
+<span class="k">def</span> <span class="nf">get_tx_spent_of_vout</span><span class="p">(</span><span class="n">txid</span><span class="p">,</span> <span class="n">vout</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">txid</span><span class="p">)</span> <span class="o">==</span> <span class="mi">64</span>
+    <span class="k">assert</span> <span class="n">vout</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+
+    <span class="n">fn</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;tx_spent_at_</span><span class="si">{</span><span class="n">txid</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">vout</span><span class="si">}</span><span class="s1">.txt&#39;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://mempool.space/api/tx/</span><span class="si">{</span><span class="n">txid</span><span class="si">}</span><span class="s1">/outspend/</span><span class="si">{</span><span class="n">vout</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">get_web_content</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
+    
+    <span class="n">obj</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">obj</span><span class="p">[</span><span class="s1">&#39;spent&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    
+    <span class="n">ret</span> <span class="o">=</span> <span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="s1">&#39;txid&#39;</span><span class="p">],</span> <span class="n">obj</span><span class="p">[</span><span class="s1">&#39;vin&#39;</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">64</span>
+    <span class="k">assert</span> <span class="n">ret</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+
+    <span class="k">return</span> <span class="n">ret</span>
+
+<span class="k">def</span> <span class="nf">get_tx_fee</span><span class="p">(</span><span class="n">txid</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">txid</span><span class="p">)</span> <span class="o">==</span> <span class="mi">64</span>
+    <span class="n">tx</span> <span class="o">=</span> <span class="n">get_tx_from_txid</span><span class="p">(</span><span class="n">txid</span><span class="p">)</span>
+
+    <span class="n">fee</span> <span class="o">=</span> <span class="n">tx</span><span class="p">[</span><span class="s1">&#39;fee&#39;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">fee</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">fee</span>
+
+    <span class="c1"># fill_vin_of_tx(tx)</span>
+
+    <span class="c1"># acc = 0</span>
+    <span class="c1"># for vin in tx[&#39;vin&#39;]:</span>
+    <span class="c1">#     assert &#39;prev_tx&#39; in vin</span>
+    <span class="c1">#     prev_tx = vin[&#39;prev_tx&#39;]</span>
+    <span class="c1">#     value = prev_tx[&#39;vout&#39;][vin[&#39;vout&#39;]][&#39;value&#39;]</span>
+    <span class="c1">#     acc += value</span>
+    
+    <span class="c1"># for vout in tx[&#39;vout&#39;]:</span>
+    <span class="c1">#     acc -= vout[&#39;value&#39;]</span>
+    
+    <span class="c1"># assert acc &gt;= 0</span>
+
+    <span class="c1"># return acc</span>
+
+<span class="k">assert</span> <span class="n">get_tx_fee</span><span class="p">(</span><span class="s1">&#39;6db71e70bd0e5b9f2cc0678ff2bdb47215e2adc68dc72bdac973d93c76a54b7b&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">130_0000</span>
+
+<span class="k">def</span> <span class="nf">get_vout_for_offset</span><span class="p">(</span><span class="n">tx</span><span class="p">,</span> <span class="n">offset</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">offset</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+    <span class="n">acc</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">vout</span> <span class="ow">in</span> <span class="n">tx</span><span class="p">[</span><span class="s1">&#39;vout&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">acc</span> <span class="o">+</span> <span class="n">vout</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">offset</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">vout</span><span class="p">,</span> <span class="n">offset</span> <span class="o">-</span> <span class="n">acc</span><span class="p">)</span>
+        <span class="n">acc</span> <span class="o">+=</span> <span class="n">vout</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
+        <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+<span class="k">def</span> <span class="nf">trace_sat</span><span class="p">(</span><span class="n">pos</span><span class="p">):</span>
+    <span class="n">txid</span> <span class="o">=</span> <span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">txid</span><span class="p">)</span> <span class="o">==</span> <span class="mi">64</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># offset in all output sat&#39;s</span>
+    <span class="k">assert</span> <span class="n">offset</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+    <span class="n">tx</span> <span class="o">=</span> <span class="n">get_tx_from_txid</span><span class="p">(</span><span class="n">txid</span><span class="p">)</span>
+
+    <span class="c1"># find the output</span>
+    <span class="n">acc</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">get_vout_for_offset</span><span class="p">(</span><span class="n">tx</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+
+    <span class="n">correct_vout</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">correct_n</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">correct_offset</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">tmp</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">correct_n</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">correct_vout</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">correct_offset</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">correct_n</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+        <span class="k">assert</span> <span class="n">correct_offset</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+    
+    <span class="k">if</span> <span class="n">tx</span><span class="p">[</span><span class="s1">&#39;vin&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;is_coinbase&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">correct_vout</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># destroyed</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;destroyed&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    
+    <span class="c1"># not fee</span>
+    <span class="k">if</span> <span class="n">correct_vout</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">spent_at</span> <span class="o">=</span> <span class="n">get_tx_spent_of_vout</span><span class="p">(</span><span class="n">txid</span><span class="p">,</span> <span class="n">correct_n</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">spent_at</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># not yet spent</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">spent_at_txid</span> <span class="o">=</span> <span class="n">spent_at</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">spent_at_vin_idx</span> <span class="o">=</span> <span class="n">spent_at</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">spent_at_tx</span> <span class="o">=</span> <span class="n">get_tx_from_txid</span><span class="p">(</span><span class="n">spent_at_txid</span><span class="p">)</span>
+
+        <span class="n">acc</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">vin_found</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">vin</span> <span class="ow">in</span> <span class="n">spent_at_tx</span><span class="p">[</span><span class="s1">&#39;vin&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">vin</span><span class="p">[</span><span class="s1">&#39;txid&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">txid</span> <span class="ow">and</span> <span class="n">vin</span><span class="p">[</span><span class="s1">&#39;vout&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">correct_n</span><span class="p">:</span>
+                <span class="n">vin_found</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
+
+            <span class="k">assert</span> <span class="s1">&#39;prevout&#39;</span> <span class="ow">in</span> <span class="n">vin</span>
+            <span class="n">prevout_value</span> <span class="o">=</span> <span class="n">vin</span><span class="p">[</span><span class="s1">&#39;prevout&#39;</span><span class="p">][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="n">prevout_value</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+
+            <span class="n">acc</span> <span class="o">+=</span> <span class="n">prevout_value</span>
+        <span class="k">assert</span> <span class="n">vin_found</span> <span class="o">==</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">spent_at_txid</span><span class="p">,</span> <span class="n">acc</span> <span class="o">+</span> <span class="n">correct_offset</span><span class="p">)</span>
+    
+    <span class="c1">#print(&#39;spent as fee&#39;)</span>
+
+    <span class="k">assert</span> <span class="n">tx</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">][</span><span class="s1">&#39;confirmed&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span>
+
+    <span class="n">block_height</span> <span class="o">=</span> <span class="n">tx</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">][</span><span class="s1">&#39;block_height&#39;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">block_height</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+    <span class="n">block_hash</span> <span class="o">=</span> <span class="n">tx</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">][</span><span class="s1">&#39;block_hash&#39;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">block_hash</span><span class="p">)</span> <span class="o">==</span> <span class="mi">64</span>
+
+    <span class="n">block_reward</span> <span class="o">=</span> <span class="n">get_block_reward</span><span class="p">(</span><span class="n">block_height</span><span class="p">)</span>
+    <span class="n">txs</span> <span class="o">=</span> <span class="n">get_block_txs_from_height</span><span class="p">(</span><span class="n">block_height</span><span class="p">)</span>
+
+    <span class="n">coinbase_txid</span> <span class="o">=</span> <span class="n">txs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;txid&#39;</span><span class="p">]</span>
+    
+    <span class="k">for</span> <span class="n">tx</span> <span class="ow">in</span> <span class="n">txs</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span> <span class="c1"># skip the coinbase tx</span>
+        <span class="k">if</span> <span class="n">tx</span><span class="p">[</span><span class="s1">&#39;txid&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">txid</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">fee_of_this_tx</span> <span class="o">=</span> <span class="n">tx</span><span class="p">[</span><span class="s1">&#39;fee&#39;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">fee_of_this_tx</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+        <span class="n">block_reward</span> <span class="o">+=</span> <span class="n">fee_of_this_tx</span>
+    
+    <span class="k">return</span> <span class="p">(</span><span class="n">coinbase_txid</span><span class="p">,</span> <span class="n">block_reward</span> <span class="o">+</span> <span class="n">correct_offset</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">find_utxo_of_sat</span><span class="p">(</span><span class="n">sat</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;getting utxo for sat </span><span class="si">{</span><span class="n">sat</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">block</span> <span class="o">=</span> <span class="n">get_mined_block_number_from_sat</span><span class="p">(</span><span class="n">sat</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;block is </span><span class="si">{</span><span class="n">block</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">tx_list</span> <span class="o">=</span> <span class="n">get_block_txs_from_height</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+    <span class="n">coinbase_tx</span> <span class="o">=</span> <span class="n">tx_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># current position of this sat is defined as (txid, output_offset)</span>
+    <span class="n">cur_pos</span> <span class="o">=</span> <span class="p">(</span><span class="n">coinbase_tx</span><span class="p">[</span><span class="s1">&#39;txid&#39;</span><span class="p">],</span> <span class="n">test_sat</span> <span class="o">-</span> <span class="n">get_number_of_the_first_block_satoshi</span><span class="p">(</span><span class="n">test_sat_block</span><span class="p">))</span>
+
+    <span class="n">n_transfer</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">tx</span> <span class="o">=</span> <span class="n">get_tx_from_txid</span><span class="p">(</span><span class="n">cur_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">tx</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">][</span><span class="s1">&#39;confirmed&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span>
+        <span class="n">block_height</span> <span class="o">=</span> <span class="n">tx</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">][</span><span class="s1">&#39;block_height&#39;</span><span class="p">]</span>
+        <span class="n">is_coinbase</span> <span class="o">=</span> <span class="n">tx</span><span class="p">[</span><span class="s1">&#39;vin&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;is_coinbase&#39;</span><span class="p">]</span>
+        <span class="n">vout</span> <span class="o">=</span> <span class="n">get_vout_for_offset</span><span class="p">(</span><span class="n">tx</span><span class="p">,</span> <span class="n">cur_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">vout_idx</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">vout_offset</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">vout</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">vout_idx</span> <span class="o">=</span> <span class="n">vout</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">vout_offset</span> <span class="o">=</span> <span class="n">vout</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">vout_idx</span> <span class="o">=</span> <span class="s1">&#39;as_fee&#39;</span>
+            <span class="n">vout_offset</span> <span class="o">=</span> <span class="s1">&#39;as_fee&#39;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;tx = </span><span class="si">{</span><span class="n">cur_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">, vout = </span><span class="si">{</span><span class="n">vout_idx</span><span class="si">}</span><span class="s1">, offset = </span><span class="si">{</span><span class="n">vout_offset</span><span class="si">}</span><span class="s1">, block = </span><span class="si">{</span><span class="n">block_height</span><span class="si">}</span><span class="s1">, n_transfer = </span><span class="si">{</span><span class="n">n_transfer</span><span class="si">}</span><span class="s1">, coinbase = </span><span class="si">{</span><span class="n">is_coinbase</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">block_height</span> <span class="o">&gt;=</span> <span class="n">till_height</span><span class="p">:</span> <span class="c1"># do not trace again</span>
+            <span class="k">break</span>
+        <span class="n">next_pos</span> <span class="o">=</span> <span class="n">trace_sat</span><span class="p">(</span><span class="n">cur_pos</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">next_pos</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">tx</span> <span class="o">=</span> <span class="n">get_tx_from_txid</span><span class="p">(</span><span class="n">next_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">tx</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">][</span><span class="s1">&#39;confirmed&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">cur_pos</span> <span class="o">=</span> <span class="n">next_pos</span>
+        <span class="n">n_transfer</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">tx</span> <span class="o">=</span> <span class="n">get_tx_from_txid</span><span class="p">(</span><span class="n">cur_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">vout</span> <span class="o">=</span> <span class="n">get_vout_for_offset</span><span class="p">(</span><span class="n">tx</span><span class="p">,</span> <span class="n">cur_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="n">vout</span> <span class="o">!=</span> <span class="kc">None</span>
+    <span class="n">vout_idx</span> <span class="o">=</span> <span class="n">vout</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">vout</span> <span class="o">=</span> <span class="n">vout</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">addr</span> <span class="o">=</span> <span class="n">vout</span><span class="p">[</span><span class="s1">&#39;scriptpubkey_address&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">cur_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">vout_idx</span><span class="p">,</span> <span class="n">addr</span><span class="p">)</span>
+
+<span class="n">ret</span> <span class="o">=</span> <span class="n">find_utxo_of_sat</span><span class="p">(</span><span class="n">test_sat</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">ret</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">test_address</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>block: 333458
+getting utxo for sat 1358647499999999
+block is 333458
+tx = 0583d72b6e68b891832be447d39826201638fc0f113bb1e3febd288e05c299e2, vout = 0, offset = 2499999999, block = 333458, n_transfer = 0, coinbase = True
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">line</span> <span class="mi">287</span>
+<span class="g g-Whitespace">    </span><span class="mi">284</span>     <span class="n">addr</span> <span class="o">=</span> <span class="n">vout</span><span class="p">[</span><span class="s1">&#39;scriptpubkey_address&#39;</span><span class="p">]</span>
+<span class="g g-Whitespace">    </span><span class="mi">285</span>     <span class="k">return</span> <span class="p">(</span><span class="n">cur_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">vout_idx</span><span class="p">,</span> <span class="n">addr</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">287</span> <span class="n">ret</span> <span class="o">=</span> <span class="n">find_utxo_of_sat</span><span class="p">(</span><span class="n">test_sat</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">288</span> <span class="nb">print</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">289</span> <span class="k">assert</span> <span class="n">ret</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">test_address</span>
+
+<span class="nn">Cell In[2], line 268,</span> in <span class="ni">find_utxo_of_sat</span><span class="nt">(sat)</span>
+<span class="g g-Whitespace">    </span><span class="mi">266</span>     <span class="n">vout_offset</span> <span class="o">=</span> <span class="s1">&#39;as_fee&#39;</span>
+<span class="g g-Whitespace">    </span><span class="mi">267</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;tx = </span><span class="si">{</span><span class="n">cur_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">, vout = </span><span class="si">{</span><span class="n">vout_idx</span><span class="si">}</span><span class="s1">, offset = </span><span class="si">{</span><span class="n">vout_offset</span><span class="si">}</span><span class="s1">, block = </span><span class="si">{</span><span class="n">block_height</span><span class="si">}</span><span class="s1">, n_transfer = </span><span class="si">{</span><span class="n">n_transfer</span><span class="si">}</span><span class="s1">, coinbase = </span><span class="si">{</span><span class="n">is_coinbase</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">268</span> <span class="k">if</span> <span class="n">block_height</span> <span class="o">&gt;=</span> <span class="n">till_height</span><span class="p">:</span> <span class="c1"># do not trace again</span>
+<span class="g g-Whitespace">    </span><span class="mi">269</span>     <span class="k">break</span>
+<span class="g g-Whitespace">    </span><span class="mi">270</span> <span class="n">next_pos</span> <span class="o">=</span> <span class="n">trace_sat</span><span class="p">(</span><span class="n">cur_pos</span><span class="p">)</span>
+
+<span class="ne">NameError</span>: name &#39;till_height&#39; is not defined
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id2">
+<h3>3. 计算一个UTXO中包含的聪的所有编号？<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
+<p>一个当前的UTXO，表示的是一个到现在为止还没有被花费掉的 TX OUTPUT。</p>
+<p>一个历史的UTXO，表示的是历史上该 TX OUTPUT没有被花费掉，后来某个时刻被花费掉了。</p>
+<p>一个UTXO包含了多少聪，就有多少个聪编号。比如一个UTXO包含了一个btc，也就是 <span class="math notranslate nohighlight">\( 10^8 \)</span> 聪，那就是 <span class="math notranslate nohighlight">\(10^8\)</span> 个编号。一一列举出这些编号，往往是复杂的。</p>
+<p>不过，对于某些UTXO，这事儿还是简单，比如一个空块儿的coinbase的output。这些output的聪编号是连续的，所以知道了第一个聪的编号，就能直接知道所有聪的编号。这里说到空块儿，是因为如果不是空块儿，那么coinbase的output中就会包含所有交易的手续费中包含的聪，那这些聪编号就复杂了。</p>
+<p>如果没有提前索引数据，计算一个utxo中的所有聪的编号，就需要从交易的vin不断的回溯，直到找到所有相关的coinbase为止，这样才能确定该utxo中的所有聪的编号，这往往会牵涉到很多很多的交易，非常的复杂。记住，coinbase中的聪部分来自挖矿，部分来自fee，fee的部分就更加的复杂了。</p>
+<p>但是如果提前做了索引，那就可以增量的处理每个区块。说是这样说，据说为了能够实时的计算所有UTXO（当前的和历史的），索引数据量需要 10T 级别。如果只计算当前UTXO，需要 100G 级别的索引数据。（数据来自 BIP ）。</p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="how-to-use-electrum.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">How to use electrum?</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">几个实验</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#block">1. 计算一个block挖出来的币的第一个聪的编号</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#utxo">2. 找到制定编号的聪目前在哪个UTXO中，归谁？</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3. 计算一个UTXO中包含的聪的所有编号？</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By ssli
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
