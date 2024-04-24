@@ -721,8 +721,6 @@ OK
             <span class="n">vout_idx</span> <span class="o">=</span> <span class="s1">&#39;as_fee&#39;</span>
             <span class="n">vout_offset</span> <span class="o">=</span> <span class="s1">&#39;as_fee&#39;</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;tx = </span><span class="si">{</span><span class="n">cur_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">, vout = </span><span class="si">{</span><span class="n">vout_idx</span><span class="si">}</span><span class="s1">, offset = </span><span class="si">{</span><span class="n">vout_offset</span><span class="si">}</span><span class="s1">, block = </span><span class="si">{</span><span class="n">block_height</span><span class="si">}</span><span class="s1">, n_transfer = </span><span class="si">{</span><span class="n">n_transfer</span><span class="si">}</span><span class="s1">, coinbase = </span><span class="si">{</span><span class="n">is_coinbase</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">block_height</span> <span class="o">&gt;=</span> <span class="n">till_height</span><span class="p">:</span> <span class="c1"># do not trace again</span>
-            <span class="k">break</span>
         <span class="n">next_pos</span> <span class="o">=</span> <span class="n">trace_sat</span><span class="p">(</span><span class="n">cur_pos</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">next_pos</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">break</span>
@@ -751,25 +749,8 @@ OK
 getting utxo for sat 1358647499999999
 block is 333458
 tx = 0583d72b6e68b891832be447d39826201638fc0f113bb1e3febd288e05c299e2, vout = 0, offset = 2499999999, block = 333458, n_transfer = 0, coinbase = True
-</pre></div>
-</div>
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">line</span> <span class="mi">287</span>
-<span class="g g-Whitespace">    </span><span class="mi">284</span>     <span class="n">addr</span> <span class="o">=</span> <span class="n">vout</span><span class="p">[</span><span class="s1">&#39;scriptpubkey_address&#39;</span><span class="p">]</span>
-<span class="g g-Whitespace">    </span><span class="mi">285</span>     <span class="k">return</span> <span class="p">(</span><span class="n">cur_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">vout_idx</span><span class="p">,</span> <span class="n">addr</span><span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">287</span> <span class="n">ret</span> <span class="o">=</span> <span class="n">find_utxo_of_sat</span><span class="p">(</span><span class="n">test_sat</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">288</span> <span class="nb">print</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">289</span> <span class="k">assert</span> <span class="n">ret</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">test_address</span>
-
-<span class="nn">Cell In[2], line 268,</span> in <span class="ni">find_utxo_of_sat</span><span class="nt">(sat)</span>
-<span class="g g-Whitespace">    </span><span class="mi">266</span>     <span class="n">vout_offset</span> <span class="o">=</span> <span class="s1">&#39;as_fee&#39;</span>
-<span class="g g-Whitespace">    </span><span class="mi">267</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;tx = </span><span class="si">{</span><span class="n">cur_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">, vout = </span><span class="si">{</span><span class="n">vout_idx</span><span class="si">}</span><span class="s1">, offset = </span><span class="si">{</span><span class="n">vout_offset</span><span class="si">}</span><span class="s1">, block = </span><span class="si">{</span><span class="n">block_height</span><span class="si">}</span><span class="s1">, n_transfer = </span><span class="si">{</span><span class="n">n_transfer</span><span class="si">}</span><span class="s1">, coinbase = </span><span class="si">{</span><span class="n">is_coinbase</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">268</span> <span class="k">if</span> <span class="n">block_height</span> <span class="o">&gt;=</span> <span class="n">till_height</span><span class="p">:</span> <span class="c1"># do not trace again</span>
-<span class="g g-Whitespace">    </span><span class="mi">269</span>     <span class="k">break</span>
-<span class="g g-Whitespace">    </span><span class="mi">270</span> <span class="n">next_pos</span> <span class="o">=</span> <span class="n">trace_sat</span><span class="p">(</span><span class="n">cur_pos</span><span class="p">)</span>
-
-<span class="ne">NameError</span>: name &#39;till_height&#39; is not defined
+tx = 3cdb5647417fa1fc42cbf545491b7663382c2c839e93e80bc34ca5b8d91d4dfd, vout = 4, offset = 671925684, block = 333580, n_transfer = 1, coinbase = False
+(&#39;3cdb5647417fa1fc42cbf545491b7663382c2c839e93e80bc34ca5b8d91d4dfd&#39;, 4, &#39;1HtUGfbDcMzTeHWx2Dbgnhc6kYnj1Hp24i&#39;)
 </pre></div>
 </div>
 </div>
