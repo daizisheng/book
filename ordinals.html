@@ -376,6 +376,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3. 计算一个UTXO中包含的聪的所有编号？</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">铭文</a></li>
 </ul>
             </nav>
         </div>
@@ -766,6 +767,156 @@ tx = 3cdb5647417fa1fc42cbf545491b7663382c2c839e93e80bc34ca5b8d91d4dfd, vout = 4,
 <p>但是如果提前做了索引，那就可以增量的处理每个区块。说是这样说，据说为了能够实时的计算所有UTXO（当前的和历史的），索引数据量需要 10T 级别。如果只计算当前UTXO，需要 100G 级别的索引数据。（数据来自 BIP ）。</p>
 </section>
 </section>
+<section id="id3">
+<h2>铭文<a class="headerlink" href="#id3" title="Permalink to this heading">#</a></h2>
+<p>既然每个聪都有了编号，那么聪就有点类似NFT了，NFT得有些附带的数据才行，比如一个图片之类的。</p>
+<p>于是，就有了给一个聪搞点数据的需求。</p>
+<p>据说是考虑到btc字节码的一些数据量的限制（ &#64;FIXME ），ORD协议选择了用 P2TR 支付方式来把数据搞到链上去。</p>
+<p>具体拿一个例子来分析。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">commit_txid</span> <span class="o">=</span> <span class="s1">&#39;93d6c93ac577ba9c11636cd9ed57133dcd49666b1fac7657065c1e9d46257766&#39;</span>
+<span class="n">tx</span> <span class="o">=</span> <span class="n">get_tx_from_txid</span><span class="p">(</span><span class="n">commit_txid</span><span class="p">)</span>
+<span class="n">vout</span> <span class="o">=</span> <span class="n">tx</span><span class="p">[</span><span class="s1">&#39;vout&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="k">assert</span> <span class="n">vout</span><span class="p">[</span><span class="s1">&#39;scriptpubkey_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;v1_p2tr&#39;</span>
+<span class="n">vout_script_pubkey</span> <span class="o">=</span> <span class="n">vout</span><span class="p">[</span><span class="s1">&#39;scriptpubkey_asm&#39;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;vout_script_pubkey = </span><span class="si">{</span><span class="n">vout_script_pubkey</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>vout_script_pubkey = OP_PUSHNUM_1 OP_PUSHBYTES_32 2d90edea641674ac4b7f2eac7d0b737fc1eab5e99513382ceb8e98266a796163
+</pre></div>
+</div>
+</div>
+</div>
+<p>在这个所谓的commit tx中，核心是一个hash为 <strong>2d90edea641674ac4b7f2eac7d0b737fc1eab5e99513382ceb8e98266a796163</strong> 的脚本。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reveal_txid</span> <span class="o">=</span> <span class="s1">&#39;3d59bc1eef840222dc4a1e4ae3ed4d7d4de7a6ba66c55b2537d2fbeb6349c047&#39;</span>
+<span class="n">tx</span> <span class="o">=</span> <span class="n">get_tx_from_txid</span><span class="p">(</span><span class="n">reveal_txid</span><span class="p">)</span>
+<span class="n">witness</span> <span class="o">=</span> <span class="n">tx</span><span class="p">[</span><span class="s1">&#39;vin&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;witness&#39;</span><span class="p">]</span>
+<span class="n">witness_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">witness</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;witness = </span><span class="si">{</span><span class="n">witness_json</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="n">inner_witnessscript_asm</span> <span class="o">=</span> <span class="n">tx</span><span class="p">[</span><span class="s1">&#39;vin&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;inner_witnessscript_asm&#39;</span><span class="p">]</span>
+<span class="n">inner_witnessscript_asm</span> <span class="o">=</span> <span class="n">inner_witnessscript_asm</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+<span class="n">inner_witnessscript_asm_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">inner_witnessscript_asm</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;inner_witnessscript_asm = </span><span class="si">{</span><span class="n">inner_witnessscript_asm_json</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>witness = [
+  &quot;79edae917792268e6ac0567ce28195bda67f1afff9d2b8514d6daca390a05be79091bebda71af36bbdd6327666dcaec875999754f24e0c8c83c07b18da4c1ba501&quot;,
+  &quot;51690063036f7264010117746578742f68746d6c3b636861727365743d7574662d38004d08023c73637269707420646174612d733d2230783166353233616463666562393261376632316137326530366264633963643963323236356539306630623234666262613335363035326162656564306633316322207372633d222f636f6e74656e742f663830623933343636613238633565666337303366616230326265656262663465333265316263346630363361633237666564666437396164393832663263656930223e3c2f7363726970743e3c626f6479207374796c653d22646973706c61793a206e6f6e65223e3c2f626f64793e000000000000000062766d76341b4504c02f0b784334f50b8197dae27b4d8888a14784f0270dd5a513be207b2f10d93a008e0e6709077663fd9bfda68412ce3cf03c5bc36a8d23464f03792c510303fcca73140e10129f9e3983a4dd9f9e062de190d2c8a380134ae9681789beef7ca2e381ce873ad9bdcd0859165ef083adaddf94ac168b71717c5ad123985d08195dbbfd2700af9e23d7368bf3252a01189c80d1906f7da2c49ea1c5acf0a4ef10aa8bd9d4509d0f7f5d5fd3c4aa6d4103f650cb7a19891e4d782adea738c7e1874ad69da9093fd20d8e4d9fddc8d7f183be72c4a347b50c09aa5770df398a5ffc36ee158ce7917bf89227ddf6b5badefe71fe9faa0a78f9cba1e6b57373565924f9960f38e2f957fcf7c6b9f9ca0dcdbff8973d7cda9d469869bd91f89c6ff7aadf2e897fb8bdce4d0802a7dc7d4e7a5d18f74e31b25870f8b8dc14edbc844ca20060f4d730240b458b2d4a068840ef1659ff1dcebb75acdb1107cfeec370595c61513ae50c72762605c6461364077163c90b60000aa7309e87318e709c2c8d627931309017c3e260837912ed3480ea647900e65c8d8fe280202a704eceac5ed5bdeec31fb3d2ce87d3731ba7977ff038d409db77d3a77aceaf26b4f44e78e9d59ff1ce695d8ffdd6b59157691c62a69e215da2afef25850ac68c80b0363044fc7f9993c0e4316618170cfab6204f1079911408750ccb8c11dc709235ac934864e74a7100cb61b853c820b08aa3fbe675732dc72feb5dd17e58a6c7579f6cddec2093d4600a2ff957c833ac22efc8840ec58d32254cc68d30ee292a79b6ff4a8dbd4ddee59ab886d6b9cfc4cd69f710386f0d134589dc1e558907a8da20900a43ee8d262902b346408d6250cc1cc354078ba213e2603252073918c8580e2f83854ac46a7b2138e6419c07cd623b079be443e5b7e51f176cfe85249e0ab5d97fd3ddcffd5259b1f820d71f7fca4955a383da1cd5b5b5a9e980dddf405f063aed73703e81930bc09b2103d966b395ab9f4fd325171ceb6f7fe0a7f3c37f04abfafdeac3953b23f238bef21fa3fbc0e381974986d36cb8176eeb8da3f23184a5bfd1b7822b8ea4659eb3a03a13875d5adf7be990f6d359755d75c4ef859714a5e5ca6ca5a3bf7e8628ca618d9eca43d5b218ba521ef969cef88fb15cd2353962f8bcc51c034e8577070d2fd3a52f931f02000068&quot;,
+  &quot;c17ad172708ff7e2e07331ccfff5b190856369e844ef6bd490660ffc78c9c3f6d9&quot;
+]
+inner_witnessscript_asm = [
+  &quot;OP_PUSHNUM_1&quot;,
+  &quot;OP_VERIFY&quot;,
+  &quot;OP_0&quot;,
+  &quot;OP_IF&quot;,
+  &quot;OP_PUSHBYTES_3&quot;,
+  &quot;6f7264&quot;,
+  &quot;OP_PUSHBYTES_1&quot;,
+  &quot;01&quot;,
+  &quot;OP_PUSHBYTES_23&quot;,
+  &quot;746578742f68746d6c3b636861727365743d7574662d38&quot;,
+  &quot;OP_0&quot;,
+  &quot;OP_PUSHDATA2&quot;,
+  &quot;3c73637269707420646174612d733d2230783166353233616463666562393261376632316137326530366264633963643963323236356539306630623234666262613335363035326162656564306633316322207372633d222f636f6e74656e742f663830623933343636613238633565666337303366616230326265656262663465333265316263346630363361633237666564666437396164393832663263656930223e3c2f7363726970743e3c626f6479207374796c653d22646973706c61793a206e6f6e65223e3c2f626f64793e000000000000000062766d76341b4504c02f0b784334f50b8197dae27b4d8888a14784f0270dd5a513be207b2f10d93a008e0e6709077663fd9bfda68412ce3cf03c5bc36a8d23464f03792c510303fcca73140e10129f9e3983a4dd9f9e062de190d2c8a380134ae9681789beef7ca2e381ce873ad9bdcd0859165ef083adaddf94ac168b71717c5ad123985d08195dbbfd2700af9e23d7368bf3252a01189c80d1906f7da2c49ea1c5acf0a4ef10aa8bd9d4509d0f7f5d5fd3c4aa6d4103f650cb7a19891e4d782adea738c7e1874ad69da9093fd20d8e4d9fddc8d7f183be72c4a347b50c09aa5770df398a5ffc36ee158ce7917bf89227ddf6b5badefe71fe9faa0a78f9cba1e6b57373565924f9960f38e2f957fcf7c6b9f9ca0dcdbff8973d7cda9d469869bd91f89c6ff7aadf2e897fb8bdce&quot;,
+  &quot;OP_PUSHDATA2&quot;,
+  &quot;a7dc7d4e7a5d18f74e31b25870f8b8dc14edbc844ca20060f4d730240b458b2d4a068840ef1659ff1dcebb75acdb1107cfeec370595c61513ae50c72762605c6461364077163c90b60000aa7309e87318e709c2c8d627931309017c3e260837912ed3480ea647900e65c8d8fe280202a704eceac5ed5bdeec31fb3d2ce87d3731ba7977ff038d409db77d3a77aceaf26b4f44e78e9d59ff1ce695d8ffdd6b59157691c62a69e215da2afef25850ac68c80b0363044fc7f9993c0e4316618170cfab6204f1079911408750ccb8c11dc709235ac934864e74a7100cb61b853c820b08aa3fbe675732dc72feb5dd17e58a6c7579f6cddec2093d4600a2ff957c833ac22efc8840ec58d32254cc68d30ee292a79b6ff4a8dbd4ddee59ab886d6b9cfc4cd69f710386f0d134589dc1e558907a8da20900a43ee8d262902b346408d6250cc1cc354078ba213e2603252073918c8580e2f83854ac46a7b2138e6419c07cd623b079be443e5b7e51f176cfe85249e0ab5d97fd3ddcffd5259b1f820d71f7fca4955a383da1cd5b5b5a9e980dddf405f063aed73703e81930bc09b2103d966b395ab9f4fd325171ceb6f7fe0a7f3c37f04abfafdeac3953b23f238bef21fa3fbc0e381974986d36cb8176eeb8da3f23184a5bfd1b7822b8ea4659eb3a03a13875d5adf7be990f6d359755d75c4ef859714a5e5ca6ca5a3bf7e8628ca618d9eca43d5b218ba52&quot;,
+  &quot;OP_PUSHBYTES_30&quot;,
+  &quot;f969cef88fb15cd2353962f8bcc51c034e8577070d2fd3a52f931f020000&quot;,
+  &quot;OP_ENDIF&quot;
+]
+</pre></div>
+</div>
+</div>
+</div>
+<p>这里最核心的，是真正的 TAPROOT SCRIPT，也就是 <strong>51</strong> 打头的这个东西，也就是上面的 <strong>inner_witnessscript_asm</strong> 中的字节码。</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">op_list</span> <span class="o">=</span> <span class="n">inner_witnessscript_asm</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">stack</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">while</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">op_list</span><span class="p">):</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="n">op_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s1">&#39;OP_0&#39;</span><span class="p">:</span>
+        <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;00&#39;</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">continue</span>
+    <span class="k">if</span> <span class="n">op</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;OP_PUSHBYTES_&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">op</span> <span class="o">==</span> <span class="s1">&#39;OP_PUSHDATA2&#39;</span><span class="p">:</span>
+        <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op_list</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">idx</span> <span class="o">+=</span> <span class="mi">2</span>
+        <span class="k">continue</span>
+    <span class="k">assert</span> <span class="kc">False</span>
+
+<span class="k">assert</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">stack</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;ord&#39;</span>
+<span class="n">stack</span> <span class="o">=</span> <span class="n">stack</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+<span class="n">meta</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">body</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">while</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">stack</span><span class="p">):</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">stack</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="n">key_i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">key_i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">stack</span><span class="p">):</span>
+            <span class="n">body</span> <span class="o">+=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">stack</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+            <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">break</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">stack</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;unknown_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">key_i</span><span class="p">)</span>
+    <span class="n">as_str</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">match</span> <span class="n">key_i</span><span class="p">:</span>
+        <span class="k">case</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;content-type&#39;</span>
+            <span class="n">as_str</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">case</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;pointer&#39;</span>
+        <span class="k">case</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;parent&#39;</span>
+        <span class="k">case</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;metadata&#39;</span>
+        <span class="k">case</span> <span class="mi">7</span><span class="p">:</span>
+            <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;metaprotocol&#39;</span>
+        <span class="k">case</span> <span class="mi">9</span><span class="p">:</span>
+            <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;content_encoding&#39;</span>
+            <span class="n">as_str</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">case</span> <span class="mi">11</span><span class="p">:</span>
+            <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;delegate&#39;</span>
+    <span class="k">if</span> <span class="n">as_str</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+    <span class="n">meta</span><span class="p">[</span><span class="n">key_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="n">idx</span> <span class="o">+=</span> <span class="mi">2</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{
+  &quot;content-type&quot;: &quot;text/html;charset=utf-8&quot;
+}
+b&#39;&lt;script data-s=&quot;0x1f523adcfeb92a7f21a72e06bdc9cd9c2265e90f0b24fbba356052abeed0f31c&quot; src=&quot;/content/f80b93466a28c5efc703fab02beebbf4e32e1bc4f063ac27fedfd79ad982f2cei0&quot;&gt;&lt;/script&gt;&lt;body style=&quot;display: none&quot;&gt;&lt;/body&gt;\x00\x00\x00\x00\x00\x00\x00\x00bvmv4\x1bE\x04\xc0/\x0bxC4\xf5\x0b\x81\x97\xda\xe2{M\x88\x88\xa1G\x84\xf0\&#39;\r\xd5\xa5\x13\xbe {/\x10\xd9:\x00\x8e\x0eg\t\x07vc\xfd\x9b\xfd\xa6\x84\x12\xce&lt;\xf0&lt;[\xc3j\x8d#FO\x03y,Q\x03\x03\xfc\xcas\x14\x0e\x10\x12\x9f\x9e9\x83\xa4\xdd\x9f\x9e\x06-\xe1\x90\xd2\xc8\xa3\x80\x13J\xe9h\x17\x89\xbe\xef|\xa2\xe3\x81\xce\x87:\xd9\xbd\xcd\x08Y\x16^\xf0\x83\xad\xad\xdf\x94\xac\x16\x8bqq|Z\xd1#\x98]\x08\x19]\xbb\xfd\&#39;\x00\xaf\x9e#\xd76\x8b\xf3%*\x01\x18\x9c\x80\xd1\x90o}\xa2\xc4\x9e\xa1\xc5\xac\xf0\xa4\xef\x10\xaa\x8b\xd9\xd4P\x9d\x0f\x7f]_\xd3\xc4\xaamA\x03\xf6P\xcbz\x19\x89\x1eMx*\xde\xa78\xc7\xe1\x87J\xd6\x9d\xa9\t?\xd2\r\x8eM\x9f\xdd\xc8\xd7\xf1\x83\xber\xc4\xa3G\xb5\x0c\t\xaaWp\xdf9\x8a_\xfc6\xee\x15\x8c\xe7\x91{\xf8\x92\&#39;\xdd\xf6\xb5\xba\xde\xfeq\xfe\x9f\xaa\nx\xf9\xcb\xa1\xe6\xb5ssVY$\xf9\x96\x0f8\xe2\xf9W\xfc\xf7\xc6\xb9\xf9\xca\r\xcd\xbf\xf8\x97=|\xda\x9dF\x98i\xbd\x91\xf8\x9co\xf7\xaa\xdf.\x89\x7f\xb8\xbd\xce\xa7\xdc}Nz]\x18\xf7N1\xb2Xp\xf8\xb8\xdc\x14\xed\xbc\x84L\xa2\x00`\xf4\xd70$\x0bE\x8b-J\x06\x88@\xef\x16Y\xff\x1d\xce\xbbu\xac\xdb\x11\x07\xcf\xee\xc3pY\\aQ:\xe5\x0crv&amp;\x05\xc6F\x13d\x07qc\xc9\x0b`\x00\n\xa70\x9e\x871\x8ep\x9c,\x8dby10\x90\x17\xc3\xe2`\x83y\x12\xed4\x80\xeady\x00\xe6\\\x8d\x8f\xe2\x80 *pN\xce\xac^\xd5\xbd\xee\xc3\x1f\xb3\xd2\xce\x87\xd3s\x1b\xa7\x97\x7f\xf08\xd4\t\xdbw\xd3\xa7z\xce\xaf&amp;\xb4\xf4Nx\xe9\xd5\x9f\xf1\xcei]\x8f\xfd\xd6\xb5\x91Wi\x1cb\xa6\x9e!]\xa2\xaf\xef%\x85\n\xc6\x8c\x80\xb060D\xfc\x7f\x99\x93\xc0\xe41f\x18\x17\x0c\xfa\xb6 O\x10y\x91\x14\x08u\x0c\xcb\x8c\x11\xdcp\x925\xac\x93Hd\xe7Jq\x00\xcba\xb8S\xc8 \xb0\x8a\xa3\xfb\xe6us-\xc7/\xeb]\xd1~X\xa6\xc7W\x9fl\xdd\xec \x93\xd4`\n/\xf9W\xc83\xac&quot;\xef\xc8\x84\x0e\xc5\x8d2%L\xc6\x8d0\xee)*y\xb6\xffJ\x8d\xbdM\xde\xe5\x9a\xb8\x86\xd6\xb9\xcf\xc4\xcdi\xf7\x108o\r\x13E\x89\xdc\x1eU\x89\x07\xa8\xda \x90\nC\xee\x8d&amp;)\x02\xb3F@\x8dbP\xcc\x1c\xc3T\x07\x8b\xa2\x13\xe2`2R\x079\x18\xc8X\x0e/\x83\x85J\xc4j{!8\xe6A\x9c\x07\xcdb;\x07\x9b\xe4C\xe5\xb7\xe5\x1f\x17l\xfe\x85$\x9e\n\xb5\xd9\x7f\xd3\xdd\xcf\xfdRY\xb1\xf8 \xd7\x1f\x7f\xcaIU\xa3\x83\xda\x1c\xd5\xb5\xb5\xa9\xe9\x80\xdd\xdf@_\x06:\xedsp&gt;\x81\x93\x0b\xc0\x9b!\x03\xd9f\xb3\x95\xab\x9fO\xd3%\x17\x1c\xebo\x7f\xe0\xa7\xf3\xc3\x7f\x04\xab\xfa\xfd\xea\xc3\x95;#\xf28\xbe\xf2\x1f\xa3\xfb\xc0\xe3\x81\x97I\x86\xd3l\xb8\x17n\xeb\x8d\xa3\xf21\x84\xa5\xbf\xd1\xb7\x82+\x8e\xa4e\x9e\xb3\xa0:\x13\x87]Z\xdf{\xe9\x90\xf6\xd3Yu]u\xc4\xef\x85\x97\x14\xa5\xe5\xcal\xa5\xa3\xbf~\x86(\xcaa\x8d\x9e\xcaC\xd5\xb2\x18\xbaR\xf9i\xce\xf8\x8f\xb1\\\xd259b\xf8\xbc\xc5\x1c\x03N\x85w\x07\r/\xd3\xa5/\x93\x1f\x02\x00\x00&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<p>这个和某个聪捆绑的东西就是 <strong>铭文</strong> ，铭文可以用两个东西来index，一个是reveal tx的txid，一个是在这个tx的所有input中reveal出来的顺序。</p>
+<p>注意，一个tx的一个input中可以搞出多个铭文，他们默认对应这个input的第一个聪，除非铭文里面写了 <strong>pointer</strong> ，从而刻意指定了哪个聪。</p>
+<p>因此，上面这个铭文的编号就是</p>
+<p><strong>3d59bc1eef840222dc4a1e4ae3ed4d7d4de7a6ba66c55b2537d2fbeb6349c047i0</strong> ，其中的 <strong>i</strong> 之前是  txid，<strong>i</strong> 之后是index。</p>
+<p>而且，按照所有铭文搞出来的顺序，每个铭文还有一个唯一编号。比如上面这个叫做 <a class="reference external" href="https://ordiscan.com/inscription/70316566">https://ordiscan.com/inscription/70316566</a> ，也就是编号为 <strong>70316566</strong>。 (&#64;FIXME ，官网说这里有个bug，对于一些特殊的铭文，其编号顺序有问题）</p>
+<p>ord官方还提供了一个地方来显示铭文的内容</p>
+<p><a class="reference external" href="https://ordiscan.com/content/3d59bc1eef840222dc4a1e4ae3ed4d7d4de7a6ba66c55b2537d2fbeb6349c047i0">https://ordiscan.com/content/3d59bc1eef840222dc4a1e4ae3ed4d7d4de7a6ba66c55b2537d2fbeb6349c047i0</a></p>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -829,6 +980,7 @@ tx = 3cdb5647417fa1fc42cbf545491b7663382c2c839e93e80bc34ca5b8d91d4dfd, vout = 4,
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3. 计算一个UTXO中包含的聪的所有编号？</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">铭文</a></li>
 </ul>
   </nav></div>
 
