@@ -377,6 +377,7 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">铭文</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brc-20">BRC-20</a></li>
 </ul>
             </nav>
         </div>
@@ -840,60 +841,64 @@ inner_witnessscript_asm = [
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">op_list</span> <span class="o">=</span> <span class="n">inner_witnessscript_asm</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">stack</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="k">while</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">op_list</span><span class="p">):</span>
-    <span class="n">op</span> <span class="o">=</span> <span class="n">op_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s1">&#39;OP_0&#39;</span><span class="p">:</span>
-        <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;00&#39;</span><span class="p">)</span>
-        <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">continue</span>
-    <span class="k">if</span> <span class="n">op</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;OP_PUSHBYTES_&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">op</span> <span class="o">==</span> <span class="s1">&#39;OP_PUSHDATA2&#39;</span><span class="p">:</span>
-        <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op_list</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
-        <span class="n">idx</span> <span class="o">+=</span> <span class="mi">2</span>
-        <span class="k">continue</span>
-    <span class="k">assert</span> <span class="kc">False</span>
 
-<span class="k">assert</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">stack</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;ord&#39;</span>
-<span class="n">stack</span> <span class="o">=</span> <span class="n">stack</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-
-<span class="n">meta</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="n">body</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="k">while</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">stack</span><span class="p">):</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">stack</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
-    <span class="n">key_i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="k">if</span> <span class="n">key_i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">while</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">stack</span><span class="p">):</span>
-            <span class="n">body</span> <span class="o">+=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">stack</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">decode_inscription</span><span class="p">(</span><span class="n">op_list</span><span class="p">):</span>
+    <span class="n">stack</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">op_list</span><span class="p">):</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="n">op_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s1">&#39;OP_0&#39;</span><span class="p">:</span>
+            <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;00&#39;</span><span class="p">)</span>
             <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">break</span>
-    <span class="n">value</span> <span class="o">=</span> <span class="n">stack</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-    <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;unknown_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">key_i</span><span class="p">)</span>
-    <span class="n">as_str</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="k">match</span> <span class="n">key_i</span><span class="p">:</span>
-        <span class="k">case</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;content-type&#39;</span>
-            <span class="n">as_str</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">case</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;pointer&#39;</span>
-        <span class="k">case</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;parent&#39;</span>
-        <span class="k">case</span> <span class="mi">5</span><span class="p">:</span>
-            <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;metadata&#39;</span>
-        <span class="k">case</span> <span class="mi">7</span><span class="p">:</span>
-            <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;metaprotocol&#39;</span>
-        <span class="k">case</span> <span class="mi">9</span><span class="p">:</span>
-            <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;content_encoding&#39;</span>
-            <span class="n">as_str</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">case</span> <span class="mi">11</span><span class="p">:</span>
-            <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;delegate&#39;</span>
-    <span class="k">if</span> <span class="n">as_str</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
-    <span class="n">meta</span><span class="p">[</span><span class="n">key_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-    <span class="n">idx</span> <span class="o">+=</span> <span class="mi">2</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">op</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;OP_PUSH&#39;</span><span class="p">):</span>
+            <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op_list</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="n">idx</span> <span class="o">+=</span> <span class="mi">2</span>
+            <span class="k">continue</span>
+        <span class="k">assert</span> <span class="kc">False</span>
+
+    <span class="k">assert</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">stack</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;ord&#39;</span>
+    <span class="n">stack</span> <span class="o">=</span> <span class="n">stack</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+    <span class="n">meta</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">stack</span><span class="p">):</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">stack</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="n">key_i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">key_i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">while</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">stack</span><span class="p">):</span>
+                <span class="n">body</span> <span class="o">+=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">stack</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+                <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">break</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">stack</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;unknown_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">key_i</span><span class="p">)</span>
+        <span class="n">as_str</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">match</span> <span class="n">key_i</span><span class="p">:</span>
+            <span class="k">case</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;content-type&#39;</span>
+                <span class="n">as_str</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">case</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;pointer&#39;</span>
+            <span class="k">case</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;parent&#39;</span>
+            <span class="k">case</span> <span class="mi">5</span><span class="p">:</span>
+                <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;metadata&#39;</span>
+            <span class="k">case</span> <span class="mi">7</span><span class="p">:</span>
+                <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;metaprotocol&#39;</span>
+            <span class="k">case</span> <span class="mi">9</span><span class="p">:</span>
+                <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;content_encoding&#39;</span>
+                <span class="n">as_str</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">case</span> <span class="mi">11</span><span class="p">:</span>
+                <span class="n">key_name</span> <span class="o">=</span> <span class="s1">&#39;delegate&#39;</span>
+        <span class="k">if</span> <span class="n">as_str</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+        <span class="n">meta</span><span class="p">[</span><span class="n">key_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">idx</span> <span class="o">+=</span> <span class="mi">2</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
@@ -901,10 +906,15 @@ inner_witnessscript_asm = [
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{
-  &quot;content-type&quot;: &quot;text/html;charset=utf-8&quot;
-}
-b&#39;&lt;script data-s=&quot;0x1f523adcfeb92a7f21a72e06bdc9cd9c2265e90f0b24fbba356052abeed0f31c&quot; src=&quot;/content/f80b93466a28c5efc703fab02beebbf4e32e1bc4f063ac27fedfd79ad982f2cei0&quot;&gt;&lt;/script&gt;&lt;body style=&quot;display: none&quot;&gt;&lt;/body&gt;\x00\x00\x00\x00\x00\x00\x00\x00bvmv4\x1bE\x04\xc0/\x0bxC4\xf5\x0b\x81\x97\xda\xe2{M\x88\x88\xa1G\x84\xf0\&#39;\r\xd5\xa5\x13\xbe {/\x10\xd9:\x00\x8e\x0eg\t\x07vc\xfd\x9b\xfd\xa6\x84\x12\xce&lt;\xf0&lt;[\xc3j\x8d#FO\x03y,Q\x03\x03\xfc\xcas\x14\x0e\x10\x12\x9f\x9e9\x83\xa4\xdd\x9f\x9e\x06-\xe1\x90\xd2\xc8\xa3\x80\x13J\xe9h\x17\x89\xbe\xef|\xa2\xe3\x81\xce\x87:\xd9\xbd\xcd\x08Y\x16^\xf0\x83\xad\xad\xdf\x94\xac\x16\x8bqq|Z\xd1#\x98]\x08\x19]\xbb\xfd\&#39;\x00\xaf\x9e#\xd76\x8b\xf3%*\x01\x18\x9c\x80\xd1\x90o}\xa2\xc4\x9e\xa1\xc5\xac\xf0\xa4\xef\x10\xaa\x8b\xd9\xd4P\x9d\x0f\x7f]_\xd3\xc4\xaamA\x03\xf6P\xcbz\x19\x89\x1eMx*\xde\xa78\xc7\xe1\x87J\xd6\x9d\xa9\t?\xd2\r\x8eM\x9f\xdd\xc8\xd7\xf1\x83\xber\xc4\xa3G\xb5\x0c\t\xaaWp\xdf9\x8a_\xfc6\xee\x15\x8c\xe7\x91{\xf8\x92\&#39;\xdd\xf6\xb5\xba\xde\xfeq\xfe\x9f\xaa\nx\xf9\xcb\xa1\xe6\xb5ssVY$\xf9\x96\x0f8\xe2\xf9W\xfc\xf7\xc6\xb9\xf9\xca\r\xcd\xbf\xf8\x97=|\xda\x9dF\x98i\xbd\x91\xf8\x9co\xf7\xaa\xdf.\x89\x7f\xb8\xbd\xce\xa7\xdc}Nz]\x18\xf7N1\xb2Xp\xf8\xb8\xdc\x14\xed\xbc\x84L\xa2\x00`\xf4\xd70$\x0bE\x8b-J\x06\x88@\xef\x16Y\xff\x1d\xce\xbbu\xac\xdb\x11\x07\xcf\xee\xc3pY\\aQ:\xe5\x0crv&amp;\x05\xc6F\x13d\x07qc\xc9\x0b`\x00\n\xa70\x9e\x871\x8ep\x9c,\x8dby10\x90\x17\xc3\xe2`\x83y\x12\xed4\x80\xeady\x00\xe6\\\x8d\x8f\xe2\x80 *pN\xce\xac^\xd5\xbd\xee\xc3\x1f\xb3\xd2\xce\x87\xd3s\x1b\xa7\x97\x7f\xf08\xd4\t\xdbw\xd3\xa7z\xce\xaf&amp;\xb4\xf4Nx\xe9\xd5\x9f\xf1\xcei]\x8f\xfd\xd6\xb5\x91Wi\x1cb\xa6\x9e!]\xa2\xaf\xef%\x85\n\xc6\x8c\x80\xb060D\xfc\x7f\x99\x93\xc0\xe41f\x18\x17\x0c\xfa\xb6 O\x10y\x91\x14\x08u\x0c\xcb\x8c\x11\xdcp\x925\xac\x93Hd\xe7Jq\x00\xcba\xb8S\xc8 \xb0\x8a\xa3\xfb\xe6us-\xc7/\xeb]\xd1~X\xa6\xc7W\x9fl\xdd\xec \x93\xd4`\n/\xf9W\xc83\xac&quot;\xef\xc8\x84\x0e\xc5\x8d2%L\xc6\x8d0\xee)*y\xb6\xffJ\x8d\xbdM\xde\xe5\x9a\xb8\x86\xd6\xb9\xcf\xc4\xcdi\xf7\x108o\r\x13E\x89\xdc\x1eU\x89\x07\xa8\xda \x90\nC\xee\x8d&amp;)\x02\xb3F@\x8dbP\xcc\x1c\xc3T\x07\x8b\xa2\x13\xe2`2R\x079\x18\xc8X\x0e/\x83\x85J\xc4j{!8\xe6A\x9c\x07\xcdb;\x07\x9b\xe4C\xe5\xb7\xe5\x1f\x17l\xfe\x85$\x9e\n\xb5\xd9\x7f\xd3\xdd\xcf\xfdRY\xb1\xf8 \xd7\x1f\x7f\xcaIU\xa3\x83\xda\x1c\xd5\xb5\xb5\xa9\xe9\x80\xdd\xdf@_\x06:\xedsp&gt;\x81\x93\x0b\xc0\x9b!\x03\xd9f\xb3\x95\xab\x9fO\xd3%\x17\x1c\xebo\x7f\xe0\xa7\xf3\xc3\x7f\x04\xab\xfa\xfd\xea\xc3\x95;#\xf28\xbe\xf2\x1f\xa3\xfb\xc0\xe3\x81\x97I\x86\xd3l\xb8\x17n\xeb\x8d\xa3\xf21\x84\xa5\xbf\xd1\xb7\x82+\x8e\xa4e\x9e\xb3\xa0:\x13\x87]Z\xdf{\xe9\x90\xf6\xd3Yu]u\xc4\xef\x85\x97\x14\xa5\xe5\xcal\xa5\xa3\xbf~\x86(\xcaa\x8d\x9e\xcaC\xd5\xb2\x18\xbaR\xf9i\xce\xf8\x8f\xb1\\\xd259b\xf8\xbc\xc5\x1c\x03N\x85w\x07\r/\xd3\xa5/\x93\x1f\x02\x00\x00&#39;
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">line</span> <span class="mi">61</span>
+<span class="g g-Whitespace">     </span><span class="mi">57</span>         <span class="n">idx</span> <span class="o">+=</span> <span class="mi">2</span>
+<span class="g g-Whitespace">     </span><span class="mi">59</span>     <span class="k">return</span> <span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
+<span class="ne">---&gt; </span><span class="mi">61</span> <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<span class="g g-Whitespace">     </span><span class="mi">62</span> <span class="nb">print</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+
+<span class="ne">NameError</span>: name &#39;meta&#39; is not defined
 </pre></div>
 </div>
 </div>
@@ -916,6 +926,194 @@ b&#39;&lt;script data-s=&quot;0x1f523adcfeb92a7f21a72e06bdc9cd9c2265e90f0b24fbba
 <p>而且，按照所有铭文搞出来的顺序，每个铭文还有一个唯一编号。比如上面这个叫做 <a class="reference external" href="https://ordiscan.com/inscription/70316566">https://ordiscan.com/inscription/70316566</a> ，也就是编号为 <strong>70316566</strong>。 (&#64;FIXME ，官网说这里有个bug，对于一些特殊的铭文，其编号顺序有问题）</p>
 <p>ord官方还提供了一个地方来显示铭文的内容</p>
 <p><a class="reference external" href="https://ordiscan.com/content/3d59bc1eef840222dc4a1e4ae3ed4d7d4de7a6ba66c55b2537d2fbeb6349c047i0">https://ordiscan.com/content/3d59bc1eef840222dc4a1e4ae3ed4d7d4de7a6ba66c55b2537d2fbeb6349c047i0</a></p>
+</section>
+<section id="brc-20">
+<h2>BRC-20<a class="headerlink" href="#brc-20" title="Permalink to this heading">#</a></h2>
+<p>brc-20又是什么鬼，看起来类似 erc20 的东西，但是这个东西又是基于 ordinals 来搞的，有些奇怪。</p>
+<p><a class="reference external" href="https://ordiswap.gitbook.io/ordiswap/protocol-concepts/brc-20-standard">https://ordiswap.gitbook.io/ordiswap/protocol-concepts/brc-20-standard</a></p>
+<p>直接来一个例子，也就是 ORDI 这个 brc20，其对应一个铭文</p>
+<p><a class="reference external" href="https://ordinals.com/inscription/b61b0172d95e266c18aea0c624db987e971a5d6d4ebc2aaed85da4642d635735i0">https://ordinals.com/inscription/b61b0172d95e266c18aea0c624db987e971a5d6d4ebc2aaed85da4642d635735i0</a></p>
+<p>其reveal tx是 <a class="reference external" href="https://mempool.space/zh/tx/b61b0172d95e266c18aea0c624db987e971a5d6d4ebc2aaed85da4642d635735">https://mempool.space/zh/tx/b61b0172d95e266c18aea0c624db987e971a5d6d4ebc2aaed85da4642d635735</a></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reveal_txid</span> <span class="o">=</span> <span class="s1">&#39;b61b0172d95e266c18aea0c624db987e971a5d6d4ebc2aaed85da4642d635735&#39;</span>
+
+<span class="k">def</span> <span class="nf">print_inscription</span><span class="p">(</span><span class="n">reveal_txid</span><span class="p">,</span> <span class="n">splice_start</span><span class="p">,</span> <span class="n">splice_end</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="n">tx</span> <span class="o">=</span> <span class="n">get_tx_from_txid</span><span class="p">(</span><span class="n">reveal_txid</span><span class="p">)</span>
+
+    <span class="n">inner_witnessscript_asm</span> <span class="o">=</span> <span class="n">tx</span><span class="p">[</span><span class="s1">&#39;vin&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;inner_witnessscript_asm&#39;</span><span class="p">]</span>
+    <span class="n">inner_witnessscript_asm</span> <span class="o">=</span> <span class="n">inner_witnessscript_asm</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="n">inner_witnessscript_asm_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">inner_witnessscript_asm</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;inner_witnessscript_asm = </span><span class="si">{</span><span class="n">inner_witnessscript_asm_json</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">op_list</span> <span class="o">=</span> <span class="n">inner_witnessscript_asm</span><span class="p">[</span><span class="n">splice_start</span><span class="p">:</span><span class="n">splice_end</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;op_list = </span><span class="si">{</span><span class="n">op_list</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">meta</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">decode_inscription</span><span class="p">(</span><span class="n">op_list</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+
+<span class="n">print_inscription</span><span class="p">(</span><span class="n">reveal_txid</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>inner_witnessscript_asm = [
+  &quot;OP_PUSHBYTES_32&quot;,
+  &quot;9e2849b90a2353691fccedd467215c88eec89a5d0dcf468e6cf37abed344d746&quot;,
+  &quot;OP_CHECKSIG&quot;,
+  &quot;OP_0&quot;,
+  &quot;OP_IF&quot;,
+  &quot;OP_PUSHBYTES_3&quot;,
+  &quot;6f7264&quot;,
+  &quot;OP_PUSHBYTES_1&quot;,
+  &quot;01&quot;,
+  &quot;OP_PUSHBYTES_24&quot;,
+  &quot;746578742f706c61696e3b636861727365743d7574662d38&quot;,
+  &quot;OP_0&quot;,
+  &quot;OP_PUSHDATA1&quot;,
+  &quot;7b200a20202270223a20226272632d3230222c0a2020226f70223a20226465706c6f79222c0a2020227469636b223a20226f726469222c0a2020226d6178223a20223231303030303030222c0a2020226c696d223a202231303030220a7d&quot;,
+  &quot;OP_ENDIF&quot;
+]
+op_list = [&#39;OP_PUSHBYTES_3&#39;, &#39;6f7264&#39;, &#39;OP_PUSHBYTES_1&#39;, &#39;01&#39;, &#39;OP_PUSHBYTES_24&#39;, &#39;746578742f706c61696e3b636861727365743d7574662d38&#39;, &#39;OP_0&#39;, &#39;OP_PUSHDATA1&#39;, &#39;7b200a20202270223a20226272632d3230222c0a2020226f70223a20226465706c6f79222c0a2020227469636b223a20226f726469222c0a2020226d6178223a20223231303030303030222c0a2020226c696d223a202231303030220a7d&#39;]
+{
+  &quot;content-type&quot;: &quot;text/plain;charset=utf-8&quot;
+}
+{ 
+  &quot;p&quot;: &quot;brc-20&quot;,
+  &quot;op&quot;: &quot;deploy&quot;,
+  &quot;tick&quot;: &quot;ordi&quot;,
+  &quot;max&quot;: &quot;21000000&quot;,
+  &quot;lim&quot;: &quot;1000&quot;
+}
+</pre></div>
+</div>
+</div>
+</div>
+<p>上面的 <strong>lim</strong> 的意思是，每次mint至多这么多个，防止被人包干了。</p>
+<p>于是乎，这个铭文就对应了一个brc20的deploy？那这个brc20就有了？从虚空中产生了？</p>
+<p>看一个 mint ORDI 的例子</p>
+<p><a class="reference external" href="https://ordinals.com/inscription/778bf74299ba8b29df3fcf22ce66cdc45a87c21cc229eb0f6d86bc57539971d2i0">https://ordinals.com/inscription/778bf74299ba8b29df3fcf22ce66cdc45a87c21cc229eb0f6d86bc57539971d2i0</a></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reveal_txid</span> <span class="o">=</span> <span class="s1">&#39;778bf74299ba8b29df3fcf22ce66cdc45a87c21cc229eb0f6d86bc57539971d2&#39;</span>
+
+<span class="n">print_inscription</span><span class="p">(</span><span class="n">reveal_txid</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>inner_witnessscript_asm = [
+  &quot;OP_PUSHBYTES_32&quot;,
+  &quot;81b7537cf86b4fe88c7320765a3c126c1734f2dcd2504585deaf50a5430a4da6&quot;,
+  &quot;OP_CHECKSIG&quot;,
+  &quot;OP_0&quot;,
+  &quot;OP_IF&quot;,
+  &quot;OP_PUSHBYTES_3&quot;,
+  &quot;6f7264&quot;,
+  &quot;OP_PUSHBYTES_1&quot;,
+  &quot;01&quot;,
+  &quot;OP_PUSHBYTES_24&quot;,
+  &quot;746578742f706c61696e3b636861727365743d7574662d38&quot;,
+  &quot;OP_0&quot;,
+  &quot;OP_PUSHBYTES_71&quot;,
+  &quot;7b200a20202270223a20226272632d3230222c0a2020226f70223a20226d696e74222c0a2020227469636b223a20226f726469222c0a202022616d74223a202231303030220a7d&quot;,
+  &quot;OP_ENDIF&quot;
+]
+op_list = [&#39;OP_PUSHBYTES_3&#39;, &#39;6f7264&#39;, &#39;OP_PUSHBYTES_1&#39;, &#39;01&#39;, &#39;OP_PUSHBYTES_24&#39;, &#39;746578742f706c61696e3b636861727365743d7574662d38&#39;, &#39;OP_0&#39;, &#39;OP_PUSHBYTES_71&#39;, &#39;7b200a20202270223a20226272632d3230222c0a2020226f70223a20226d696e74222c0a2020227469636b223a20226f726469222c0a202022616d74223a202231303030220a7d&#39;]
+{
+  &quot;content-type&quot;: &quot;text/plain;charset=utf-8&quot;
+}
+{ 
+  &quot;p&quot;: &quot;brc-20&quot;,
+  &quot;op&quot;: &quot;mint&quot;,
+  &quot;tick&quot;: &quot;ordi&quot;,
+  &quot;amt&quot;: &quot;1000&quot;
+}
+</pre></div>
+</div>
+</div>
+</div>
+<p>这样就 mint 了 1000 个 ORDI 了。貌似这个铭文和 deploy 的那个铭文毛关系都没有，只是 BRC20 客户端自己进行规则解释的结果？</p>
+<p>下面是一个 transfer 的例子</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reveal_txid</span> <span class="o">=</span> <span class="s1">&#39;be412e058204fa0d9ac4babd2d73bd1d148c88bc904817d9882026a5509c9e06&#39;</span>
+
+<span class="n">print_inscription</span><span class="p">(</span><span class="n">reveal_txid</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>inner_witnessscript_asm = [
+  &quot;OP_PUSHBYTES_32&quot;,
+  &quot;72105d510c324751598b1b0c54a0ad002a1dd6a2970b4345cb42d12577233018&quot;,
+  &quot;OP_CHECKSIG&quot;,
+  &quot;OP_0&quot;,
+  &quot;OP_IF&quot;,
+  &quot;OP_PUSHBYTES_3&quot;,
+  &quot;6f7264&quot;,
+  &quot;OP_PUSHBYTES_1&quot;,
+  &quot;01&quot;,
+  &quot;OP_PUSHBYTES_24&quot;,
+  &quot;746578742f706c61696e3b636861727365743d7574662d38&quot;,
+  &quot;OP_0&quot;,
+  &quot;OP_PUSHBYTES_56&quot;,
+  &quot;7b2270223a226272632d3230222c226f70223a227472616e73666572222c227469636b223a226f726469222c22616d74223a22393030227d&quot;,
+  &quot;OP_ENDIF&quot;
+]
+op_list = [&#39;OP_PUSHBYTES_3&#39;, &#39;6f7264&#39;, &#39;OP_PUSHBYTES_1&#39;, &#39;01&#39;, &#39;OP_PUSHBYTES_24&#39;, &#39;746578742f706c61696e3b636861727365743d7574662d38&#39;, &#39;OP_0&#39;, &#39;OP_PUSHBYTES_56&#39;, &#39;7b2270223a226272632d3230222c226f70223a227472616e73666572222c227469636b223a226f726469222c22616d74223a22393030227d&#39;]
+{
+  &quot;content-type&quot;: &quot;text/plain;charset=utf-8&quot;
+}
+{&quot;p&quot;:&quot;brc-20&quot;,&quot;op&quot;:&quot;transfer&quot;,&quot;tick&quot;:&quot;ordi&quot;,&quot;amt&quot;:&quot;900&quot;}
+</pre></div>
+</div>
+</div>
+</div>
+<p>还有这种所谓 inscription_transfer 的。这种直接给了地址，而不是用utxo的地址？</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reveal_txid</span> <span class="o">=</span> <span class="s1">&#39;ed6d6c678dd5c7669bac7539c79c3cd74854a946c1870ee890116f87b8ea9c2c&#39;</span>
+
+<span class="n">print_inscription</span><span class="p">(</span><span class="n">reveal_txid</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>inner_witnessscript_asm = [
+  &quot;OP_PUSHBYTES_32&quot;,
+  &quot;08634c1af665c7e94ab7365e26bbaa92339cee5ed16952d9fbce6d003d70e7cb&quot;,
+  &quot;OP_CHECKSIG&quot;,
+  &quot;OP_0&quot;,
+  &quot;OP_IF&quot;,
+  &quot;OP_PUSHBYTES_3&quot;,
+  &quot;6f7264&quot;,
+  &quot;OP_PUSHBYTES_1&quot;,
+  &quot;01&quot;,
+  &quot;OP_PUSHBYTES_16&quot;,
+  &quot;6170706c69636174696f6e2f6a736f6e&quot;,
+  &quot;OP_0&quot;,
+  &quot;OP_PUSHDATA1&quot;,
+  &quot;7b0a202020202270223a20226272632d3230222c0a20202020226f70223a20227472616e73666572222c0a20202020227469636b223a20226f726469222c0a2020202022616d74223a202231222c0a2020202022746f223a2022626331706d7870337235677a346e7563307779366779776e6a736a39776576736a6c64713279646b396136306877777461766877353861716d7239687a30222c0a2020202022666565223a202231220a7d&quot;,
+  &quot;OP_ENDIF&quot;
+]
+op_list = [&#39;OP_PUSHBYTES_3&#39;, &#39;6f7264&#39;, &#39;OP_PUSHBYTES_1&#39;, &#39;01&#39;, &#39;OP_PUSHBYTES_16&#39;, &#39;6170706c69636174696f6e2f6a736f6e&#39;, &#39;OP_0&#39;, &#39;OP_PUSHDATA1&#39;, &#39;7b0a202020202270223a20226272632d3230222c0a20202020226f70223a20227472616e73666572222c0a20202020227469636b223a20226f726469222c0a2020202022616d74223a202231222c0a2020202022746f223a2022626331706d7870337235677a346e7563307779366779776e6a736a39776576736a6c64713279646b396136306877777461766877353861716d7239687a30222c0a2020202022666565223a202231220a7d&#39;]
+{
+  &quot;content-type&quot;: &quot;application/json&quot;
+}
+{
+    &quot;p&quot;: &quot;brc-20&quot;,
+    &quot;op&quot;: &quot;transfer&quot;,
+    &quot;tick&quot;: &quot;ordi&quot;,
+    &quot;amt&quot;: &quot;1&quot;,
+    &quot;to&quot;: &quot;bc1pmxp3r5gz4nuc0wy6gywnjsj9wevsjldq2ydk9a60hwwtavhw58aqmr9hz0&quot;,
+    &quot;fee&quot;: &quot;1&quot;
+}
+</pre></div>
+</div>
+</div>
+</div>
 </section>
 </section>
 
@@ -981,6 +1179,7 @@ b&#39;&lt;script data-s=&quot;0x1f523adcfeb92a7f21a72e06bdc9cd9c2265e90f0b24fbba
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">铭文</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brc-20">BRC-20</a></li>
 </ul>
   </nav></div>
 
