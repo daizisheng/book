@@ -1114,6 +1114,18 @@ op_list = [&#39;OP_PUSHBYTES_3&#39;, &#39;6f7264&#39;, &#39;OP_PUSHBYTES_1&#39;,
 </div>
 </div>
 </div>
+<p><a class="reference external" href="https://layer1.gitbook.io/layer1-foundation/protocols/brc-20/documentation">https://layer1.gitbook.io/layer1-foundation/protocols/brc-20/documentation</a></p>
+<p>这个页面解释了铭文和BRC20的关系</p>
+<ol class="arabic simple">
+<li><p>mint而言，搞出来的铭文的第一个owner得到balance，以后这个铭文转移到任何地方都没有关系了。</p></li>
+<li><p>transfer而言，搞出来的铭文transfer给sender，然后sender transfer这个铭文的目标得到balance。</p></li>
+</ol>
+<p>这尼玛感觉有个bug，举例如下：</p>
+<ol class="arabic simple">
+<li><p>A有比如 1000 个 ORDI</p></li>
+<li><p>B搞一个transfer的铭文，内容是转移出500个，然后reveal给A，这个时候A并不知道，反正就是被动接受了而已</p></li>
+<li><p>A往外打钱，在不知情的情况下，把B打给自己的UTXO给打出去了，这样 500 个ORDI就不知情的打出去了？</p></li>
+</ol>
 </section>
 </section>
 
