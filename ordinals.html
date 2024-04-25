@@ -1326,7 +1326,14 @@ Rune name is @FIXME  BITCOINPEPEMATRIW
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mint_txid</span> <span class="o">=</span> <span class="s1">&#39;1b8587082a46af5f1cde323f56bcf22c586fc9ad8fc314d71e888abb2108c24a&#39;</span>
 
+<span class="c1"># Mint的是 840000:1 ，也就是 **Z•Z•Z•Z•Z•FEHU•Z•Z•Z•Z•Z**</span>
+
 <span class="n">decode_runes_op</span><span class="p">(</span><span class="n">mint_txid</span><span class="p">)</span>
+
+<span class="n">zzz_deploy_txid</span> <span class="o">=</span> <span class="s1">&#39;2bb85f4b004be6da54f766c17c1e855187327112c231ef2ff35ebad0ea67c69e&#39;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+<span class="n">decode_runes_op</span><span class="p">(</span><span class="n">zzz_deploy_txid</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1336,6 +1343,23 @@ Rune name is @FIXME  BITCOINPEPEMATRIW
 [20, 840000, 20, 1]
 field:  20 , name: Mint         , value: [840000, 1]
 edicts = []
+--------------------------------------------------
+decode_runes_op for 2bb85f4b004be6da54f766c17c1e855187327112c231ef2ff35ebad0ea67c69e
+
+[2, 7, 4, 67090369340599840949, 5, 5792, 3, 7967, 1, 2, 6, 11000000000, 8, 1111111, 10, 100]
+field:   2 , name: Flags        , value: [7]
+field:   4 , name: Rune         , value: [67090369340599840949]
+field:   5 , name: Symbol       , value: [5792]
+field:   3 , name: Spacers      , value: [7967]
+field:   1 , name: Divisibility , value: [2]
+field:   6 , name: Premine      , value: [11000000000]
+field:   8 , name: Cap          , value: [1111111]
+field:  10 , name: Amount       , value: [100]
+edicts = []
+Flag.Etching = True
+Flag.Terms = True
+Flag.Turbo = True
+Rune name is @FIXME  AAAAA@FEHVAAA@Y
 </pre></div>
 </div>
 </div>
