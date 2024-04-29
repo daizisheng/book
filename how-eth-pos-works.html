@@ -1,0 +1,1000 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>POS &#8212; My book</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'how-eth-pos-works';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="My book - Home"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="My book - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Welcome to your Jupyter Book
+                </a>
+            </li>
+        </ul>
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="how-to-save-btc-safely.html">How to save btc safely.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to-use-electrum.html">How to use electrum?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ordinals.html">Ordinals</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/daizisheng/book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/daizisheng/book/issues/new?title=Issue%20on%20page%20%2Fhow-eth-pos-works.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/how-eth-pos-works.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>POS</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#execution-client">Execution client</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#engine-api">Engine API</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#beacon-node-startup">1. beacon node startup</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#validator">Validator</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#eth-deposit-contract-32-eth">先去ETH deposit contract 上打入 32 个 ETH</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="pos">
+<h1>POS<a class="headerlink" href="#pos" title="Permalink to this heading">#</a></h1>
+<p><a class="reference external" href="https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/">https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/</a></p>
+<section id="execution-client">
+<h2>Execution client<a class="headerlink" href="#execution-client" title="Permalink to this heading">#</a></h2>
+<p><img alt="" src="_images/_content_developers_docs_nodes-and-clients_eth1eth2client.png" /></p>
+<p>执行客户端感觉就是之前的 eth 客户端，有 mempool ，打包之类的东西，也有 p2p 网络做数据的交换。</p>
+<p>按照 <a class="reference external" href="https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/">https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/</a> 上面的说法，执行客户端负责：</p>
+<ol class="arabic simple">
+<li><p>收到tx之后，验证tx的正确性，比如签名是否ok，以及余额是否足够；</p></li>
+<li><p>验证tx之后，把tx放在mempool中，并通过自己的 p2p 网络广播出去；</p></li>
+<li><p>在共识客户端的引导下，执行打包和计算state 改变等任务。</p></li>
+</ol>
+</section>
+<section id="engine-api">
+<h2>Engine API<a class="headerlink" href="#engine-api" title="Permalink to this heading">#</a></h2>
+<p>执行客户端和共识客户端之间的API就是这个所谓的 Engine API，其细节都在</p>
+<p><a class="github reference external" href="https://github.com/ethereum/execution-apis/blob/main/src/engine/README.md">ethereum/execution-apis</a></p>
+<p>但是，这个文档并不直观，一个直观的介绍在</p>
+<p><a class="reference external" href="https://hackmd.io/&#64;danielrachi/engine_api">https://hackmd.io/&#64;danielrachi/engine_api</a></p>
+<p>这个介绍是可以做一些实验的。</p>
+<section id="beacon-node-startup">
+<h3>1. beacon node startup<a class="headerlink" href="#beacon-node-startup" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span><span class="o">,</span> <span class="nn">jwt</span><span class="o">,</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="n">jwt_secret_fn</span> <span class="o">=</span> <span class="s1">&#39;/etc/sg-a-jwt.hex&#39;</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">jwt_secret_fn</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">jwt_secret</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">jwt_secret</span><span class="p">)</span> <span class="o">==</span> <span class="mi">64</span>
+<span class="n">jwt_secret_bytes</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">jwt_secret</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">jwt_secret_bytes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">32</span>
+
+<span class="k">def</span> <span class="nf">print_obj</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">call_engine_api</span><span class="p">(</span><span class="n">payload</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">jwt_secret_bytes</span>
+
+    <span class="n">jwt_payload</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;iat&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()),</span>
+    <span class="p">}</span>
+    <span class="n">jwt_token</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">jwt_payload</span><span class="p">,</span> <span class="n">jwt_secret_bytes</span><span class="p">,</span> <span class="n">algorithm</span><span class="o">=</span><span class="s1">&#39;HS256&#39;</span><span class="p">)</span>
+
+    <span class="n">engine_api_endpoint</span> <span class="o">=</span> <span class="s1">&#39;http://localhost:8551&#39;</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s1">&#39;POST&#39;</span><span class="p">,</span> <span class="n">engine_api_endpoint</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;Authorization&#39;</span><span class="p">:</span> <span class="s1">&#39;Bearer &#39;</span> <span class="o">+</span> <span class="n">jwt_token</span><span class="p">,</span>
+        <span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">,</span>
+    <span class="p">})</span>
+
+    <span class="n">obj</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="c1">#print_obj(obj)</span>
+    <span class="k">assert</span> <span class="n">obj</span><span class="p">[</span><span class="s2">&quot;jsonrpc&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;2.0&quot;</span>
+
+    <span class="k">return</span> <span class="n">obj</span>
+
+<span class="c1"># test call</span>
+<span class="n">ret</span> <span class="o">=</span> <span class="n">call_engine_api</span><span class="p">({</span>
+    <span class="s2">&quot;jsonrpc&quot;</span><span class="p">:</span> <span class="s2">&quot;2.0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;eth_blockNumber&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">})</span>
+<span class="n">blocknumber</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">blocknumber</span> <span class="o">&gt;</span> <span class="mi">0</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;bloknumber is </span><span class="si">{</span><span class="n">blocknumber</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>bloknumber is 19759839
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## from CL to EL</span>
+
+<span class="n">ret</span> <span class="o">=</span> <span class="n">call_engine_api</span><span class="p">({</span>
+    <span class="s2">&quot;jsonrpc&quot;</span><span class="p">:</span> <span class="s2">&quot;2.0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;engine_exchangeCapabilities&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">[</span> <span class="p">[]</span> <span class="p">],</span>
+    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">})</span>
+<span class="n">print_obj</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{
+  &quot;jsonrpc&quot;: &quot;2.0&quot;,
+  &quot;id&quot;: 1,
+  &quot;result&quot;: [
+    &quot;engine_forkchoiceUpdatedV1&quot;,
+    &quot;engine_forkchoiceUpdatedV2&quot;,
+    &quot;engine_forkchoiceUpdatedV3&quot;,
+    &quot;engine_newPayloadV1&quot;,
+    &quot;engine_newPayloadV2&quot;,
+    &quot;engine_newPayloadV3&quot;,
+    &quot;engine_getPayloadV1&quot;,
+    &quot;engine_getPayloadV2&quot;,
+    &quot;engine_getPayloadV3&quot;,
+    &quot;engine_exchangeTransitionConfigurationV1&quot;,
+    &quot;engine_getPayloadBodiesByHashV1&quot;,
+    &quot;engine_getPayloadBodiesByRangeV1&quot;
+  ]
+}
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="validator">
+<h2>Validator<a class="headerlink" href="#validator" title="Permalink to this heading">#</a></h2>
+<section id="eth-deposit-contract-32-eth">
+<h3>先去ETH deposit contract 上打入 32 个 ETH<a class="headerlink" href="#eth-deposit-contract-32-eth" title="Permalink to this heading">#</a></h3>
+<p><a class="github reference external" href="https://github.com/ethereum/consensus-specs/blob/dev/solidity_deposit_contract/deposit_contract.sol">ethereum/consensus-specs</a></p>
+<p><a class="reference external" href="https://etherscan.io/address/0x00000000219ab540356cbb839cbe05303d7705fa">https://etherscan.io/address/0x00000000219ab540356cbb839cbe05303d7705fa</a></p>
+<p>下面是合约内容</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%javascript</span>
+
+<span class="c1">// ┏━━━┓━┏┓━┏┓━━┏━━━┓━━┏━━━┓━━━━┏━━━┓━━━━━━━━━━━━━━━━━━━┏┓━━━━━┏━━━┓━━━━━━━━━┏┓━━━━━━━━━━━━━━┏┓━</span>
+<span class="c1">// ┃┏━━┛┏┛┗┓┃┃━━┃┏━┓┃━━┃┏━┓┃━━━━┗┓┏┓┃━━━━━━━━━━━━━━━━━━┏┛┗┓━━━━┃┏━┓┃━━━━━━━━┏┛┗┓━━━━━━━━━━━━┏┛┗┓</span>
+<span class="c1">// ┃┗━━┓┗┓┏┛┃┗━┓┗┛┏┛┃━━┃┃━┃┃━━━━━┃┃┃┃┏━━┓┏━━┓┏━━┓┏━━┓┏┓┗┓┏┛━━━━┃┃━┗┛┏━━┓┏━┓━┗┓┏┛┏━┓┏━━┓━┏━━┓┗┓┏┛</span>
+<span class="c1">// ┃┏━━┛━┃┃━┃┏┓┃┏━┛┏┛━━┃┃━┃┃━━━━━┃┃┃┃┃┏┓┃┃┏┓┃┃┏┓┃┃━━┫┣┫━┃┃━━━━━┃┃━┏┓┃┏┓┃┃┏┓┓━┃┃━┃┏┛┗━┓┃━┃┏━┛━┃┃━</span>
+<span class="c1">// ┃┗━━┓━┃┗┓┃┃┃┃┃┃┗━┓┏┓┃┗━┛┃━━━━┏┛┗┛┃┃┃━┫┃┗┛┃┃┗┛┃┣━━┃┃┃━┃┗┓━━━━┃┗━┛┃┃┗┛┃┃┃┃┃━┃┗┓┃┃━┃┗┛┗┓┃┗━┓━┃┗┓</span>
+<span class="c1">// ┗━━━┛━┗━┛┗┛┗┛┗━━━┛┗┛┗━━━┛━━━━┗━━━┛┗━━┛┃┏━┛┗━━┛┗━━┛┗┛━┗━┛━━━━┗━━━┛┗━━┛┗┛┗┛━┗━┛┗┛━┗━━━┛┗━━┛━┗━┛</span>
+<span class="c1">// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┃┃━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+<span class="c1">// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┗┛━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+
+<span class="c1">// SPDX-License-Identifier: CC0-1.0</span>
+
+<span class="nx">pragma</span><span class="w"> </span><span class="nx">solidity</span><span class="w"> </span><span class="mf">0.6.11</span><span class="p">;</span>
+
+<span class="c1">// This interface is designed to be compatible with the Vyper version.</span>
+<span class="c1">/// @notice This is the Ethereum 2.0 deposit contract interface.</span>
+<span class="c1">/// For more information see the Phase 0 specification under https://github.com/ethereum/eth2.0-specs</span>
+<span class="kr">interface</span><span class="w"> </span><span class="nx">IDepositContract</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">/// @notice A processed deposit event.</span>
+<span class="w">    </span><span class="nx">event</span><span class="w"> </span><span class="nx">DepositEvent</span><span class="p">(</span>
+<span class="w">        </span><span class="nx">bytes</span><span class="w"> </span><span class="nx">pubkey</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">bytes</span><span class="w"> </span><span class="nx">withdrawal_credentials</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">bytes</span><span class="w"> </span><span class="nx">amount</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">bytes</span><span class="w"> </span><span class="nx">signature</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">bytes</span><span class="w"> </span><span class="nx">index</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">/// @notice Submit a Phase 0 DepositData object.</span>
+<span class="w">    </span><span class="c1">/// @param pubkey A BLS12-381 public key.</span>
+<span class="w">    </span><span class="c1">/// @param withdrawal_credentials Commitment to a public key for withdrawals.</span>
+<span class="w">    </span><span class="c1">/// @param signature A BLS12-381 signature.</span>
+<span class="w">    </span><span class="c1">/// @param deposit_data_root The SHA-256 hash of the SSZ-encoded DepositData object.</span>
+<span class="w">    </span><span class="c1">/// Used as a protection against malformed input.</span>
+<span class="w">    </span><span class="kd">function</span><span class="w"> </span><span class="nx">deposit</span><span class="p">(</span>
+<span class="w">        </span><span class="nx">bytes</span><span class="w"> </span><span class="nx">calldata</span><span class="w"> </span><span class="nx">pubkey</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">bytes</span><span class="w"> </span><span class="nx">calldata</span><span class="w"> </span><span class="nx">withdrawal_credentials</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">bytes</span><span class="w"> </span><span class="nx">calldata</span><span class="w"> </span><span class="nx">signature</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">bytes32</span><span class="w"> </span><span class="nx">deposit_data_root</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="nx">external</span><span class="w"> </span><span class="nx">payable</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">/// @notice Query the current deposit root hash.</span>
+<span class="w">    </span><span class="c1">/// @return The deposit root hash.</span>
+<span class="w">    </span><span class="kd">function</span><span class="w"> </span><span class="nx">get_deposit_root</span><span class="p">()</span><span class="w"> </span><span class="nx">external</span><span class="w"> </span><span class="nx">view</span><span class="w"> </span><span class="nx">returns</span><span class="w"> </span><span class="p">(</span><span class="nx">bytes32</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">/// @notice Query the current deposit count.</span>
+<span class="w">    </span><span class="c1">/// @return The deposit count encoded as a little endian 64-bit number.</span>
+<span class="w">    </span><span class="kd">function</span><span class="w"> </span><span class="nx">get_deposit_count</span><span class="p">()</span><span class="w"> </span><span class="nx">external</span><span class="w"> </span><span class="nx">view</span><span class="w"> </span><span class="nx">returns</span><span class="w"> </span><span class="p">(</span><span class="nx">bytes</span><span class="w"> </span><span class="nx">memory</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// Based on official specification in https://eips.ethereum.org/EIPS/eip-165</span>
+<span class="kr">interface</span><span class="w"> </span><span class="nx">ERC165</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">/// @notice Query if a contract implements an interface</span>
+<span class="w">    </span><span class="c1">/// @param interfaceId The interface identifier, as specified in ERC-165</span>
+<span class="w">    </span><span class="c1">/// @dev Interface identification is specified in ERC-165. This function</span>
+<span class="w">    </span><span class="c1">///  uses less than 30,000 gas.</span>
+<span class="w">    </span><span class="c1">/// @return `true` if the contract implements `interfaceId` and</span>
+<span class="w">    </span><span class="c1">///  `interfaceId` is not 0xffffffff, `false` otherwise</span>
+<span class="w">    </span><span class="kd">function</span><span class="w"> </span><span class="nx">supportsInterface</span><span class="p">(</span><span class="nx">bytes4</span><span class="w"> </span><span class="nx">interfaceId</span><span class="p">)</span><span class="w"> </span><span class="nx">external</span><span class="w"> </span><span class="nx">pure</span><span class="w"> </span><span class="nx">returns</span><span class="w"> </span><span class="p">(</span><span class="nx">bool</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// This is a rewrite of the Vyper Eth2.0 deposit contract in Solidity.</span>
+<span class="c1">// It tries to stay as close as possible to the original source code.</span>
+<span class="c1">/// @notice This is the Ethereum 2.0 deposit contract interface.</span>
+<span class="c1">/// For more information see the Phase 0 specification under https://github.com/ethereum/eth2.0-specs</span>
+<span class="nx">contract</span><span class="w"> </span><span class="nx">DepositContract</span><span class="w"> </span><span class="nx">is</span><span class="w"> </span><span class="nx">IDepositContract</span><span class="p">,</span><span class="w"> </span><span class="nx">ERC165</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">uint</span><span class="w"> </span><span class="nx">constant</span><span class="w"> </span><span class="nx">DEPOSIT_CONTRACT_TREE_DEPTH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">32</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// NOTE: this also ensures `deposit_count` will fit into 64-bits</span>
+
+<span class="w">    </span><span class="c1">// 最大的可DEPOSIT的数量，2^32-1，不是ETH个数，是DEPOSIT的数量，也就是32个ETH只算一次</span>
+<span class="w">    </span><span class="nx">uint</span><span class="w"> </span><span class="nx">constant</span><span class="w"> </span><span class="nx">MAX_DEPOSIT_COUNT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">2</span><span class="o">**</span><span class="nx">DEPOSIT_CONTRACT_TREE_DEPTH</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">1</span><span class="p">;</span>
+
+<span class="w">    </span><span class="nx">bytes32</span><span class="p">[</span><span class="nx">DEPOSIT_CONTRACT_TREE_DEPTH</span><span class="p">]</span><span class="w"> </span><span class="nx">branch</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">uint256</span><span class="w"> </span><span class="nx">deposit_count</span><span class="p">;</span>
+
+<span class="w">    </span><span class="nx">bytes32</span><span class="p">[</span><span class="nx">DEPOSIT_CONTRACT_TREE_DEPTH</span><span class="p">]</span><span class="w"> </span><span class="nx">zero_hashes</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kr">constructor</span><span class="p">()</span><span class="w"> </span><span class="kr">public</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Compute hashes in empty sparse Merkle tree</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="nx">uint</span><span class="w"> </span><span class="nx">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="w"> </span><span class="nx">height</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nx">DEPOSIT_CONTRACT_TREE_DEPTH</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">1</span><span class="p">;</span><span class="w"> </span><span class="nx">height</span><span class="o">++</span><span class="p">)</span>
+<span class="w">            </span><span class="nx">zero_hashes</span><span class="p">[</span><span class="nx">height</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">sha256</span><span class="p">(</span><span class="nx">abi</span><span class="p">.</span><span class="nx">encodePacked</span><span class="p">(</span><span class="nx">zero_hashes</span><span class="p">[</span><span class="nx">height</span><span class="p">],</span><span class="w"> </span><span class="nx">zero_hashes</span><span class="p">[</span><span class="nx">height</span><span class="p">]));</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">function</span><span class="w"> </span><span class="nx">get_deposit_root</span><span class="p">()</span><span class="w"> </span><span class="nx">override</span><span class="w"> </span><span class="nx">external</span><span class="w"> </span><span class="nx">view</span><span class="w"> </span><span class="nx">returns</span><span class="w"> </span><span class="p">(</span><span class="nx">bytes32</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">bytes32</span><span class="w"> </span><span class="nx">node</span><span class="p">;</span>
+<span class="w">        </span><span class="nx">uint</span><span class="w"> </span><span class="nx">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">deposit_count</span><span class="p">;</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="nx">uint</span><span class="w"> </span><span class="nx">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="w"> </span><span class="nx">height</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nx">DEPOSIT_CONTRACT_TREE_DEPTH</span><span class="p">;</span><span class="w"> </span><span class="nx">height</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="nx">size</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span>
+<span class="w">                </span><span class="nx">node</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">sha256</span><span class="p">(</span><span class="nx">abi</span><span class="p">.</span><span class="nx">encodePacked</span><span class="p">(</span><span class="nx">branch</span><span class="p">[</span><span class="nx">height</span><span class="p">],</span><span class="w"> </span><span class="nx">node</span><span class="p">));</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="w">                </span><span class="nx">node</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">sha256</span><span class="p">(</span><span class="nx">abi</span><span class="p">.</span><span class="nx">encodePacked</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span><span class="w"> </span><span class="nx">zero_hashes</span><span class="p">[</span><span class="nx">height</span><span class="p">]));</span>
+<span class="w">            </span><span class="nx">size</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="mf">2</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">sha256</span><span class="p">(</span><span class="nx">abi</span><span class="p">.</span><span class="nx">encodePacked</span><span class="p">(</span>
+<span class="w">            </span><span class="nx">node</span><span class="p">,</span>
+<span class="w">            </span><span class="nx">to_little_endian_64</span><span class="p">(</span><span class="nx">uint64</span><span class="p">(</span><span class="nx">deposit_count</span><span class="p">)),</span>
+<span class="w">            </span><span class="nx">bytes24</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="w">        </span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">function</span><span class="w"> </span><span class="nx">get_deposit_count</span><span class="p">()</span><span class="w"> </span><span class="nx">override</span><span class="w"> </span><span class="nx">external</span><span class="w"> </span><span class="nx">view</span><span class="w"> </span><span class="nx">returns</span><span class="w"> </span><span class="p">(</span><span class="nx">bytes</span><span class="w"> </span><span class="nx">memory</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">to_little_endian_64</span><span class="p">(</span><span class="nx">uint64</span><span class="p">(</span><span class="nx">deposit_count</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">function</span><span class="w"> </span><span class="nx">deposit</span><span class="p">(</span>
+<span class="w">        </span><span class="nx">bytes</span><span class="w"> </span><span class="nx">calldata</span><span class="w"> </span><span class="nx">pubkey</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">bytes</span><span class="w"> </span><span class="nx">calldata</span><span class="w"> </span><span class="nx">withdrawal_credentials</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">bytes</span><span class="w"> </span><span class="nx">calldata</span><span class="w"> </span><span class="nx">signature</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">bytes32</span><span class="w"> </span><span class="nx">deposit_data_root</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="nx">override</span><span class="w"> </span><span class="nx">external</span><span class="w"> </span><span class="nx">payable</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Extended ABI length checks since dynamic types are used.</span>
+<span class="w">        </span><span class="nx">require</span><span class="p">(</span><span class="nx">pubkey</span><span class="p">.</span><span class="nx">length</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mf">48</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;DepositContract: invalid pubkey length&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="nx">require</span><span class="p">(</span><span class="nx">withdrawal_credentials</span><span class="p">.</span><span class="nx">length</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mf">32</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;DepositContract: invalid withdrawal_credentials length&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="nx">require</span><span class="p">(</span><span class="nx">signature</span><span class="p">.</span><span class="nx">length</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mf">96</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;DepositContract: invalid signature length&quot;</span><span class="p">);</span>
+
+<span class="w">        </span><span class="c1">// Check deposit amount</span>
+<span class="w">        </span><span class="nx">require</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">value</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mf">1</span><span class="w"> </span><span class="nx">ether</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;DepositContract: deposit value too low&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="nx">require</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">value</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mf">1</span><span class="w"> </span><span class="nx">gwei</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;DepositContract: deposit value not multiple of gwei&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="nx">uint</span><span class="w"> </span><span class="nx">deposit_amount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">msg</span><span class="p">.</span><span class="nx">value</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1</span><span class="w"> </span><span class="nx">gwei</span><span class="p">;</span>
+<span class="w">        </span><span class="nx">require</span><span class="p">(</span><span class="nx">deposit_amount</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="nx">type</span><span class="p">(</span><span class="nx">uint64</span><span class="p">).</span><span class="nx">max</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;DepositContract: deposit value too high&quot;</span><span class="p">);</span>
+
+<span class="w">        </span><span class="c1">// Emit `DepositEvent` log</span>
+<span class="w">        </span><span class="nx">bytes</span><span class="w"> </span><span class="nx">memory</span><span class="w"> </span><span class="nx">amount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">to_little_endian_64</span><span class="p">(</span><span class="nx">uint64</span><span class="p">(</span><span class="nx">deposit_amount</span><span class="p">));</span>
+<span class="w">        </span><span class="nx">emit</span><span class="w"> </span><span class="nx">DepositEvent</span><span class="p">(</span>
+<span class="w">            </span><span class="nx">pubkey</span><span class="p">,</span>
+<span class="w">            </span><span class="nx">withdrawal_credentials</span><span class="p">,</span>
+<span class="w">            </span><span class="nx">amount</span><span class="p">,</span>
+<span class="w">            </span><span class="nx">signature</span><span class="p">,</span>
+<span class="w">            </span><span class="nx">to_little_endian_64</span><span class="p">(</span><span class="nx">uint64</span><span class="p">(</span><span class="nx">deposit_count</span><span class="p">))</span>
+<span class="w">        </span><span class="p">);</span>
+
+<span class="w">        </span><span class="c1">// Compute deposit data root (`DepositData` hash tree root)</span>
+<span class="w">        </span><span class="nx">bytes32</span><span class="w"> </span><span class="nx">pubkey_root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">sha256</span><span class="p">(</span><span class="nx">abi</span><span class="p">.</span><span class="nx">encodePacked</span><span class="p">(</span><span class="nx">pubkey</span><span class="p">,</span><span class="w"> </span><span class="nx">bytes16</span><span class="p">(</span><span class="mf">0</span><span class="p">)));</span>
+<span class="w">        </span><span class="nx">bytes32</span><span class="w"> </span><span class="nx">signature_root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">sha256</span><span class="p">(</span><span class="nx">abi</span><span class="p">.</span><span class="nx">encodePacked</span><span class="p">(</span>
+<span class="w">            </span><span class="nx">sha256</span><span class="p">(</span><span class="nx">abi</span><span class="p">.</span><span class="nx">encodePacked</span><span class="p">(</span><span class="nx">signature</span><span class="p">[</span><span class="o">:</span><span class="mf">64</span><span class="p">])),</span>
+<span class="w">            </span><span class="nx">sha256</span><span class="p">(</span><span class="nx">abi</span><span class="p">.</span><span class="nx">encodePacked</span><span class="p">(</span><span class="nx">signature</span><span class="p">[</span><span class="mf">64</span><span class="o">:</span><span class="p">],</span><span class="w"> </span><span class="nx">bytes32</span><span class="p">(</span><span class="mf">0</span><span class="p">)))</span>
+<span class="w">        </span><span class="p">));</span>
+<span class="w">        </span><span class="nx">bytes32</span><span class="w"> </span><span class="nx">node</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">sha256</span><span class="p">(</span><span class="nx">abi</span><span class="p">.</span><span class="nx">encodePacked</span><span class="p">(</span>
+<span class="w">            </span><span class="nx">sha256</span><span class="p">(</span><span class="nx">abi</span><span class="p">.</span><span class="nx">encodePacked</span><span class="p">(</span><span class="nx">pubkey_root</span><span class="p">,</span><span class="w"> </span><span class="nx">withdrawal_credentials</span><span class="p">)),</span>
+<span class="w">            </span><span class="nx">sha256</span><span class="p">(</span><span class="nx">abi</span><span class="p">.</span><span class="nx">encodePacked</span><span class="p">(</span><span class="nx">amount</span><span class="p">,</span><span class="w"> </span><span class="nx">bytes24</span><span class="p">(</span><span class="mf">0</span><span class="p">),</span><span class="w"> </span><span class="nx">signature_root</span><span class="p">))</span>
+<span class="w">        </span><span class="p">));</span>
+
+<span class="w">        </span><span class="c1">// Verify computed and expected deposit data roots match</span>
+<span class="w">        </span><span class="nx">require</span><span class="p">(</span><span class="nx">node</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nx">deposit_data_root</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;DepositContract: reconstructed DepositData does not match supplied deposit_data_root&quot;</span><span class="p">);</span>
+
+<span class="w">        </span><span class="c1">// Avoid overflowing the Merkle tree (and prevent edge case in computing `branch`)</span>
+<span class="w">        </span><span class="nx">require</span><span class="p">(</span><span class="nx">deposit_count</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nx">MAX_DEPOSIT_COUNT</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;DepositContract: merkle tree full&quot;</span><span class="p">);</span>
+
+<span class="w">        </span><span class="c1">// Add deposit data root to Merkle tree (update a single `branch` node)</span>
+<span class="w">        </span><span class="nx">deposit_count</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mf">1</span><span class="p">;</span>
+<span class="w">        </span><span class="nx">uint</span><span class="w"> </span><span class="nx">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">deposit_count</span><span class="p">;</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="nx">uint</span><span class="w"> </span><span class="nx">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="w"> </span><span class="nx">height</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nx">DEPOSIT_CONTRACT_TREE_DEPTH</span><span class="p">;</span><span class="w"> </span><span class="nx">height</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="nx">size</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nx">branch</span><span class="p">[</span><span class="nx">height</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">node</span><span class="p">;</span>
+<span class="w">                </span><span class="k">return</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="nx">node</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">sha256</span><span class="p">(</span><span class="nx">abi</span><span class="p">.</span><span class="nx">encodePacked</span><span class="p">(</span><span class="nx">branch</span><span class="p">[</span><span class="nx">height</span><span class="p">],</span><span class="w"> </span><span class="nx">node</span><span class="p">));</span>
+<span class="w">            </span><span class="nx">size</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="mf">2</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="c1">// As the loop should always end prematurely with the `return` statement,</span>
+<span class="w">        </span><span class="c1">// this code should be unreachable. We assert `false` just to be safe.</span>
+<span class="w">        </span><span class="nx">assert</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">function</span><span class="w"> </span><span class="nx">supportsInterface</span><span class="p">(</span><span class="nx">bytes4</span><span class="w"> </span><span class="nx">interfaceId</span><span class="p">)</span><span class="w"> </span><span class="nx">override</span><span class="w"> </span><span class="nx">external</span><span class="w"> </span><span class="nx">pure</span><span class="w"> </span><span class="nx">returns</span><span class="w"> </span><span class="p">(</span><span class="nx">bool</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">interfaceId</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nx">type</span><span class="p">(</span><span class="nx">ERC165</span><span class="p">).</span><span class="nx">interfaceId</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nx">interfaceId</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nx">type</span><span class="p">(</span><span class="nx">IDepositContract</span><span class="p">).</span><span class="nx">interfaceId</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">function</span><span class="w"> </span><span class="nx">to_little_endian_64</span><span class="p">(</span><span class="nx">uint64</span><span class="w"> </span><span class="nx">value</span><span class="p">)</span><span class="w"> </span><span class="nx">internal</span><span class="w"> </span><span class="nx">pure</span><span class="w"> </span><span class="nx">returns</span><span class="w"> </span><span class="p">(</span><span class="nx">bytes</span><span class="w"> </span><span class="nx">memory</span><span class="w"> </span><span class="nx">ret</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">ret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">bytes</span><span class="p">(</span><span class="mf">8</span><span class="p">);</span>
+<span class="w">        </span><span class="nx">bytes8</span><span class="w"> </span><span class="nx">bytesValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">bytes8</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// Byteswapping during copying to bytes.</span>
+<span class="w">        </span><span class="nx">ret</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">bytesValue</span><span class="p">[</span><span class="mf">7</span><span class="p">];</span>
+<span class="w">        </span><span class="nx">ret</span><span class="p">[</span><span class="mf">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">bytesValue</span><span class="p">[</span><span class="mf">6</span><span class="p">];</span>
+<span class="w">        </span><span class="nx">ret</span><span class="p">[</span><span class="mf">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">bytesValue</span><span class="p">[</span><span class="mf">5</span><span class="p">];</span>
+<span class="w">        </span><span class="nx">ret</span><span class="p">[</span><span class="mf">3</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">bytesValue</span><span class="p">[</span><span class="mf">4</span><span class="p">];</span>
+<span class="w">        </span><span class="nx">ret</span><span class="p">[</span><span class="mf">4</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">bytesValue</span><span class="p">[</span><span class="mf">3</span><span class="p">];</span>
+<span class="w">        </span><span class="nx">ret</span><span class="p">[</span><span class="mf">5</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">bytesValue</span><span class="p">[</span><span class="mf">2</span><span class="p">];</span>
+<span class="w">        </span><span class="nx">ret</span><span class="p">[</span><span class="mf">6</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">bytesValue</span><span class="p">[</span><span class="mf">1</span><span class="p">];</span>
+<span class="w">        </span><span class="nx">ret</span><span class="p">[</span><span class="mf">7</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">bytesValue</span><span class="p">[</span><span class="mf">0</span><span class="p">];</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/javascript">
+// ┏━━━┓━┏┓━┏┓━━┏━━━┓━━┏━━━┓━━━━┏━━━┓━━━━━━━━━━━━━━━━━━━┏┓━━━━━┏━━━┓━━━━━━━━━┏┓━━━━━━━━━━━━━━┏┓━
+// ┃┏━━┛┏┛┗┓┃┃━━┃┏━┓┃━━┃┏━┓┃━━━━┗┓┏┓┃━━━━━━━━━━━━━━━━━━┏┛┗┓━━━━┃┏━┓┃━━━━━━━━┏┛┗┓━━━━━━━━━━━━┏┛┗┓
+// ┃┗━━┓┗┓┏┛┃┗━┓┗┛┏┛┃━━┃┃━┃┃━━━━━┃┃┃┃┏━━┓┏━━┓┏━━┓┏━━┓┏┓┗┓┏┛━━━━┃┃━┗┛┏━━┓┏━┓━┗┓┏┛┏━┓┏━━┓━┏━━┓┗┓┏┛
+// ┃┏━━┛━┃┃━┃┏┓┃┏━┛┏┛━━┃┃━┃┃━━━━━┃┃┃┃┃┏┓┃┃┏┓┃┃┏┓┃┃━━┫┣┫━┃┃━━━━━┃┃━┏┓┃┏┓┃┃┏┓┓━┃┃━┃┏┛┗━┓┃━┃┏━┛━┃┃━
+// ┃┗━━┓━┃┗┓┃┃┃┃┃┃┗━┓┏┓┃┗━┛┃━━━━┏┛┗┛┃┃┃━┫┃┗┛┃┃┗┛┃┣━━┃┃┃━┃┗┓━━━━┃┗━┛┃┃┗┛┃┃┃┃┃━┃┗┓┃┃━┃┗┛┗┓┃┗━┓━┃┗┓
+// ┗━━━┛━┗━┛┗┛┗┛┗━━━┛┗┛┗━━━┛━━━━┗━━━┛┗━━┛┃┏━┛┗━━┛┗━━┛┗┛━┗━┛━━━━┗━━━┛┗━━┛┗┛┗┛━┗━┛┗┛━┗━━━┛┗━━┛━┗━┛
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┃┃━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┗┛━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// SPDX-License-Identifier: CC0-1.0
+
+pragma solidity 0.6.11;
+
+// This interface is designed to be compatible with the Vyper version.
+/// @notice This is the Ethereum 2.0 deposit contract interface.
+/// For more information see the Phase 0 specification under https://github.com/ethereum/eth2.0-specs
+interface IDepositContract {
+    /// @notice A processed deposit event.
+    event DepositEvent(
+        bytes pubkey,
+        bytes withdrawal_credentials,
+        bytes amount,
+        bytes signature,
+        bytes index
+    );
+
+    /// @notice Submit a Phase 0 DepositData object.
+    /// @param pubkey A BLS12-381 public key.
+    /// @param withdrawal_credentials Commitment to a public key for withdrawals.
+    /// @param signature A BLS12-381 signature.
+    /// @param deposit_data_root The SHA-256 hash of the SSZ-encoded DepositData object.
+    /// Used as a protection against malformed input.
+    function deposit(
+        bytes calldata pubkey,
+        bytes calldata withdrawal_credentials,
+        bytes calldata signature,
+        bytes32 deposit_data_root
+    ) external payable;
+
+    /// @notice Query the current deposit root hash.
+    /// @return The deposit root hash.
+    function get_deposit_root() external view returns (bytes32);
+
+    /// @notice Query the current deposit count.
+    /// @return The deposit count encoded as a little endian 64-bit number.
+    function get_deposit_count() external view returns (bytes memory);
+}
+
+// Based on official specification in https://eips.ethereum.org/EIPS/eip-165
+interface ERC165 {
+    /// @notice Query if a contract implements an interface
+    /// @param interfaceId The interface identifier, as specified in ERC-165
+    /// @dev Interface identification is specified in ERC-165. This function
+    ///  uses less than 30,000 gas.
+    /// @return `true` if the contract implements `interfaceId` and
+    ///  `interfaceId` is not 0xffffffff, `false` otherwise
+    function supportsInterface(bytes4 interfaceId) external pure returns (bool);
+}
+
+// This is a rewrite of the Vyper Eth2.0 deposit contract in Solidity.
+// It tries to stay as close as possible to the original source code.
+/// @notice This is the Ethereum 2.0 deposit contract interface.
+/// For more information see the Phase 0 specification under https://github.com/ethereum/eth2.0-specs
+contract DepositContract is IDepositContract, ERC165 {
+    uint constant DEPOSIT_CONTRACT_TREE_DEPTH = 32;
+    // NOTE: this also ensures `deposit_count` will fit into 64-bits
+
+    // 最大的可DEPOSIT的数量，2^32-1，不是ETH个数，是DEPOSIT的数量，也就是32个ETH只算一次
+    uint constant MAX_DEPOSIT_COUNT = 2**DEPOSIT_CONTRACT_TREE_DEPTH - 1;
+
+    bytes32[DEPOSIT_CONTRACT_TREE_DEPTH] branch;
+    uint256 deposit_count;
+
+    bytes32[DEPOSIT_CONTRACT_TREE_DEPTH] zero_hashes;
+
+    constructor() public {
+        // Compute hashes in empty sparse Merkle tree
+        for (uint height = 0; height < DEPOSIT_CONTRACT_TREE_DEPTH - 1; height++)
+            zero_hashes[height + 1] = sha256(abi.encodePacked(zero_hashes[height], zero_hashes[height]));
+    }
+
+    function get_deposit_root() override external view returns (bytes32) {
+        bytes32 node;
+        uint size = deposit_count;
+        for (uint height = 0; height < DEPOSIT_CONTRACT_TREE_DEPTH; height++) {
+            if ((size & 1) == 1)
+                node = sha256(abi.encodePacked(branch[height], node));
+            else
+                node = sha256(abi.encodePacked(node, zero_hashes[height]));
+            size /= 2;
+        }
+        return sha256(abi.encodePacked(
+            node,
+            to_little_endian_64(uint64(deposit_count)),
+            bytes24(0)
+        ));
+    }
+
+    function get_deposit_count() override external view returns (bytes memory) {
+        return to_little_endian_64(uint64(deposit_count));
+    }
+
+    function deposit(
+        bytes calldata pubkey,
+        bytes calldata withdrawal_credentials,
+        bytes calldata signature,
+        bytes32 deposit_data_root
+    ) override external payable {
+        // Extended ABI length checks since dynamic types are used.
+        require(pubkey.length == 48, "DepositContract: invalid pubkey length");
+        require(withdrawal_credentials.length == 32, "DepositContract: invalid withdrawal_credentials length");
+        require(signature.length == 96, "DepositContract: invalid signature length");
+
+        // Check deposit amount
+        require(msg.value >= 1 ether, "DepositContract: deposit value too low");
+        require(msg.value % 1 gwei == 0, "DepositContract: deposit value not multiple of gwei");
+        uint deposit_amount = msg.value / 1 gwei;
+        require(deposit_amount <= type(uint64).max, "DepositContract: deposit value too high");
+
+        // Emit `DepositEvent` log
+        bytes memory amount = to_little_endian_64(uint64(deposit_amount));
+        emit DepositEvent(
+            pubkey,
+            withdrawal_credentials,
+            amount,
+            signature,
+            to_little_endian_64(uint64(deposit_count))
+        );
+
+        // Compute deposit data root (`DepositData` hash tree root)
+        bytes32 pubkey_root = sha256(abi.encodePacked(pubkey, bytes16(0)));
+        bytes32 signature_root = sha256(abi.encodePacked(
+            sha256(abi.encodePacked(signature[:64])),
+            sha256(abi.encodePacked(signature[64:], bytes32(0)))
+        ));
+        bytes32 node = sha256(abi.encodePacked(
+            sha256(abi.encodePacked(pubkey_root, withdrawal_credentials)),
+            sha256(abi.encodePacked(amount, bytes24(0), signature_root))
+        ));
+
+        // Verify computed and expected deposit data roots match
+        require(node == deposit_data_root, "DepositContract: reconstructed DepositData does not match supplied deposit_data_root");
+
+        // Avoid overflowing the Merkle tree (and prevent edge case in computing `branch`)
+        require(deposit_count < MAX_DEPOSIT_COUNT, "DepositContract: merkle tree full");
+
+        // Add deposit data root to Merkle tree (update a single `branch` node)
+        deposit_count += 1;
+        uint size = deposit_count;
+        for (uint height = 0; height < DEPOSIT_CONTRACT_TREE_DEPTH; height++) {
+            if ((size & 1) == 1) {
+                branch[height] = node;
+                return;
+            }
+            node = sha256(abi.encodePacked(branch[height], node));
+            size /= 2;
+        }
+        // As the loop should always end prematurely with the `return` statement,
+        // this code should be unreachable. We assert `false` just to be safe.
+        assert(false);
+    }
+
+    function supportsInterface(bytes4 interfaceId) override external pure returns (bool) {
+        return interfaceId == type(ERC165).interfaceId || interfaceId == type(IDepositContract).interfaceId;
+    }
+
+    function to_little_endian_64(uint64 value) internal pure returns (bytes memory ret) {
+        ret = new bytes(8);
+        bytes8 bytesValue = bytes8(value);
+        // Byteswapping during copying to bytes.
+        ret[0] = bytesValue[7];
+        ret[1] = bytesValue[6];
+        ret[2] = bytesValue[5];
+        ret[3] = bytesValue[4];
+        ret[4] = bytesValue[3];
+        ret[5] = bytesValue[2];
+        ret[6] = bytesValue[1];
+        ret[7] = bytesValue[0];
+    }
+}
+</script></div>
+</div>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#execution-client">Execution client</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#engine-api">Engine API</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#beacon-node-startup">1. beacon node startup</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#validator">Validator</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#eth-deposit-contract-32-eth">先去ETH deposit contract 上打入 32 个 ETH</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By ssli
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

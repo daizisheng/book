@@ -372,7 +372,7 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">几个实验</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#block">1. 计算一个block挖出来的币的第一个聪的编号</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#utxo">2. 找到制定编号的聪目前在哪个UTXO中，归谁？</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#utxo">2. 找到指定编号的聪目前在哪个UTXO中，归谁？</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3. 计算一个UTXO中包含的聪的所有编号？</a></li>
 </ul>
 </li>
@@ -452,7 +452,7 @@ OK
 </div>
 </section>
 <section id="utxo">
-<h3>2. 找到制定编号的聪目前在哪个UTXO中，归谁？<a class="headerlink" href="#utxo" title="Permalink to this heading">#</a></h3>
+<h3>2. 找到指定编号的聪目前在哪个UTXO中，归谁？<a class="headerlink" href="#utxo" title="Permalink to this heading">#</a></h3>
 <p>首先找到挖出它的block，然后根据转账历史一个tx一个tx的跟踪，直到找到当前的UTXO，从而找到其当前所有者。</p>
 <p>因此一个聪经历的转账次数越多，找到他就越麻烦。比如我们来试着找一下看看。</p>
 <div class="cell docutils container">
@@ -1336,8 +1336,9 @@ Rune name is @FIXME  BITCOINPEPEMATRIW
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>decode_runes_op for 1b8587082a46af5f1cde323f56bcf22c586fc9ad8fc314d71e888abb2108c24a
-
-[20, 840000, 20, 1]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[20, 840000, 20, 1]
 field:  20 , name: Mint         , value: [840000, 1]
 edicts = []
 --------------------------------------------------
@@ -1426,7 +1427,7 @@ Rune name is @FIXME  AAAAA@FEHVAAA@Y
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">几个实验</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#block">1. 计算一个block挖出来的币的第一个聪的编号</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#utxo">2. 找到制定编号的聪目前在哪个UTXO中，归谁？</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#utxo">2. 找到指定编号的聪目前在哪个UTXO中，归谁？</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3. 计算一个UTXO中包含的聪的所有编号？</a></li>
 </ul>
 </li>
