@@ -462,7 +462,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>bloknumber is 19759840
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>bloknumber is 19759947
 </pre></div>
 </div>
 </div>
@@ -587,13 +587,23 @@ document.write(`
 <span class="w">    </span><span class="c1">// 最大的可DEPOSIT的数量，2^32-1，不是ETH个数，是DEPOSIT的数量，也就是32个ETH只算一次</span>
 <span class="w">    </span><span class="nx">uint</span><span class="w"> </span><span class="nx">constant</span><span class="w"> </span><span class="nx">MAX_DEPOSIT_COUNT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">2</span><span class="o">**</span><span class="nx">DEPOSIT_CONTRACT_TREE_DEPTH</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">1</span><span class="p">;</span>
 
+<span class="w">    </span><span class="c1">// 感觉是类似于Merkle树的结构?</span>
+<span class="w">    </span><span class="c1">// hash = sha256(abi.encodePacked(left, right))</span>
+<span class="w">    </span><span class="c1">// 这个树有个特点，叶子是从左往右fill的</span>
+<span class="w">    </span><span class="c1">// branch存放的是下一个插入节点的 to root merkle path，但只看left pair，因为right都是0</span>
+<span class="w">    </span><span class="c1">// 注意其中有些数据并没有意义，有没有意义得由deposit_count来决定</span>
 <span class="w">    </span><span class="nx">bytes32</span><span class="p">[</span><span class="nx">DEPOSIT_CONTRACT_TREE_DEPTH</span><span class="p">]</span><span class="w"> </span><span class="nx">branch</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// DEPOSIT的次数</span>
 <span class="w">    </span><span class="nx">uint256</span><span class="w"> </span><span class="nx">deposit_count</span><span class="p">;</span>
 
+<span class="w">    </span><span class="c1">// 如果下面的所有数据都是空的，那么这个树的root是啥</span>
 <span class="w">    </span><span class="nx">bytes32</span><span class="p">[</span><span class="nx">DEPOSIT_CONTRACT_TREE_DEPTH</span><span class="p">]</span><span class="w"> </span><span class="nx">zero_hashes</span><span class="p">;</span>
 
 <span class="w">    </span><span class="kr">constructor</span><span class="p">()</span><span class="w"> </span><span class="kr">public</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="c1">// Compute hashes in empty sparse Merkle tree</span>
+<span class="w">        </span><span class="c1">// 初始化 zero root hash</span>
+<span class="w">        </span><span class="c1">// zero_hashes[0] = 0x0 ?</span>
 <span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="nx">uint</span><span class="w"> </span><span class="nx">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="w"> </span><span class="nx">height</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nx">DEPOSIT_CONTRACT_TREE_DEPTH</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">1</span><span class="p">;</span><span class="w"> </span><span class="nx">height</span><span class="o">++</span><span class="p">)</span>
 <span class="w">            </span><span class="nx">zero_hashes</span><span class="p">[</span><span class="nx">height</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">sha256</span><span class="p">(</span><span class="nx">abi</span><span class="p">.</span><span class="nx">encodePacked</span><span class="p">(</span><span class="nx">zero_hashes</span><span class="p">[</span><span class="nx">height</span><span class="p">],</span><span class="w"> </span><span class="nx">zero_hashes</span><span class="p">[</span><span class="nx">height</span><span class="p">]));</span>
 <span class="w">    </span><span class="p">}</span>
@@ -602,10 +612,14 @@ document.write(`
 <span class="w">        </span><span class="nx">bytes32</span><span class="w"> </span><span class="nx">node</span><span class="p">;</span>
 <span class="w">        </span><span class="nx">uint</span><span class="w"> </span><span class="nx">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">deposit_count</span><span class="p">;</span>
 <span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="nx">uint</span><span class="w"> </span><span class="nx">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="w"> </span><span class="nx">height</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nx">DEPOSIT_CONTRACT_TREE_DEPTH</span><span class="p">;</span><span class="w"> </span><span class="nx">height</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// 如果我是right child，那么我的left pair就有数据，branch[height]</span>
 <span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="nx">size</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span>
 <span class="w">                </span><span class="nx">node</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">sha256</span><span class="p">(</span><span class="nx">abi</span><span class="p">.</span><span class="nx">encodePacked</span><span class="p">(</span><span class="nx">branch</span><span class="p">[</span><span class="nx">height</span><span class="p">],</span><span class="w"> </span><span class="nx">node</span><span class="p">));</span>
+<span class="w">            </span><span class="c1">// 否则，我有right pair，全是0</span>
 <span class="w">            </span><span class="k">else</span>
 <span class="w">                </span><span class="nx">node</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">sha256</span><span class="p">(</span><span class="nx">abi</span><span class="p">.</span><span class="nx">encodePacked</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span><span class="w"> </span><span class="nx">zero_hashes</span><span class="p">[</span><span class="nx">height</span><span class="p">]));</span>
+<span class="w">            </span>
+<span class="w">            </span><span class="c1">// 上移</span>
 <span class="w">            </span><span class="nx">size</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="mf">2</span><span class="p">;</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">sha256</span><span class="p">(</span><span class="nx">abi</span><span class="p">.</span><span class="nx">encodePacked</span><span class="p">(</span>
@@ -657,6 +671,8 @@ document.write(`
 <span class="w">            </span><span class="nx">sha256</span><span class="p">(</span><span class="nx">abi</span><span class="p">.</span><span class="nx">encodePacked</span><span class="p">(</span><span class="nx">amount</span><span class="p">,</span><span class="w"> </span><span class="nx">bytes24</span><span class="p">(</span><span class="mf">0</span><span class="p">),</span><span class="w"> </span><span class="nx">signature_root</span><span class="p">))</span>
 <span class="w">        </span><span class="p">));</span>
 
+<span class="w">        </span><span class="c1">// node 是最终写入的叶子数据</span>
+
 <span class="w">        </span><span class="c1">// Verify computed and expected deposit data roots match</span>
 <span class="w">        </span><span class="nx">require</span><span class="p">(</span><span class="nx">node</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nx">deposit_data_root</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;DepositContract: reconstructed DepositData does not match supplied deposit_data_root&quot;</span><span class="p">);</span>
 
@@ -664,14 +680,14 @@ document.write(`
 <span class="w">        </span><span class="nx">require</span><span class="p">(</span><span class="nx">deposit_count</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nx">MAX_DEPOSIT_COUNT</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;DepositContract: merkle tree full&quot;</span><span class="p">);</span>
 
 <span class="w">        </span><span class="c1">// Add deposit data root to Merkle tree (update a single `branch` node)</span>
-<span class="w">        </span><span class="nx">deposit_count</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mf">1</span><span class="p">;</span>
+<span class="w">        </span><span class="nx">deposit_count</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mf">1</span><span class="p">;</span><span class="w"> </span><span class="c1">// 需要重新计算下一个插入的位置的 to root branch path</span>
 <span class="w">        </span><span class="nx">uint</span><span class="w"> </span><span class="nx">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">deposit_count</span><span class="p">;</span>
 <span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="nx">uint</span><span class="w"> </span><span class="nx">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="w"> </span><span class="nx">height</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nx">DEPOSIT_CONTRACT_TREE_DEPTH</span><span class="p">;</span><span class="w"> </span><span class="nx">height</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="nx">size</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nx">branch</span><span class="p">[</span><span class="nx">height</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">node</span><span class="p">;</span>
+<span class="w">                </span><span class="nx">branch</span><span class="p">[</span><span class="nx">height</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">node</span><span class="p">;</span><span class="w"> </span><span class="c1">// 当前插入的数据就是其left pair，更上层的left pair不变</span>
 <span class="w">                </span><span class="k">return</span><span class="p">;</span>
 <span class="w">            </span><span class="p">}</span>
-<span class="w">            </span><span class="nx">node</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">sha256</span><span class="p">(</span><span class="nx">abi</span><span class="p">.</span><span class="nx">encodePacked</span><span class="p">(</span><span class="nx">branch</span><span class="p">[</span><span class="nx">height</span><span class="p">],</span><span class="w"> </span><span class="nx">node</span><span class="p">));</span>
+<span class="w">            </span><span class="nx">node</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">sha256</span><span class="p">(</span><span class="nx">abi</span><span class="p">.</span><span class="nx">encodePacked</span><span class="p">(</span><span class="nx">branch</span><span class="p">[</span><span class="nx">height</span><span class="p">],</span><span class="w"> </span><span class="nx">node</span><span class="p">));</span><span class="w"> </span><span class="c1">// 当前插入的数据不是其left pair，需要逐层往上更新</span>
 <span class="w">            </span><span class="nx">size</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="mf">2</span><span class="p">;</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">        </span><span class="c1">// As the loop should always end prematurely with the `return` statement,</span>
@@ -772,13 +788,23 @@ contract DepositContract is IDepositContract, ERC165 {
     // 最大的可DEPOSIT的数量，2^32-1，不是ETH个数，是DEPOSIT的数量，也就是32个ETH只算一次
     uint constant MAX_DEPOSIT_COUNT = 2**DEPOSIT_CONTRACT_TREE_DEPTH - 1;
 
+    // 感觉是类似于Merkle树的结构?
+    // hash = sha256(abi.encodePacked(left, right))
+    // 这个树有个特点，叶子是从左往右fill的
+    // branch存放的是下一个插入节点的 to root merkle path，但只看left pair，因为right都是0
+    // 注意其中有些数据并没有意义，有没有意义得由deposit_count来决定
     bytes32[DEPOSIT_CONTRACT_TREE_DEPTH] branch;
+
+    // DEPOSIT的次数
     uint256 deposit_count;
 
+    // 如果下面的所有数据都是空的，那么这个树的root是啥
     bytes32[DEPOSIT_CONTRACT_TREE_DEPTH] zero_hashes;
 
     constructor() public {
         // Compute hashes in empty sparse Merkle tree
+        // 初始化 zero root hash
+        // zero_hashes[0] = 0x0 ?
         for (uint height = 0; height < DEPOSIT_CONTRACT_TREE_DEPTH - 1; height++)
             zero_hashes[height + 1] = sha256(abi.encodePacked(zero_hashes[height], zero_hashes[height]));
     }
@@ -787,10 +813,14 @@ contract DepositContract is IDepositContract, ERC165 {
         bytes32 node;
         uint size = deposit_count;
         for (uint height = 0; height < DEPOSIT_CONTRACT_TREE_DEPTH; height++) {
+            // 如果我是right child，那么我的left pair就有数据，branch[height]
             if ((size & 1) == 1)
                 node = sha256(abi.encodePacked(branch[height], node));
+            // 否则，我有right pair，全是0
             else
                 node = sha256(abi.encodePacked(node, zero_hashes[height]));
+            
+            // 上移
             size /= 2;
         }
         return sha256(abi.encodePacked(
@@ -842,6 +872,8 @@ contract DepositContract is IDepositContract, ERC165 {
             sha256(abi.encodePacked(amount, bytes24(0), signature_root))
         ));
 
+        // node 是最终写入的叶子数据
+
         // Verify computed and expected deposit data roots match
         require(node == deposit_data_root, "DepositContract: reconstructed DepositData does not match supplied deposit_data_root");
 
@@ -849,14 +881,14 @@ contract DepositContract is IDepositContract, ERC165 {
         require(deposit_count < MAX_DEPOSIT_COUNT, "DepositContract: merkle tree full");
 
         // Add deposit data root to Merkle tree (update a single `branch` node)
-        deposit_count += 1;
+        deposit_count += 1; // 需要重新计算下一个插入的位置的 to root branch path
         uint size = deposit_count;
         for (uint height = 0; height < DEPOSIT_CONTRACT_TREE_DEPTH; height++) {
             if ((size & 1) == 1) {
-                branch[height] = node;
+                branch[height] = node; // 当前插入的数据就是其left pair，更上层的left pair不变
                 return;
             }
-            node = sha256(abi.encodePacked(branch[height], node));
+            node = sha256(abi.encodePacked(branch[height], node)); // 当前插入的数据不是其left pair，需要逐层往上更新
             size /= 2;
         }
         // As the loop should always end prematurely with the `return` statement,
