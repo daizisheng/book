@@ -380,7 +380,11 @@ document.write(`
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#more">more</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2. 高级契约</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2. 高级契约 （写到一半发现，这个文章说到的高级契约，在OP_CAT已经支持的情况下也是实现不了的。。。 悲剧）</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">一种特殊的契约</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#txid">怎么在脚本中得到当前交易的txid？</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -501,13 +505,13 @@ document.write(`
 <li><p>先一个隐藏的随机数nonce: <strong>k</strong></p></li>
 <li><p>搞出公开的nonce: <strong>R = k * G</strong></p></li>
 <li><p><strong>e = hash(h || R || P)</strong></p></li>
-<li><p><strong>s = k - e * x</strong></p></li>
+<li><p><strong>s = k + e * x</strong></p></li>
 <li><p>得到签名: <strong>(R, s)</strong></p></li>
 </ol>
 <p>验证签名的算法是</p>
 <ol class="arabic simple">
 <li><p>已知 <strong>(R, s)</strong>, <strong>h</strong></p></li>
-<li><p><strong>s * G = (k - e * x) * G = k * G - e * x * G = R - e * P = R - hash(h || R || P) * G</strong></p></li>
+<li><p><strong>s * G = (k + e * x) * G = k * G + e * x * G = R + e * P = R + hash(h || R || P) * G</strong></p></li>
 </ol>
 <p>正常情况下，我们验证签名的byte codes如下</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>    &lt;签名&gt; &lt;pubkey&gt; CHECK_SIG
@@ -519,7 +523,7 @@ document.write(`
 </pre></div>
 </div>
 <p>可以看出，用户只需要提供 <strong>s</strong> 就可以完成支付，这样有什么好处呢？</p>
-<p>假设用户想要双花，因为 <strong>e</strong> 的hash中包含了 <strong>h</strong>，而双花的话 <strong>h</strong> 肯定是不一样的，所以 <strong>e</strong> 也就不一样了，所以 <strong>s</strong> 也就不一样了。这样我们就得到了两个不同的签名 <strong>(s1, R)</strong> 和 <strong>(s2, R)</strong> , 连个签名对应同一个私钥 <strong>x</strong> 。而且 <strong>s1 - s2 = (k - e1 * x) - (k - e2 * x) = (e2 - e1) * x</strong>，所以有 <strong>x = (s1-s2)/(e2-e1)</strong>。</p>
+<p>假设用户想要双花，因为 <strong>e</strong> 的hash中包含了 <strong>h</strong>，而双花的话 <strong>h</strong> 肯定是不一样的，所以 <strong>e</strong> 也就不一样了，所以 <strong>s</strong> 也就不一样了。这样我们就得到了两个不同的签名 <strong>(s1, R)</strong> 和 <strong>(s2, R)</strong> , 连个签名对应同一个私钥 <strong>x</strong> 。而且 <strong>s1 - s2 = (k + e1 * x) - (k + e2 * x) = (e1 - e2) * x</strong>，所以有 <strong>x = (s1-s2)/(e1-e2)</strong>。</p>
 <p>所以完蛋了， <strong>x</strong> 算出来了，如果这个双花的家伙还有使用 <strong>x</strong> 为私钥的资产的话，就暴露了。</p>
 </section>
 <section id="more">
@@ -529,7 +533,57 @@ document.write(`
 </section>
 </section>
 <section id="id2">
-<h3>2. 高级契约<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
+<h3>2. 高级契约 （写到一半发现，这个文章说到的高级契约，在OP_CAT已经支持的情况下也是实现不了的。。。 悲剧）<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
+<p><a class="reference external" href="https://www.wpsoftware.net/andrew/blog/cat-and-schnorr-tricks-i.html">https://www.wpsoftware.net/andrew/blog/cat-and-schnorr-tricks-i.html</a></p>
+<p>什么是契约？ btc本身就有一些机制</p>
+<ol class="arabic simple">
+<li><p>最普通的 P2PK/P2PKH 之类的，我这笔钱，只能拥有某个地址的私钥的人才能拿走，别人休想</p></li>
+<li><p>P2SH ， 只有知道指定脚本内容的人才能拿走</p></li>
+<li><p>P2ANYONE，任何人都可以拿走
+…</p></li>
+</ol>
+<p>但是这些不够高级，更高级的体现在 btc 签名算法中所谓的 <strong>hashtype</strong></p>
+<p><a class="reference external" href="https://en.bitcoin.it/wiki/OP_CHECKSIG">https://en.bitcoin.it/wiki/OP_CHECKSIG</a></p>
+<p>我在签名一个交易的时候，我只签名一部分，而让别的部分可以变化。类似合同，我留下了一些空白页，允许别人填写内容。但是，和空白页不同的是，我不能允许别人瞎写，得符合一定之规</p>
+<p>对于币的去向:</p>
+<ol class="arabic simple">
+<li><p>SIGHASH_ALL: 必须按照我指定的去向，btc去了哪里都被安排得明明白白的</p></li>
+<li><p>SIGHASH_NONE: 我不关心去向。。。</p></li>
+<li><p>SIGHASH_SINGLE: 别的我不管，但是我指定的去向必须满足，类似别人收多少钱我不管，但我得收这么多钱</p></li>
+</ol>
+<p>对于币的来源:</p>
+<ol class="arabic simple">
+<li><p>SIGHASH_ANYONECANPAY: 别的人可以添加币的来源</p></li>
+</ol>
+<p>可惜的是，目前来说，btc的所谓高级契约类型非常有限。对于 eth，因为它是图灵完备的，理论上，通过写合约的方式，可以搞出无数种千奇百怪的契约（或者叫智能合约）来</p>
+<section id="id3">
+<h4>一种特殊的契约<a class="headerlink" href="#id3" title="Permalink to this heading">#</a></h4>
+<p>完美的契约起码包括，我可以通过程序限制一个tx的方方面面，比如要求 <strong>给某某人至少多少钱，给另外一个人在满足什么的条件下至少多少钱</strong> 之类的，但是这对btc确实太难了。</p>
+<p>一种粗暴的办法是，我们限制花费我们的这个utxo的交易的txid比如是某个指定的值，这样其实就是限定了能够花费这笔钱的交易的所有信息，比如其他输入是什么，所有输出长什么样子。</p>
+<p>一个交易的txid是怎么算出来的呢，是所有 input+output 然后hash，input主要是所花费的 utxo 的 txid和output index。所以交易的 txid 依赖于 utxo 的 txid。如果我们把 txid 写入到 utxo 的 script 中去，就会影响 utxo 的 txid，反过来就会影响当前交易的txid，这就循环依赖了。</p>
+<p><strong>就是这里，这个绕不过去了</strong>，所以上面描述的粗暴办法无法实现，但是文章得到一个有意思的东西，就是</p>
+</section>
+<section id="txid">
+<h4>怎么在脚本中得到当前交易的txid？<a class="headerlink" href="#txid" title="Permalink to this heading">#</a></h4>
+<p>考虑这个脚本 (pubkeyScript)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;G&gt; 2DUP SWAP CAT SWAP CHECKSIG
+</pre></div>
+</div>
+<p>支付的时候需要提供 <strong>s</strong>，就是 schnorr 签名 (s, R) 中的 s，一次考虑stack上的情况</p>
+<ol class="arabic simple">
+<li><p>s</p></li>
+<li><p>s G</p></li>
+<li><p>s G s G</p></li>
+<li><p>s G G s</p></li>
+<li><p>s G G##s</p></li>
+<li><p>s G##s G</p></li>
+</ol>
+<p>然后是 CHECKSIG，G被当作pubkey，G##s 被当作签名。CHECKSIG要能过，就相当于要求 私钥是 <strong>x=1</strong>，因为 <strong>G = 1 * G</strong>，而秘密nonce <strong>r=1</strong>，也就是 <strong>R = 1 * G</strong>，这样的话，s 是什么？ <strong>s = 1 + e</strong>，其中 <strong>e = hash(h || R || P) = hash(h || G || G)</strong>。 e是可以提前算出来的，因此s也是。</p>
+<p>好了，我们有一个基本上是当前tx的hash的东西 <strong>s = 1 + e</strong> 留在了栈上，我们可以对其进行要求了，比如满足什么条件我们才允许支付。。。</p>
+<p>如前所述，最理想的是我们要求 <strong>s</strong> 是一个具体的值，这样就完全限制住了交易，但是这不可能，因为有循环依赖的问题。所以原文到这里就只能 <strong>戛然而止</strong>。</p>
+<p>不过我们貌似还是可以做一些事情的。</p>
+<p>比如我们要求 <strong>s % 100000000 == 0</strong>，这有点像 <strong>POW</strong>，要求对方必须花费很大力气才能穷举出一个交易。但是，好像 <strong>并没有什么用处</strong> 。</p>
+</section>
 </section>
 </section>
 </section>
@@ -597,7 +651,11 @@ document.write(`
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#more">more</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2. 高级契约</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2. 高级契约 （写到一半发现，这个文章说到的高级契约，在OP_CAT已经支持的情况下也是实现不了的。。。 悲剧）</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">一种特殊的契约</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#txid">怎么在脚本中得到当前交易的txid？</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
