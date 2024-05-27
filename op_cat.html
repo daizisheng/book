@@ -176,9 +176,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="how-eth-pos-works.html">POS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="NTT.html">NTT revised</a></li>
 <li class="toctree-l1"><a class="reference internal" href="a-math-prob.html">a math problem</a></li>
-
-
-
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">op-cat</a></li>
 </ul>
 
@@ -378,11 +375,12 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what">what?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#history">history</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">用处</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#an-equivocation-bond">an equivocation bond （翻译为 模棱两可的债券 ？？）</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#an-equivocation-bond">1. an equivocation bond （翻译为 模棱两可的债券 ？？）</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#schnorr">先简单说一下 <strong>schnorr签名</strong></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#without-op-cat">without OP_CAT？</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#more">more</a></li>
 </ul>
 </li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2. 高级契约</a></li>
 </ul>
 </li>
 </ul>
@@ -452,12 +450,32 @@ document.write(`
 </pre></div>
 </div>
 <p>貌似是因为 <strong>bn2</strong> 如果很大的话，比如10个亿，会让 <strong>bn</strong> 超级大，然后估计就 <strong>OOM</strong> 了，从而产生了 <strong>DDOS</strong> 攻击，但因为这个就把 <strong>OP_CAT</strong> 干掉了？神奇。可能是中本聪被搞怕了。</p>
+<p>具体干掉这些 op code 的commit在这里</p>
+<p><a class="github reference external" href="https://github.com/bitcoin/bitcoin/commit/4bd188c4383d6e614e18f79dc337fbabe8464c82">bitcoin/bitcoin</a></p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>    if (opcode == OP_CAT ||
+        opcode == OP_SUBSTR ||
+        opcode == OP_LEFT ||
+        opcode == OP_RIGHT ||
+        opcode == OP_INVERT ||
+        opcode == OP_AND ||
+        opcode == OP_OR ||
+        opcode == OP_XOR ||
+        opcode == OP_2MUL ||
+        opcode == OP_2DIV ||
+        opcode == OP_MUL ||
+        opcode == OP_DIV ||
+        opcode == OP_MOD ||
+        opcode == OP_LSHIFT ||
+        opcode == OP_RSHIFT)
+        return false;
+</pre></div>
+</div>
 </section>
 <section id="id1">
 <h2>用处<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h2>
 <p>这个 OP_CAT 搞出来有啥用呢？</p>
 <section id="an-equivocation-bond">
-<h3>an equivocation bond （翻译为 模棱两可的债券 ？？）<a class="headerlink" href="#an-equivocation-bond" title="Permalink to this heading">#</a></h3>
+<h3>1. an equivocation bond （翻译为 模棱两可的债券 ？？）<a class="headerlink" href="#an-equivocation-bond" title="Permalink to this heading">#</a></h3>
 <p><a class="reference external" href="https://bitcoinops.org/en/topics/op_cat/">https://bitcoinops.org/en/topics/op_cat/</a></p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>The primary expected use for OP_CAT is for data provided by the creator of a script to be concatenated with data provided by someone spending from that script.
 </pre></div>
@@ -504,10 +522,14 @@ document.write(`
 <p>假设用户想要双花，因为 <strong>e</strong> 的hash中包含了 <strong>h</strong>，而双花的话 <strong>h</strong> 肯定是不一样的，所以 <strong>e</strong> 也就不一样了，所以 <strong>s</strong> 也就不一样了。这样我们就得到了两个不同的签名 <strong>(s1, R)</strong> 和 <strong>(s2, R)</strong> , 连个签名对应同一个私钥 <strong>x</strong> 。而且 <strong>s1 - s2 = (k - e1 * x) - (k - e2 * x) = (e2 - e1) * x</strong>，所以有 <strong>x = (s1-s2)/(e2-e1)</strong>。</p>
 <p>所以完蛋了， <strong>x</strong> 算出来了，如果这个双花的家伙还有使用 <strong>x</strong> 为私钥的资产的话，就暴露了。</p>
 </section>
-<section id="without-op-cat">
-<h4>without OP_CAT？<a class="headerlink" href="#without-op-cat" title="Permalink to this heading">#</a></h4>
+<section id="more">
+<h4>more<a class="headerlink" href="#more" title="Permalink to this heading">#</a></h4>
 <p>没有 OP_CAT 能完成这个任务吗？</p>
+<p>这个例子是不是人为性太强了？我要瞎搞的话，是不是私钥就只干这个事情，不留别的资产了？</p>
 </section>
+</section>
+<section id="id2">
+<h3>2. 高级契约<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
 </section>
 </section>
 </section>
@@ -570,11 +592,12 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what">what?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#history">history</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">用处</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#an-equivocation-bond">an equivocation bond （翻译为 模棱两可的债券 ？？）</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#an-equivocation-bond">1. an equivocation bond （翻译为 模棱两可的债券 ？？）</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#schnorr">先简单说一下 <strong>schnorr签名</strong></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#without-op-cat">without OP_CAT？</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#more">more</a></li>
 </ul>
 </li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2. 高级契约</a></li>
 </ul>
 </li>
 </ul>
