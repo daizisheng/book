@@ -461,6 +461,27 @@ document.write(`
 </pre></div>
 </div>
 <p>你琢磨琢磨？这个java程序你准备怎么写。</p>
+<p>有个事情，比较好玩儿，如果你真写出这样一个java程序，你就牛逼了。为啥呢，考虑如下程序：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>int main() {
+    bigint n,a,b,c;
+
+    for(n = 1;;n++) {
+        for(a = 1;a &lt; n;a++) {
+            for(b = 1;b &lt; n;b++) {
+                for(c = 1;c &lt; n;c++) {
+                    if(a * a * a + b * b * b == c * c * c) {
+                        return 0;
+                    }
+                }
+            }
+        }
+    }
+
+    // unreachable
+}
+</pre></div>
+</div>
+<p>你要输出 <strong>YES</strong> ，说明费马大定理不成立，你要输出 <strong>NO</strong> ，说明费马大定理成立，哈哈，你要获得菲尔兹奖了。当然得是前几年，因为这个问题已经被数学家解决了。</p>
 </section>
 </section>
 </section>
