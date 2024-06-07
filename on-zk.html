@@ -448,6 +448,19 @@ document.write(`
 <section id="id2">
 <h3>图灵机万能吗？<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
 <p>不可能，世界不会简单到 <strong>真理=可计算</strong> ， 比如估计谁也算不出明天的股票价格。。。 当然，这里不说这个。我们得来一个，能精准描述，但是图灵机就是算不出来的东西。</p>
+<p>最著名的例子莫过于是所谓的 <strong>停机问题</strong> ，他可以这样描述：</p>
+<p>请你设计一个图灵机，他的名字叫 <strong>U</strong> ，就是 <strong>universal</strong> 的 <strong>U</strong> ，可以叫做万能图灵机，他需要干啥呢。我们把任何用户给的图灵机 <strong>I</strong>，就是 <strong>input</strong> 的 <strong>I</strong> ，编码好，然后写在你的 <strong>TAPE</strong> 上，然后你的 <strong>U</strong> 要干的事儿，就是计算出，我这个 <strong>I</strong> 到底能不能停下来，或者准确一点说，我的 <strong>I</strong> 的 <strong>STATE</strong> 能不能在某个时刻进入到某个指定的值上，比如 <strong>FINISH</strong> 。</p>
+<p>这说起来，好像有点拗口，我们直接用现在的计算机程序举个例子：</p>
+<p>你能不能写一个比如 java 程序，然后我给你输入一个 c 程序，你告诉我，我这个 c 程序会不会在有限的时间内完成。当然你的程序也得在有限时间完成。</p>
+<p>在具体一点，比如我的程序如下的话，你就输出 <strong>YES</strong></p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>int main() { return 0; }
+</pre></div>
+</div>
+<p>但如果如下的话，你就输出 <strong>NO</strong></p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>int main() { while(1); return 0; }
+</pre></div>
+</div>
+<p>你琢磨琢磨？这个java程序你准备怎么写。</p>
 </section>
 </section>
 </section>
