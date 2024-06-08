@@ -181,7 +181,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="op_cat.html">op-cat</a></li>
 <li class="toctree-l1"><a class="reference internal" href="blocksize-war.html">block size war</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">on zkp</a></li>
-
 </ul>
 
     </div>
@@ -377,7 +376,6 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">on zkp</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">进步</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#computation">计算 computation</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">图灵机模型</a></li>
@@ -385,14 +383,11 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#information">信息 information</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">知识 和 零知识</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">零知识</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">知识 和 零知识</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">零知识</a></li>
 </ul>
-</li>
-</ul>
-
             </nav>
         </div>
     </div>
@@ -581,9 +576,8 @@ document.write(`
 <p>香农是幸运的，他的这临门一击，正切中那个时代的通信的迫切需求，他的理论实际上并没有碰到明显的阻碍，自然就被人们所接受了。</p>
 <p>但是，批判的来看，难道就只有香农所定义的信息才是信息？难道我之前列举出的生活种种就没有信息？难道有了香农，有了香农的信息论，人类自古以来通过声音，通过语气，通过别的途径，所传达的那些无法准确量化的信息就不是信息了？不应该是这样，只是香农声势浩大，夺下了 <strong>信息</strong> 在数学上的那块阵地。只是，在包括通信，包括计算机的某些领域中，我们承认，香农的理论目前是靠谱的，是值得的，我们批判的接受这一点。我们依然在下一个赌注。</p>
 </section>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="id4">
-<h1>知识 和 零知识<a class="headerlink" href="#id4" title="Permalink to this heading">#</a></h1>
+<section id="id4">
+<h2>知识 和 零知识<a class="headerlink" href="#id4" title="Permalink to this heading">#</a></h2>
 <p><strong>知识</strong> 同样难以量化，不过幸运的是，<strong>香农</strong> 帮我们承担了一切。</p>
 <p>如文首所述，如果我们开心的承认香农的 <strong>信息论</strong>，我们大起胆子，不再纠结，我们就很容易给知识下一个定义。我们把批评留个香农，我们轻装上阵。</p>
 <p>类似 <strong>信息</strong> 的定义，我们大胆的来定义知识。</p>
@@ -605,7 +599,7 @@ document.write(`
 <li><p>知识的传递，导致度量知识的概率分布的改变</p></li>
 </ol>
 <section id="id5">
-<h2>零知识<a class="headerlink" href="#id5" title="Permalink to this heading">#</a></h2>
+<h3>零知识<a class="headerlink" href="#id5" title="Permalink to this heading">#</a></h3>
 <p>零知识更多的是指出一个过程没有发生知识的传递，比如上文中 “你告诉我的是，骰子的点数 小于 10” 的情形。</p>
 <p>似乎零知识很简单，对吧？定义很清楚，对吧？那我们来看这个例子：</p>
 <blockquote>
@@ -625,6 +619,7 @@ document.write(`
 </div>
 <p>上面的程序，将在有限的时间内，从你的地址计算出你的私钥。程序计算结束，我将拥有你的完整私钥。所以，答案必然是 <strong>YES</strong> 。</p>
 <p>但是，为什么，你不会有丝毫恐慌？原因是什么？是因为这个方法适合于所有的人？你不担心你的私钥我更容易算出来的么？比如，如果你的地址的私钥是 <span class="math notranslate nohighlight">\(p &lt; 10000\)</span> ，那我的程序将可以在几微秒就能算出你的私钥，这不是很恐怖的吗？</p>
+</section>
 </section>
 </section>
 
@@ -683,7 +678,6 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">on zkp</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">进步</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#computation">计算 computation</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">图灵机模型</a></li>
@@ -691,14 +685,11 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#information">信息 information</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">知识 和 零知识</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">零知识</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">知识 和 零知识</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">零知识</a></li>
 </ul>
-</li>
-</ul>
-
   </nav></div>
 
 </div></div>
