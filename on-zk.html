@@ -376,9 +376,10 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">进步</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#computation">计算 computation</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">图灵机模型</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">图灵机万能吗？</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">图灵机模型</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">图灵机万能吗？</a></li>
 </ul>
 </li>
 </ul>
@@ -394,12 +395,23 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="on-zk">
 <h1>on zk<a class="headerlink" href="#on-zk" title="Permalink to this heading">#</a></h1>
+<section id="id1">
+<h2>进步<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h2>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{array}{l|l:c:r}
+a &amp; b &amp; c &amp; ... \\ \hline
+d &amp; e &amp; f &amp; ... \\
+g &amp; h &amp; i &amp; ...
+\end{array}
+\end{split}\]</div>
+</section>
 <section id="computation">
 <h2>计算 computation<a class="headerlink" href="#computation" title="Permalink to this heading">#</a></h2>
 <p>我们能计算啥，不能计算啥，什么方便计算，什么难于计算？</p>
 <p>这个概念的清晰化，至少很大程度归功于图灵。</p>
-<section id="id1">
-<h3>图灵机模型<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
+<section id="id2">
+<h3>图灵机模型<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
 <p>模型由如下部件组成：</p>
 <ol class="arabic simple">
 <li><p>TAPE: 一个纸带， <strong>无限长</strong>，然后被分成了一格一格的，格子里面可以写上一个字母</p></li>
@@ -446,8 +458,8 @@ document.write(`
 <p>注意，这不是一个定理，更像是一个猜想。</p>
 </div></blockquote>
 </section>
-<section id="id2">
-<h3>图灵机万能吗？<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
+<section id="id3">
+<h3>图灵机万能吗？<a class="headerlink" href="#id3" title="Permalink to this heading">#</a></h3>
 <p>不可能，世界不会简单到 <strong>真理=可计算</strong> ， 比如估计谁也算不出明天的股票价格。。。 当然，这里不说这个。我们得来一个，能精准描述，但是图灵机就是算不出来的东西。</p>
 <p>最著名的例子莫过于是所谓的 <strong>停机问题</strong> ，他可以这样描述：</p>
 <p>请你设计一个图灵机，他的名字叫 <strong>U</strong> ，就是 <strong>universal</strong> 的 <strong>U</strong> ，可以叫做万能图灵机，他需要干啥呢。我们把任何用户给的图灵机 <strong>I</strong>，就是 <strong>input</strong> 的 <strong>I</strong> ，编码好，然后写在你的 <strong>TAPE</strong> 上，然后你的 <strong>U</strong> 要干的事儿，就是计算出，我这个 <strong>I</strong> 到底能不能停下来，或者准确一点说，我的 <strong>I</strong> 的 <strong>STATE</strong> 能不能在某个时刻进入到某个指定的值上，比如 <strong>FINISH</strong> 。</p>
@@ -542,9 +554,10 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">进步</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#computation">计算 computation</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">图灵机模型</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">图灵机万能吗？</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">图灵机模型</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">图灵机万能吗？</a></li>
 </ul>
 </li>
 </ul>
