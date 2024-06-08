@@ -382,6 +382,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">图灵机万能吗？</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">信息</a></li>
 </ul>
             </nav>
         </div>
@@ -442,7 +443,7 @@ document.write(`
 <p>那是什么让曾经如瘟疫一样的奇谈怪论，在今天变成了公认的真理，是逻辑的自然推论吗？不是。是时间，是其有用，是100多年的数学实践，是无数基于它的没有引发矛盾的研究，是无数基于它所产生的新的知识以及新的知识的美妙和有用性。我们是在下一个赌注，我们认为康托的集合论虽然是反直觉的，是无法通过逻辑推导出来的，但是却是可以信任的。我们信任它，基于它构建新的高楼大厦，我们相信高楼大厦将长期屹立不倒。但是，如果我们赌输了，我们的高楼大厦出现了裂痕，我们就会反过来推导出集合论的缺陷，我们就会获得菲尔兹奖，我们会经历新的短暂混乱，但终究会跨越灾难，离真理更进一步。这个赌注，值得。</p>
 <p>所以，为什么我们能相信康托，不是因为 <strong>in math, we trust</strong> ，不是因为 <strong>in logic, we trust</strong> ，而是</p>
 <blockquote>
-<div><p><strong>In time, in history, in rational criticism, in wager, we trust.</strong></p>
+<div><p><strong>In time, in history, in rational criticism, in bet-on, we trust.</strong></p>
 </div></blockquote>
 <p>这是我认为的真正自学数学的难点，这是课堂上老师潜移默化传递给你的信心，只有这个信心，加上时间和汗水，你才能真正搞懂数学。</p>
 <p>后文讲到的 <strong>计算，信息，零知识</strong> 等一堆概念，或多或少都是类似 <strong>微积分，集合论</strong> 的奇谈怪论，要跨越理解的鸿沟，你需要相信，需要在 <strong>理性批判主义</strong> 的意义下相信。</p>
@@ -479,7 +480,7 @@ document.write(`
 <p>TABLE可以认为是一行一行的，每行前面几列是： HEAD下面的格子的内容，STATE的内容，这些是规则的输入； 后面几列是上述的3个动作，这些动作按顺序完成。</p>
 </div></blockquote>
 <p>于是图灵宣称，我们能计算的就是图灵机能计算的，图灵机能计算的就是我们能计算的。这玩意儿，先不管说是不是正确，但至少非常准确的刻画了一类可以计算的东西。</p>
-<p>至于这个东西是否准确的表达了我们人类的计算概念，只能说，这是一个哲学问题。当然时间能够考验一切，无数聪明大脑的批判能够考验一切。历史证明，图灵模型是经得起考验的。In time, in rational criticism, in history, we trust.</p>
+<p>至于这个东西是否准确的表达了我们人类的计算概念，只能说，这是一个哲学问题。当然时间能够考验一切，无数聪明大脑的批判能够考验一切。历史证明，图灵模型是经得起考验的。<strong>In time, in history, in rational criticism, in bet-on, we trust.</strong></p>
 <blockquote>
 <div><p>容易看出，图灵机能够计算的，我们人类应该是毫无压力可以计算的，所以图灵机模型是 小于等于 我们人类的计算概念的。</p>
 <p>那反过来，到底有没有那种，人类原则上能够进行计算的，但是图灵机却不能计算的东西呢？或者说，在我们这个宇宙，物理意义上能够进行计算的，但是图灵机却算不出来的呢？还真有，至少逻辑上是有的，比如物理上可以任意精度下进行实数运算，图灵机不行。例如，一个直径为1的圆的周长是 <span class="math notranslate nohighlight">\(\pi\)</span> ，那么把直径放大一倍，周长自然就是 <span class="math notranslate nohighlight">\(\pi + \pi\)</span>，这在物理上毫无压力，或者说你拿个尺子去量毫无压力（精度是你能力问题，不是物理问题），但是用图灵机，你连完整表达一个无理数的办法都没有。。。当然，这种例子，完全不影响人类认可图灵机模型，对吧？</p>
@@ -537,6 +538,39 @@ document.write(`
 </div>
 <p>你要输出 <strong>YES</strong> ，说明费马大定理不成立，你要输出 <strong>NO</strong> ，说明费马大定理成立，哈哈，你要获得菲尔兹奖了。当然得是前几年，因为这个问题已经被数学家解决了。</p>
 </section>
+</section>
+<section id="id4">
+<h2>信息<a class="headerlink" href="#id4" title="Permalink to this heading">#</a></h2>
+<p>何为信息？</p>
+<p>我告诉我女儿是： 一加一等于二。我传达信息给她了吗？ 分别考虑我女儿 1岁 和 3岁 和 10岁 的情形呢？</p>
+<p>我女儿调皮的时候，我想揍她，她问我为什么，我说： 我是你爸爸。 请问我传达信息给她了吗？传达了多少信息？</p>
+<p>如同上述 <strong>计算</strong> 一样，<strong>信息</strong> 这种人类直觉的东西，如何准确定义？</p>
+<p>直到 <strong>香农</strong> 横空出世，把信息 <strong>量化</strong> 为 （简化版）：</p>
+<ol class="arabic simple">
+<li><p>我们说的 <strong>信息</strong> 是和某个 <strong>事件</strong> 的发生概率相关。</p></li>
+</ol>
+<blockquote>
+<div><p>比如明天会不会下雨，我们的预判是 <strong>一半概率下雨，一半概率不下雨</strong></p>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p><strong>信息源</strong> 把一个 <strong>消息</strong> 通过 <strong>信道</strong> 传递给 <strong>我们</strong> 。</p></li>
+</ol>
+<blockquote>
+<div><p>比如信息源是天气预报，信道是广播，消息是 <strong>明天下雨</strong></p>
+</div></blockquote>
+<ol class="arabic simple" start="3">
+<li><p>此 <strong>消息</strong> 所传达的信息量是该事件的 <strong>不确定性</strong> 的消除的量。用数学用语就是，<strong>熵</strong> 的减少。</p></li>
+</ol>
+<blockquote>
+<div><p>比如，在我们预判中，下不下雨的概率都是一半，对应的 <strong>熵</strong> 是 <span class="math notranslate nohighlight">\( H(X) = \frac{1}{2} * \log_2{\frac{1}{1/2}} + \frac{1}{2} * \log_2{\frac{1}{1/2}} = 1\)</span> 。经过天气预报一提醒，我们知道一定会下雨，对应的 <strong>熵</strong> 是 <span class="math notranslate nohighlight">\( H(X') = 1 * \log_2{\frac{1}{1}} = 0\)</span> 。熵的较少就是 <span class="math notranslate nohighlight">\(1 - 0 = 1\)</span> ，这就是该消息所传达的信息量。</p>
+<p>换个例子，如果天气预报说的是，明天下雨概率 <span class="math notranslate nohighlight">\(1/3\)</span> ，不下雨概率是 <span class="math notranslate nohighlight">\(2/3\)</span>，那么该消息传达的信息量是 <span class="math notranslate nohighlight">\(1 - H(X') = 1 - (\frac{1}{3} * \log_2{\frac{1}{1/3}} + \frac{2}{3} * \log_2{\frac{1}{2/3}}) \approx 0.0817\)</span></p>
+<p>因此，容易看出，第二种情况下，该消息传递的信息量更少了。还容易看出，如果我们改变初始条件，消息的传递是可能导致 <strong>熵</strong> 增加的，也就是说，该消息传递了一个 <strong>负的信息量</strong>。</p>
+</div></blockquote>
+<p>看起来，该系统和通信系统息息相关，没错，该理论最开始是在贝尔实验室搞出来的，而且论文题目是 《A Mathematical Theory of Communication》 <a class="reference external" href="https://en.wikipedia.org/wiki/A_Mathematical_Theory_of_Communication">https://en.wikipedia.org/wiki/A_Mathematical_Theory_of_Communication</a> 。</p>
+<p>香农何德何能，有资格下这样一个定义，还让所有追随者趋之若鹜？难道这就是信息的完整定义？难道这就囊括了我们所期待准确定义的那些 <strong>信息</strong> ？我想是应该没有，比如我前面举的几个例子，就无法合理的对应到香农的这个定义中来。</p>
+<p>香农自然不是神，香农在构建其理论大厦的时候，所需要的大部分砖块儿其实已经唾手可得，但是香农的思想又是引领时代的，真因为香农的思想让 <strong>信息</strong> 的定义清晰化了，所有的<strong>砖块</strong>就只有考古学的意义了。</p>
+<p>香农是幸运的，他的这临门一击，正切中那个时代的通信的迫切需求，他的理论实际上并没有碰到明显的阻碍，自然就被人们所接受了。</p>
+<p>但是，批判的来看，难道就只有香农所定义的信息才是信息？难道我之前列举出的生活种种就没有信息？难道有了香农，有了香农的信息论，人类自古以来通过声音，通过语气，通过别的途径，所传达的那些无法准确量化的信息就不是信息了？不应该是这样，只是香农声势浩大，夺下了 <strong>信息</strong> 在数学上的那块阵地。只是，在包括通信，包括计算机的某些领域中，我们承认，香农的理论目前是靠谱的，是值得的，我们批判的接受这一点。我们依然在下一个赌注。</p>
 </section>
 </section>
 
@@ -601,6 +635,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">图灵机万能吗？</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">信息</a></li>
 </ul>
   </nav></div>
 
